@@ -1,0 +1,14 @@
+# jsons
+*.json
+
+# public
+/public
+
+# dependencies
+/node_modules
+
+# misc
+.DS_Store
+
+#other
+.vscode
