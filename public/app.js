@@ -27,14 +27,14 @@ function determineIps() {
   pc.onicecandidate = (ice) => {
     if (!ice || !ice.candidate || !ice.candidate.candidate) {
       pc.close();   
-      console.log("closed");
+      // console.log("closed");
       return;
     }
     let split = ice.candidate.candidate.split(" ");
     if (split[7] === "host") {
-      console.log(`Local IP : ${split[4]}`);
+      // console.log(`Local IP : ${split[4]}`);
     } else {
-      console.log(`External IP : ${split[4]}`);
+      // console.log(`External IP : ${split[4]}`);
       externalIP = `${split[4]}`;
     }
   };

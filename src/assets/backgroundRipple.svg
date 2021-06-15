@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 600">
+  <circle class="circle" cx="600" cy="600" r="40" fill="transparent" stroke="red" />
+  <circle class="circle" cx="600" cy="600" r="100" fill="transparent" stroke="blue" />
+  <circle class="circle" cx="600" cy="600" r="200" fill="transparent" stroke="yellow" />
+  <circle class="circle" cx="600" cy="600" r="300" fill="transparent" stroke="orange" />
+  <circle class="circle" cx="600" cy="600" r="400" fill="transparent" stroke="gold" />
+  <circle class="circle" cx="600" cy="600" r="500" fill="transparent" stroke="black" />
+  <circle class="circle" cx="600" cy="600" r="600" fill="transparent" stroke="pink" />
+</svg>
