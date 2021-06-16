@@ -1,5 +1,5 @@
 import React, {useEffect} from 'react';
-import stunConfig from 'src/utils/stunConfig';
+import pcConfig from 'src/utils/pcConfig';
 
 export interface IIdentityContextVariable {
   localID: string;
@@ -22,7 +22,7 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
   useEffect(() => {
     let localIP: string, externalIP: string;
     let channel: RTCDataChannel | null;
-    const pc = new RTCPeerConnection(stunConfig);
+    const pc = new RTCPeerConnection(pcConfig);
     channel = pc.createDataChannel('');
     pc.createOffer().then((offer) => pc.setLocalDescription(offer));
     pc.onicecandidate = (ice) => {

@@ -1,4 +1,4 @@
-const stunConfig = {
+const pcConfig = {
   iceServers: [
     {
       urls: ['stun:stun1.l.google.com:19302', 'stun:stun2.l.google.com:19302'],
@@ -7,4 +7,4 @@ const stunConfig = {
   iceCandidatePoolSize: 10,
 };
 
-export default stunConfig;
+export default pcConfig;

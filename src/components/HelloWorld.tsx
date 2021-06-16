@@ -1,10 +1,20 @@
-import React, {useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
+import firebase from 'src/services/firebase';
 import styled from 'styled-components';
+
+import pcConfig from 'src/utils/pcConfig';
+import getRandomFaceEmoji from 'src/utils/getRandomFaceEmoji';
+import detectOS from 'src/utils/detectOS';
+
 import {Button} from '@material-ui/core';
+import CircularProgress from '@material-ui/core/CircularProgress';
 import backgroundRipple from 'src/assets/backgroundRipple.svg';
+
 import {IdentityContext, IIdentityContextVariable} from 'src/components/IdentityProvider';
 
-// import firebase from 'src/services/firebase';
+// https://material-ui.com/components/drawers/
+
+const Loader = styled(CircularProgress)``;
 
 const StyledP = styled.p``;
 
@@ -18,11 +28,12 @@ const RippleHolder = styled.div`
   width: 100%;
   max-width: 1200px;
   height: 600px;
-  z-index: -1;
+  z-index: 1;
 `;
 
 const Wrapper = styled.div`
   position: relative;
+  background-color: #303846;
   min-height: 100vh;
   max-width: 100vw;
   overflow-x: hidden;
@@ -42,12 +53,24 @@ interface Props {
 }
 
 const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
+  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
+
   useEffect(() => {
-    if (!localID || !publicID) return;
-    console.log(localID);
-    console.log(publicID);
+    const initPeersInRoom = async () => {
+      const db = firebase.firestore();
+      const roomRef = await db.collection('rooms').doc(publicID);
+      // const connections = roomRef.collection('connection');
+      const peers = roomRef.collection('peers');
+      await peers.doc(localID).set({
+        id: localID,
+        emoji: `${getRandomFaceEmoji()}`,
+        ...detectOS(),
+      });
+    };
+    initPeersInRoom();
     return () => {};
-  }, [publicID, localID]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <Wrapper>
@@ -62,7 +85,9 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
 
 const HelloWorld = () => (
   <IdentityContext.Consumer>
-    {({localID, publicID}: IIdentityContextVariable) => <ConsumedHelloWorld localID={localID} publicID={publicID} />}
+    {({localID, publicID}: IIdentityContextVariable) =>
+      localID && publicID ? <ConsumedHelloWorld localID={localID} publicID={publicID} /> : <Loader />
+    }
   </IdentityContext.Consumer>
 );
 
