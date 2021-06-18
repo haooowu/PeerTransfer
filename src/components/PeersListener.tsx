@@ -16,13 +16,16 @@ const PeersListener: React.FC<Props> = ({publicID, localID}) => {
 
   useEffect(() => {
     const listenPeers = async () => {
-      const db = firebase.firestore();
-      const roomRef = await db.collection('rooms').doc(publicID);
-      const peers = roomRef.collection('peers') as firebase.firestore.CollectionReference<IPeerField>;
-      peers.onSnapshot(async (snapshot) => {
-        const peerCollection = snapshot.docs;
-        const otherPeers = peerCollection.filter((peer) => peer.id !== localID).map((peer) => peer.data());
-        setOtherPeers(otherPeers);
+      const db = firebase.database();
+      const peersRef = db.ref(`${publicID}`);
+
+      peersRef.on('value', async (snapshot) => {
+        const allPeers: IPeerField[] = snapshot.val();
+        let peerHolder: IPeerField[] = [];
+        for (let id in allPeers) {
+          if (id !== localID) peerHolder.push(allPeers[id]);
+        }
+        setOtherPeers(peerHolder);
       });
     };
     listenPeers();
@@ -33,7 +36,7 @@ const PeersListener: React.FC<Props> = ({publicID, localID}) => {
   return (
     <div>
       {otherPeers.map((peer) => (
-        <PeerConnectionHolder targetPeer={peer} publicID={publicID} localID={localID} />
+        <PeerConnectionHolder key={peer.id} targetPeer={peer} publicID={publicID} localID={localID} />
       ))}
     </div>
   );

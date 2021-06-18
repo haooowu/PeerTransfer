@@ -1,6 +1,8 @@
 /* eslint-disable */
 mdc.ripple.MDCRipple.attachTo(document.querySelector('.mdc-button'));
 
+// TODO-sprint: to be deleted
+
 // DEfault configuration - Change these if you have a different STUN or TURN server.
 const configuration = {
   iceServers: [

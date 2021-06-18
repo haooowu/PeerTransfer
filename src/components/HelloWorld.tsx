@@ -11,6 +11,7 @@ import backgroundRipple from 'src/assets/backgroundRipple.svg';
 
 import {IdentityContext, IIdentityContextVariable} from 'src/components/IdentityProvider';
 
+import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
 import PeersListener from 'src/components/PeersListener';
 import {IPeerField} from 'src/types';
 
@@ -61,43 +62,19 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
   const [selfIdentity, setSelfIdentity] = useState<IPeerField | null>();
 
   useEffect(() => {
-    const initPeersInRoom = async () => {
-      const DB = firebase.firestore();
-      const roomRef = await DB.collection('rooms').doc(publicID);
-      const peers = roomRef.collection('peers');
-
-      // TODO-sprint: move peers to firebase database with presence detection
+    const initPeers = async () => {
       const presenceDB = firebase.database();
-      const peersMeta = await peers.get();
-      peersMeta.forEach(async (peer) => {
-        presenceDB.ref(peer.id).once('value', async (snapshot) => {
-          if (!snapshot.val()) await peer.ref.delete();
-        });
-      });
-      let presenceRef = presenceDB.ref(localID);
-      presenceRef.set(true);
-      // Write a string when this client loses connection
-      presenceRef.onDisconnect().remove();
-
-      let identity = {
+      const identity = {
         id: localID,
         emoji: `${getRandomFaceEmoji()}`,
         ...detectOS(),
       } as IPeerField;
-      await peers.doc(localID).set(identity);
+      let presenceRef = presenceDB.ref(`${publicID}/${localID}`);
+      presenceRef.set(identity);
+      presenceRef.onDisconnect().remove();
       setSelfIdentity(identity);
     };
-
-    // TODO-sprint: on peers drop, close rtc connection if any
-    // const listenPeerPresence = () => {
-    //   const ref = firebase.database().ref();
-    //   ref.on('value', function(snapshot) {
-    //     console.log(snapshot.val())
-    //   });
-    // }
-
-    initPeersInRoom();
-    // listenPeerPresence();
+    initPeers();
     return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -105,9 +82,7 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
   return (
     <Wrapper>
       <StyledP>Hello World</StyledP>
-      <Button color="primary" variant="contained" disableTouchRipple>
-        You: {selfIdentity?.emoji}
-      </Button>
+      {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
       <PeersListener publicID={publicID} localID={localID} />
       <RippleHolder />
     </Wrapper>

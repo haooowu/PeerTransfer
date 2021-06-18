@@ -21,33 +21,7 @@
       work correctly both with client-side routing and a non-root public URL.
       Learn how to configure a non-root public URL by running `npm run build`.
     -->
-    
     <title>PeerTransfer</title>
-
-    <!-- TODO-sprint: to be deleted -->
-
-    <!-- The core Firebase JS SDK is always required and must be listed first -->
-    <!-- <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.6.5/firebase-firestore.js"></script> -->
-
-    <!-- <script>
-      // Your web app's Firebase configuration
-      var firebaseConfig = {
-        apiKey: "AIzaSyBeFSn6EPYfSzFt6BhqeM-33Vd96NdT33Q",
-        authDomain: "peertransfer-44201.firebaseapp.com",
-        projectId: "peertransfer-44201",
-        storageBucket: "peertransfer-44201.appspot.com",
-        messagingSenderId: "640914820360",
-        appId: "1:640914820360:web:51564296511922d704f0bd"
-      };
-      // Initialize Firebase
-      firebase.initializeApp(firebaseConfig);
-    </script>
-     -->
-    <link href="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.css" rel="stylesheet">
-    <script src="https://unpkg.com/material-components-web@latest/dist/material-components-web.min.js"></script>
-    <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
-    <link rel="stylesheet" type="text/css" href="main.css">
   </head>
   <body>
     <noscript>You need to enable JavaScript to run this app.</noscript>
@@ -62,93 +36,6 @@
       To begin the development, run `npm start` or `yarn start`.
       To create a production bundle, use `npm run build` or `yarn build`.
     -->
-
-    <!-- TODO-sprint: to be deleted -->
-
-      <div id="buttons">
-        <button class="mdc-button mdc-button--raised" id="createBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">add</i>
-            <span class="mdc-button__label">Create room</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" id="joinBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">group</i>
-            <span class="mdc-button__label">Join room</span>
-        </button>
-        <button class="mdc-button mdc-button--raised" id="hangupBtn">
-            <i class="material-icons mdc-button__icon" aria-hidden="true">close</i>
-            <span class="mdc-button__label">Hangup</span>
-        </button>
-    </div>
-    <div>
-        <span id="currentRoom"></span>
-    </div>
-    <div class="mdc-dialog"
-        id="room-dialog"
-        role="alertdialog"
-        aria-modal="true"
-        aria-labelledby="my-dialog-title"
-        aria-describedby="my-dialog-content">
-        <div class="mdc-dialog__container">
-            <div class="mdc-dialog__surface">
-                <h2 class="mdc-dialog__title" id="my-dialog-title">Join room</h2>
-                <div class="mdc-dialog__content" id="my-dialog-content">
-                    Enter ID for room to join:
-                    <div class="mdc-text-field">
-                        <input type="text" id="room-id" class="mdc-text-field__input">
-                        <label class="mdc-floating-label" for="my-text-field">Room ID</label>
-                        <div class="mdc-line-ripple"></div>
-                    </div>
-                </div>
-                <footer class="mdc-dialog__actions">
-                    <button type="button" class="mdc-button mdc-dialog__button" data-mdc-dialog-action="no">
-                        <span class="mdc-button__label">Cancel</span>
-                    </button>
-                    <button id="confirmJoinBtn" type="button" class="mdc-button mdc-dialog__button"
-                            data-mdc-dialog-action="yes">
-                        <span class="mdc-button__label">Join</span>
-                    </button>
-                </footer>
-            </div>
-        </div>
-        <div class="mdc-dialog__scrim"></div>
-    </div>
-
-
-    <div id="container">
-      <section>
-          <div >
-          <form id="fileInfo">
-              <input type="file" disabled id="fileInput" name="files"/>
-          </form>
-          <button disabled id="sendFile">Send</button>
-          <button disabled id="abortButton">Abort</button>
-          </div>
-  
-          <div class="progress">
-          <div class="label">Send progress: </div>
-          <progress id="sendProgress" max="0" value="0"></progress>
-          </div>
-  
-          <div class="progress">
-          <div class="label">Receive progress: </div>
-          <progress id="receiveProgress" max="0" value="0"></progress>
-          </div>
-  
-          <div id="bitrate"></div>
-          <a id="download"></a>
-          <span id="status"></span>
-      </section>
-  
-      <section>
-          <p>View the console to see logging.</p>
-  
-          <p>The <code>RTCPeerConnection</code> objects <code>localConnection</code> and <code>remoteConnection</code> are in global scope, so you can inspect them in the console as well.</p>
-  
-          <p>For more information about RTCDataChannel, see <a href="http://www.html5rocks.com/en/tutorials/webrtc/basics/#toc-rtcdatachannel" title="RTCDataChannel section of HTML5 Rocks article about WebRTC">Getting Started With WebRTC</a>.</p>
-      </section>
-    </div>
-
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
-    <!-- <script src="app.js"></script> -->
   </body>
 </html>
