@@ -5,7 +5,6 @@ const detectOS = () => {
 
   return {
     name: parsedAgent.browser.name,
-    os: parsedAgent.os.name,
     platform: parsedAgent.platform.type,
   };
 };

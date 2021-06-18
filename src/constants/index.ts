@@ -1,3 +1,1 @@
-const constants = {};
-
-export default constants;
+export * from 'src/constants/collectionName';
