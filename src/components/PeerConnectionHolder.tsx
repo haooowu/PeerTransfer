@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 import {
@@ -14,7 +14,8 @@ import {
 import {IFileMeta, IPeerField} from 'src/types';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import pcConfig from 'src/utils/pcConfig';
-import WaitResponsePopper from './Poppers/WaitResponsePopper';
+import LinearProgress from 'src/components/LinearProgress';
+import WaitResponsePopper from 'src/components/Poppers/WaitResponsePopper';
 
 interface Props {
   targetPeer: IPeerField;
@@ -40,24 +41,24 @@ interface Props {
 // - accept: upon got all answer from connectionId, send file Data
 
 const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [connectionId, setConnectionId] = useState<string>();
-  const [sendChannel, setSendChannel] = useState<RTCDataChannel | null>(null);
-  const [receiveChannel, setReceiveChannel] = useState<RTCDataChannel | null>(null);
+  const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
+  const connectionIdRef = useRef<string | null>(null);
+  const sendChannelRef = useRef<RTCDataChannel | null>(null);
+  const receiveChannelRef = useRef<RTCDataChannel | null>(null);
+  const sentFileReaderRef = useRef<FileReader | null>(null);
 
-  const anchorRef = React.useRef(null);
+  const anchorRef = useRef(null);
   const [isOpen, setOpen] = React.useState(true);
   const [anchorElement, setAnchorElement] = React.useState(null);
+
   useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef]);
 
-  const [fileReader, setFileReader] = React.useState<FileReader>(new FileReader());
-
   function handleFileAbort() {
-    if (fileReader && fileReader.readyState === 1) {
+    if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
       console.log('Abort read!');
-      fileReader.abort();
+      sentFileReaderRef.current.abort();
     }
   }
 
@@ -93,7 +94,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       return;
     }
 
-    // TODO-sprint: peer id
+    // TODO-sprint: peer id with state change update
     const sendProgress = document.querySelector('progress#sendProgress') as HTMLProgressElement;
     const receiveProgress = document.querySelector('progress#receiveProgress') as HTMLProgressElement;
     sendProgress!.max = file.size;
@@ -101,13 +102,16 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const chunkSize = 16384;
 
     let offset = 0;
+    let sendChannel = sendChannelRef.current as RTCDataChannel;
 
-    fileReader.addEventListener('error', (error) => console.error('Error reading file:', error));
-    fileReader.addEventListener('abort', (event) => console.log('File reading aborted:', event));
-    fileReader.addEventListener('load', (e) => {
+    sentFileReaderRef.current = new FileReader();
+
+    sentFileReaderRef.current.addEventListener('error', (error) => console.error('Error reading file:', error));
+    sentFileReaderRef.current.addEventListener('abort', (event) => console.log('File reading aborted:', event));
+    sentFileReaderRef.current.addEventListener('load', (e) => {
       console.log('FileRead.onload ', e);
       let result = e!.target!.result as ArrayBuffer;
-      sendChannel!.send(result);
+      sendChannel.send(result);
       offset += result.byteLength;
       sendProgress.value = offset;
       if (offset < file.size) {
@@ -119,31 +123,30 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const readSlice = (o: number) => {
       console.log('readSlice ', o);
       const slice = file.slice(offset, o + chunkSize);
-      fileReader.readAsArrayBuffer(slice);
+      sentFileReaderRef.current!.readAsArrayBuffer(slice);
     };
     readSlice(0);
   }
 
   function closeDataChannels() {
     console.log('Closing data channels');
-
-    if (sendChannel) {
-      sendChannel.close();
-      console.log(`Closed data channel with label: ${sendChannel.label}`);
-      setSendChannel(null);
+    if (sendChannelRef.current) {
+      sendChannelRef.current.close();
+      console.log(`Closed data channel with label: ${sendChannelRef.current.label}`);
+      sendChannelRef.current = null;
     }
-
-    if (receiveChannel) {
-      receiveChannel.close();
-      console.log(`Closed data channel with label: ${receiveChannel.label}`);
-      setReceiveChannel(null);
+    if (receiveChannelRef.current) {
+      receiveChannelRef.current.close();
+      console.log(`Closed data channel with label: ${receiveChannelRef.current.label}`);
+      receiveChannelRef.current = null;
     }
-    clear('TODO-sprint: destroy');
+    clear();
   }
 
-  async function clear(roomId: string) {
-    if (peerConnection) {
-      peerConnection.close();
+  async function clear() {
+    const roomId = connectionIdRef.current;
+    if (peerConnectionRef.current) {
+      peerConnectionRef.current.close();
     }
     // Delete room on hangup
     if (roomId) {
@@ -197,11 +200,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
    * TODO-sprint: chain promise
    * TODO-sprint: only create Receive when
    */
-  function createReceiveDataChannel(pc: RTCPeerConnection, id: string) {
-    pc.ondatachannel = receiveChannelCallback;
+  function createReceiveDataChannel() {
+    peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
+    const id = connectionIdRef.current as string;
 
+    let receiveChannel = receiveChannelRef.current;
     let completeFlag = 0;
-    let receiveChannel: RTCDataChannel;
     let receivedSize = 0;
     let receiveBuffer: ArrayBuffer[] = [];
 
@@ -279,27 +283,27 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
    * TODO-sprint: chain promise
    * Send Data Channel
    */
-  function createSendDataChannel(pc: RTCPeerConnection) {
-    let sendChannel = pc.createDataChannel('sendDataChannel');
-    sendChannel.binaryType = 'arraybuffer';
-    console.log('Created send data channel: ', sendChannel);
+  function createSendDataChannel() {
+    sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
+    sendChannelRef.current.binaryType = 'arraybuffer';
+    console.log('Created send data channel: ', sendChannelRef.current);
 
     function onSendChannelStateChange() {
-      if (sendChannel) {
-        const {readyState} = sendChannel;
+      if (sendChannelRef.current) {
+        const {readyState} = sendChannelRef.current;
         console.log(`Send channel state is: ${readyState}`);
       }
     }
     function onError(errorEvent: RTCErrorEvent) {
-      if (sendChannel) {
+      if (sendChannelRef.current) {
         console.error('Error in sendChannel:', errorEvent);
         return;
       }
       console.log('Error in sendChannel which is already closed:', errorEvent);
     }
-    sendChannel.onopen = onSendChannelStateChange;
-    sendChannel.onclose = onSendChannelStateChange;
-    sendChannel.onerror = onError;
+    sendChannelRef.current.onopen = onSendChannelStateChange;
+    sendChannelRef.current.onclose = onSendChannelStateChange;
+    sendChannelRef.current.onerror = onError;
   }
 
   const joinFileChannel = async (connectionID: string) => {
@@ -308,15 +312,14 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const connectionRef = roomRef.collection('connections').doc(connectionID);
     const connectionSnapshot = await connectionRef.get();
 
-    let peerConnection: RTCPeerConnection;
-
     if (connectionSnapshot.exists) {
-      peerConnection = new RTCPeerConnection(pcConfig);
+      connectionIdRef.current = connectionID;
+      peerConnectionRef.current = new RTCPeerConnection(pcConfig);
 
       // Code for collecting ICE candidates below
       const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
 
-      peerConnection.addEventListener('icecandidate', (event) => {
+      peerConnectionRef.current.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
           console.log('Got final candidate!');
           return;
@@ -326,19 +329,16 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       });
       // Code for collecting ICE candidates above
 
-      // TODO-sprint: UI to accept connection
-
-      // TODO-sprint:
-      createSendDataChannel(peerConnection);
-      createReceiveDataChannel(peerConnection, connectionID);
+      createSendDataChannel();
+      createReceiveDataChannel();
 
       // Code for creating SDP answer below
       const offer = connectionSnapshot!.data()!.offer;
       console.log('Got offer:', offer);
-      await peerConnection.setRemoteDescription(new RTCSessionDescription(offer));
-      const answer = await peerConnection.createAnswer();
+      await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+      const answer = await peerConnectionRef.current.createAnswer();
       console.log('Created answer:', answer);
-      await peerConnection.setLocalDescription(answer);
+      await peerConnectionRef.current.setLocalDescription(answer);
 
       const roomWithAnswer = {
         answer: {
@@ -355,7 +355,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           if (change.type === 'added') {
             let data = change.doc.data();
             console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
-            await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+            await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
           }
         });
       });
@@ -379,16 +379,14 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     console.log('called');
     await targetConnectionRef.set(p2pData, {merge: true});
-    setConnectionId(targetConnectionRef.id);
-
     const callerCandidatesCollection = targetConnectionRef.collection('callerCandidates');
 
-    const peerConnection = new RTCPeerConnection(pcConfig);
+    peerConnectionRef.current = new RTCPeerConnection(pcConfig);
+    connectionIdRef.current = targetConnectionRef.id;
+    createSendDataChannel();
+    createReceiveDataChannel();
 
-    createSendDataChannel(peerConnection);
-    createReceiveDataChannel(peerConnection, targetConnectionRef.id);
-
-    peerConnection.addEventListener('icecandidate', (event) => {
+    peerConnectionRef.current.addEventListener('icecandidate', (event) => {
       if (!event.candidate) {
         console.log('Got final candidate!');
         return;
@@ -397,8 +395,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       callerCandidatesCollection.add(event.candidate.toJSON());
     });
     // Code for creating a room below
-    const offer = await peerConnection.createOffer();
-    await peerConnection.setLocalDescription(offer);
+    const offer = await peerConnectionRef.current.createOffer();
+    await peerConnectionRef.current.setLocalDescription(offer);
     console.log('Created offer:', offer);
 
     const roomWithOffer = {
@@ -412,10 +410,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     // Listening for remote session description below
     targetConnectionRef.onSnapshot(async (snapshot) => {
       const data = snapshot.data();
-      if (!peerConnection.currentRemoteDescription && data && data.answer) {
+      if (!peerConnectionRef.current!.currentRemoteDescription && data && data.answer) {
         console.log('Got remote description: ', data.answer);
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
-        await peerConnection.setRemoteDescription(rtcSessionDescription);
+        await peerConnectionRef.current!.setRemoteDescription(rtcSessionDescription);
       }
     });
     // Listening for remote session description above
@@ -426,7 +424,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         if (change.type === 'added') {
           let data = change.doc.data();
           console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
-          await peerConnection.addIceCandidate(new RTCIceCandidate(data));
+          await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
         }
       });
     });
@@ -449,7 +447,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         <input type="file" id="fileInput" name="files" hidden />
       </Button>
 
-      <div>Progress</div>
+      <LinearProgress progress={20} />
 
       <WaitResponsePopper isOpen={isOpen} setOpen={setOpen} anchorElement={anchorElement} />
     </div>
