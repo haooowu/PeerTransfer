@@ -53,6 +53,7 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}
       <Button color="primary" variant="contained" disableTouchRipple>
         You: {selfIdentity?.emoji}
       </Button>
+      <div>Test</div>
     </Wrapper>
   );
 };

@@ -52,6 +52,117 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef]);
 
+  const [fileReader, setFileReader] = React.useState<FileReader>(new FileReader());
+
+  function handleFileAbort() {
+    if (fileReader && fileReader.readyState === 1) {
+      console.log('Abort read!');
+      fileReader.abort();
+    }
+  }
+
+  async function handleFileInputChange() {
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    const file = fileInput!.files ? fileInput.files[0] : null;
+
+    if (!file) {
+      console.log('No file chosen');
+    } else {
+      const fileMeta = {
+        fileMeta: {
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        },
+      };
+      // TODO-sprint: update fileMeta
+      // await roomRef.update(fileMeta);
+    }
+  }
+
+  async function sendData() {
+    // TODO-sprint: peer id
+    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
+    if (!fileInput.files) return;
+    const file = fileInput!.files[0];
+    console.log(`File is ${[file.name, file.size, file.type].join(' ')}`);
+
+    if (file.size === 0) {
+      console.log('File is empty, please select a non-empty file');
+      closeDataChannels();
+      return;
+    }
+
+    // TODO-sprint: peer id
+    const sendProgress = document.querySelector('progress#sendProgress') as HTMLProgressElement;
+    const receiveProgress = document.querySelector('progress#receiveProgress') as HTMLProgressElement;
+    sendProgress!.max = file.size;
+    receiveProgress!.max = file.size;
+    const chunkSize = 16384;
+
+    let offset = 0;
+
+    fileReader.addEventListener('error', (error) => console.error('Error reading file:', error));
+    fileReader.addEventListener('abort', (event) => console.log('File reading aborted:', event));
+    fileReader.addEventListener('load', (e) => {
+      console.log('FileRead.onload ', e);
+      let result = e!.target!.result as ArrayBuffer;
+      sendChannel!.send(result);
+      offset += result.byteLength;
+      sendProgress.value = offset;
+      if (offset < file.size) {
+        readSlice(offset);
+      } else {
+        console.log('done');
+      }
+    });
+    const readSlice = (o: number) => {
+      console.log('readSlice ', o);
+      const slice = file.slice(offset, o + chunkSize);
+      fileReader.readAsArrayBuffer(slice);
+    };
+    readSlice(0);
+  }
+
+  function closeDataChannels() {
+    console.log('Closing data channels');
+
+    if (sendChannel) {
+      sendChannel.close();
+      console.log(`Closed data channel with label: ${sendChannel.label}`);
+      setSendChannel(null);
+    }
+
+    if (receiveChannel) {
+      receiveChannel.close();
+      console.log(`Closed data channel with label: ${receiveChannel.label}`);
+      setReceiveChannel(null);
+    }
+    clear('TODO-sprint: destroy');
+  }
+
+  async function clear(roomId: string) {
+    if (peerConnection) {
+      peerConnection.close();
+    }
+    // Delete room on hangup
+    if (roomId) {
+      const db = firebase.firestore();
+      const roomRef = db.collection('rooms').doc(`${roomId}`);
+      const calleeCandidates = await roomRef.collection('calleeCandidates').get();
+      calleeCandidates.forEach(async (candidate) => {
+        await candidate.ref.delete();
+      });
+      const callerCandidates = await roomRef.collection('callerCandidates').get();
+      callerCandidates.forEach(async (candidate) => {
+        await candidate.ref.delete();
+      });
+      await roomRef.delete();
+    }
+
+    document.location.reload(true);
+  }
+
   useEffect(() => {
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(publicID);
@@ -66,6 +177,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         if (change.type === 'added') {
           let data = change.doc.data();
           // TODO-sprint: if p2p[localID] exist
+          // if (data.p2p && data.p2p[localID]) {
+          //   joinFileChannel(change.doc.id)
+          // }
           console.log(data.p2p);
           console.log(`Got new connection: ${JSON.stringify(data)}`);
         }
@@ -335,7 +449,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         <input type="file" id="fileInput" name="files" hidden />
       </Button>
 
-      <div>test</div>
+      <div>Progress</div>
 
       <WaitResponsePopper isOpen={isOpen} setOpen={setOpen} anchorElement={anchorElement} />
     </div>
