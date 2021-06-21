@@ -1,18 +1,8 @@
-import React, {useState, useEffect, useRef} from 'react';
+import React, {useState, useEffect, useRef, ChangeEvent} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
-import {
-  Button,
-  Popper,
-  Typography,
-  Paper,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  DialogContentText,
-} from '@material-ui/core';
+import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
-import usePopperStyles from 'src/styles/usePopperStyles';
 import pcConfig from 'src/utils/pcConfig';
 import LinearProgress from 'src/components/LinearProgress';
 import WaitResponsePopper from 'src/components/Poppers/WaitResponsePopper';
@@ -25,11 +15,11 @@ interface Props {
 
 // TODO-sprint: UI to abort fileReader transfer
 
-// TODO-sprint: react-dropzone to wrap input
+// TODO-sprint: react-dropzone to wrap input and drop to change file
 
 // TODO-sprint: if reject delete doc and all nested data
 
-// TODO-sprint: join BY roomID, or join by listen to connectionIDs snapshot
+// TODO-sprint: join BY roomID
 
 // 1. receiver upon listen to connectionIDs snapshot, for every connection that p2p contains self,
 //   and there is not yet both answer and offer created, show UI indicate fileMeta and UI to accept/decline
@@ -62,13 +52,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   }
 
-  async function handleFileInputChange() {
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    const file = fileInput!.files ? fileInput.files[0] : null;
+  async function handleFileInputChange(e: ChangeEvent<HTMLInputElement>) {
+    let file = e.target?.files && e.target?.files[0];
 
-    if (!file) {
-      console.log('No file chosen');
-    } else {
+    if (file) {
       const fileMeta = {
         fileMeta: {
           name: file.name,
@@ -76,16 +63,24 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           type: file.type,
         },
       };
-      // TODO-sprint: update fileMeta
-      // await roomRef.update(fileMeta);
+
+      console.log('got file', fileMeta);
+
+      const connectionId = connectionIdRef.current as string;
+
+      const db = firebase.firestore();
+      const roomRef = db.collection('rooms').doc(publicID);
+      const connectionsRef = roomRef.collection('connections');
+      const targetConnectionRef = await connectionsRef.doc(connectionId);
+      await targetConnectionRef.update(fileMeta);
     }
   }
 
+  // TODO-sprint: listener to trigger sendData (on fileMeta?)
   async function sendData() {
-    // TODO-sprint: peer id
-    const fileInput = document.getElementById('fileInput') as HTMLInputElement;
-    if (!fileInput.files) return;
-    const file = fileInput!.files[0];
+    const fileInput = document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement;
+    const file = fileInput!.files && fileInput!.files[0];
+    if (!file) return;
     console.log(`File is ${[file.name, file.size, file.type].join(' ')}`);
 
     if (file.size === 0) {
@@ -94,15 +89,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       return;
     }
 
-    // TODO-sprint: peer id with state change update
-    const sendProgress = document.querySelector('progress#sendProgress') as HTMLProgressElement;
-    const receiveProgress = document.querySelector('progress#receiveProgress') as HTMLProgressElement;
+    const sendProgress = document.getElementById(`sendProgress-${targetPeer.id}`) as HTMLProgressElement;
     sendProgress!.max = file.size;
-    receiveProgress!.max = file.size;
+
     const chunkSize = 16384;
 
     let offset = 0;
-    let sendChannel = sendChannelRef.current as RTCDataChannel;
 
     sentFileReaderRef.current = new FileReader();
 
@@ -111,7 +103,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     sentFileReaderRef.current.addEventListener('load', (e) => {
       console.log('FileRead.onload ', e);
       let result = e!.target!.result as ArrayBuffer;
-      sendChannel.send(result);
+      (sendChannelRef.current as RTCDataChannel).send(result);
       offset += result.byteLength;
       sendProgress.value = offset;
       if (offset < file.size) {
@@ -150,17 +142,19 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
     // Delete room on hangup
     if (roomId) {
+      const connectionId = connectionIdRef.current as string;
       const db = firebase.firestore();
       const roomRef = db.collection('rooms').doc(`${roomId}`);
-      const calleeCandidates = await roomRef.collection('calleeCandidates').get();
+      const connectionRef = roomRef.collection('connections').doc(connectionId);
+      const calleeCandidates = await connectionRef.collection('calleeCandidates').get();
       calleeCandidates.forEach(async (candidate) => {
         await candidate.ref.delete();
       });
-      const callerCandidates = await roomRef.collection('callerCandidates').get();
+      const callerCandidates = await connectionRef.collection('callerCandidates').get();
       callerCandidates.forEach(async (candidate) => {
         await candidate.ref.delete();
       });
-      await roomRef.delete();
+      await connectionRef.delete();
     }
 
     document.location.reload(true);
@@ -172,26 +166,30 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const connectionRef = roomRef.collection('connections');
 
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
-      const data = snapshot.size;
-
       snapshot.docChanges().forEach(async (change) => {
-        if (change.type === 'modified') return;
-        if (change.type === 'removed') return;
         if (change.type === 'added') {
           let data = change.doc.data();
-          // TODO-sprint: if p2p[localID] exist
-          // if (data.p2p && data.p2p[localID]) {
-          //   joinFileChannel(change.doc.id)
-          // }
-          console.log(data.p2p);
           console.log(`Got new connection: ${JSON.stringify(data)}`);
+        }
+        if (change.type === 'removed') {
+          let connectionId = change.doc.id;
+          if (connectionId === connectionIdRef.current) closeDataChannels();
+        }
+
+        if (change.type === 'modified') {
+          let data = change.doc.data();
+          // TODO-sprint: UI to prompts should join or not
+          if (data.p2p && data.fileMeta && !data.answer && data.p2p.answer === localID) {
+            console.log(change.doc.id);
+            joinFileChannel(change.doc.id);
+          }
         }
       });
     });
-
     return () => {
       // TODO-sprint: close connection and delete the document on peer presence drop
       unsubscribe();
+      closeDataChannels();
     };
   }, []);
 
@@ -204,22 +202,23 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
     const id = connectionIdRef.current as string;
 
-    let receiveChannel = receiveChannelRef.current;
     let completeFlag = 0;
     let receivedSize = 0;
     let receiveBuffer: ArrayBuffer[] = [];
+    let downloadAnchor = document.createElement('a');
 
     function receiveChannelCallback(event: RTCDataChannelEvent) {
       console.log('Receive Channel Callback');
-      receiveChannel = event.channel;
-      receiveChannel.binaryType = 'arraybuffer';
-      receiveChannel.onmessage = onReceiveMessageCallback;
-      receiveChannel.onopen = onReceiveChannelStateChange;
-      receiveChannel.onclose = onReceiveChannelStateChange;
+      receiveChannelRef.current = event.channel;
+      receiveChannelRef.current.binaryType = 'arraybuffer';
+      receiveChannelRef.current.onmessage = onReceiveMessageCallback;
+      receiveChannelRef.current.onopen = onReceiveChannelStateChange;
+      receiveChannelRef.current.onclose = onReceiveChannelStateChange;
 
       receivedSize = 0;
 
       // TODO-sprint: remove previous received file + download file popper UI
+
       // downloadAnchor.textContent = '';
       // downloadAnchor.removeAttribute('download');
       // if (downloadAnchor.href) {
@@ -233,8 +232,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       console.log(event.data);
       receiveBuffer.push(event.data);
 
+      receivedSize += event.data.byteLength;
       // TODO-sprint: receive progress popper UI
-      // receivedSize += event.data.byteLength;
       // receiveProgress.value = receivedSize;
 
       const db = firebase.firestore();
@@ -261,8 +260,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
         // TODO-sprint: download progress popper UI
         // downloadAnchor.textContent = '';
-        // downloadAnchor.href = URL.createObjectURL(received);
-        // downloadAnchor.download = name;
+        downloadAnchor.href = URL.createObjectURL(received);
+        downloadAnchor.download = name;
+        document.body.appendChild(downloadAnchor);
+        downloadAnchor.click();
+        document.body.removeChild(downloadAnchor);
+
         // downloadAnchor.textContent =
         //   `Click to download '${name}' (${size} bytes)`;
 
@@ -272,8 +275,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
 
     async function onReceiveChannelStateChange() {
-      if (receiveChannel) {
-        const readyState = receiveChannel.readyState;
+      if (receiveChannelRef.current) {
+        const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
       }
     }
@@ -289,6 +292,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     console.log('Created send data channel: ', sendChannelRef.current);
 
     function onSendChannelStateChange() {
+      console.log(sendChannelRef.current);
       if (sendChannelRef.current) {
         const {readyState} = sendChannelRef.current;
         console.log(`Send channel state is: ${readyState}`);
@@ -316,8 +320,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       connectionIdRef.current = connectionID;
       peerConnectionRef.current = new RTCPeerConnection(pcConfig);
 
+      console.log(connectionSnapshot.data());
+
       // Code for collecting ICE candidates below
-      const calleeCandidatesCollection = roomRef.collection('calleeCandidates');
+      const calleeCandidatesCollection = connectionRef.collection('calleeCandidates');
 
       peerConnectionRef.current.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
@@ -346,11 +352,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           sdp: answer.sdp,
         },
       };
-      await roomRef.update(roomWithAnswer);
+      await connectionRef.update(roomWithAnswer);
       // Code for creating SDP answer above
 
       // Listening for remote ICE candidates below
-      roomRef.collection('callerCandidates').onSnapshot((snapshot) => {
+      connectionRef.collection('callerCandidates').onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
             let data = change.doc.data();
@@ -364,7 +370,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   };
 
   const tryCreatePeerConnection = async (e: React.MouseEvent<HTMLElement>, peer: IPeerField) => {
-    e.preventDefault();
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(publicID);
     const connectionsRef = roomRef.collection('connections');
@@ -372,13 +377,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     const p2pData = {
       p2p: {
-        p1: localID,
-        p2: peer.id,
+        offer: localID,
+        answer: peer.id,
       },
     };
 
-    console.log('called');
-    await targetConnectionRef.set(p2pData, {merge: true});
     const callerCandidatesCollection = targetConnectionRef.collection('callerCandidates');
 
     peerConnectionRef.current = new RTCPeerConnection(pcConfig);
@@ -406,7 +409,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       },
     };
 
-    await targetConnectionRef.set(roomWithOffer, {merge: true});
+    await targetConnectionRef.set({
+      ...roomWithOffer,
+      ...p2pData,
+    });
+
     // Listening for remote session description below
     targetConnectionRef.onSnapshot(async (snapshot) => {
       const data = snapshot.data();
@@ -435,19 +442,23 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     <div>
       <Button
         ref={anchorRef}
-        style={{
-          marginTop: 20,
-        }}
         color="primary"
         variant="contained"
         component="label"
         onClick={(e: React.MouseEvent<HTMLElement>) => tryCreatePeerConnection(e, targetPeer)}
       >
         {targetPeer.emoji}
-        <input type="file" id="fileInput" name="files" hidden />
+        <input
+          type="file"
+          name="peer-file"
+          id={`fileInput-${targetPeer.id}`}
+          hidden
+          onClick={(e) => e.stopPropagation()}
+          onChange={handleFileInputChange}
+        />
       </Button>
 
-      <LinearProgress progress={20} />
+      <LinearProgress id={`sendProgress-${targetPeer.id}`} progress={20} />
 
       <WaitResponsePopper isOpen={isOpen} setOpen={setOpen} anchorElement={anchorElement} />
     </div>

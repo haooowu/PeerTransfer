@@ -22,31 +22,7 @@ interface Props {
 // onDecline: ...
 
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
-  const [peerConnection, setPeerConnection] = useState<RTCPeerConnection | null>(null);
-  const [connectionId, setConnectionId] = useState<string>();
-  const [sendChannel, setSendChannel] = useState<RTCDataChannel | null>(null);
-  const [receiveChannel, setReceiveChannel] = useState<RTCDataChannel | null>(null);
-
-  useEffect(() => {
-    // const db = firebase.firestore();
-    // const roomRef = db.collection('rooms').doc(publicID);
-    // const connectionRef = roomRef.collection('connections')
-
-    // connectionRef.onSnapshot(async (snapshot) => {
-    //   snapshot.docChanges().forEach(async (change) => {
-    //     if (change.type === 'modified') return;
-    //     if (change.type === 'removed') return;
-    //     if (change.type === 'added') {
-    //       let data = change.doc.data();
-    //       console.log(`Got new connection: ${JSON.stringify(data)}`);
-    //     }
-    //   });
-    // });
-
-    return () => {
-      // TODO-sprint: close connection and delete the document
-    };
-  }, []);
+  // TODO-sprint: peerID to connection map and receive progress callback
 
   return (
     <Wrapper>
