@@ -1,18 +1,26 @@
 import React, {useState, useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
-import {Button} from '@material-ui/core';
-
+import {
+  Button,
+  Popper,
+  Typography,
+  Paper,
+  DialogActions,
+  DialogContent,
+  DialogTitle,
+  DialogContentText,
+} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
+import usePopperStyles from 'src/styles/usePopperStyles';
 import pcConfig from 'src/utils/pcConfig';
+import WaitResponsePopper from './Poppers/WaitResponsePopper';
 
 interface Props {
   targetPeer: IPeerField;
   localID: string;
   publicID: string;
 }
-
-// TODO-sprint: react-popper to contain all the UI
 
 // TODO-sprint: UI to abort fileReader transfer
 
@@ -36,6 +44,13 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const [connectionId, setConnectionId] = useState<string>();
   const [sendChannel, setSendChannel] = useState<RTCDataChannel | null>(null);
   const [receiveChannel, setReceiveChannel] = useState<RTCDataChannel | null>(null);
+
+  const anchorRef = React.useRef(null);
+  const [isOpen, setOpen] = React.useState(true);
+  const [anchorElement, setAnchorElement] = React.useState(null);
+  useEffect(() => {
+    if (anchorRef.current) setAnchorElement(anchorRef.current);
+  }, [anchorRef]);
 
   useEffect(() => {
     const db = firebase.firestore();
@@ -307,6 +322,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   return (
     <div>
       <Button
+        ref={anchorRef}
         style={{
           marginTop: 20,
         }}
@@ -318,6 +334,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         {targetPeer.emoji}
         <input type="file" id="fileInput" name="files" hidden />
       </Button>
+
+      <div>test</div>
+
+      <WaitResponsePopper isOpen={isOpen} setOpen={setOpen} anchorElement={anchorElement} />
     </div>
   );
 };

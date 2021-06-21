@@ -6,13 +6,18 @@ import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 
+const Wrapper = styled.div`
+  position: absolute;
+  bottom: 1em;
+`;
+
 interface Props {
   selfIdentity: IPeerField;
   localID: string;
   publicID: string;
 }
 
-// TODO-sprint: UI to prompts which peer whats to start an connection, and UI to accept or decline offer
+// TODO-sprint: UI to prompts received filed progress
 // onAccept: ...
 // onDecline: ...
 
@@ -44,11 +49,11 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}
   }, []);
 
   return (
-    <div>
+    <Wrapper>
       <Button color="primary" variant="contained" disableTouchRipple>
         You: {selfIdentity?.emoji}
       </Button>
-    </div>
+    </Wrapper>
   );
 };
 
