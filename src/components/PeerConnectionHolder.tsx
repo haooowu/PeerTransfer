@@ -19,7 +19,9 @@ interface Props {
 
 // TODO-sprint: if reject delete doc and all nested data
 
-// TODO-sprint: join BY roomID
+// TODO-sprint: UI for join BY roomID dialog (that should only add to presenceDB)
+
+// TODO-sprint: once connection is established disable reselection
 
 // 1. receiver upon listen to connectionIDs snapshot, for every connection that p2p contains self,
 //   and there is not yet both answer and offer created, show UI indicate fileMeta and UI to accept/decline
@@ -41,6 +43,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const [isOpen, setOpen] = React.useState(true);
   const [anchorElement, setAnchorElement] = React.useState(null);
 
+  const [openNotifyOfferPopper, setOpenNotifyPopperOffer] = React.useState(false);
+  const [openReceiveProgressPopper, setOpenReceiveProgressPopper] = React.useState(false);
+  const [openSendProgressPopper, setOpenSendProgressPopper] = React.useState(false);
+  const [openWaitResponsePopper, setOpenWaitResponsePopper] = React.useState(false);
+
   useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef]);
@@ -61,6 +68,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           name: file.name,
           size: file.size,
           type: file.type,
+          isAccepting: false,
+          isSent: false,
         },
       };
 
@@ -76,7 +85,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   }
 
-  // TODO-sprint: listener to trigger sendData (on fileMeta?)
   async function sendData() {
     const fileInput = document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement;
     const file = fileInput!.files && fileInput!.files[0];
@@ -160,6 +168,19 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     document.location.reload(true);
   }
 
+  async function promptsIncomingFileTransferPopper(fileMeta: IFileMeta, connectionId: string) {
+    alert('incoming file request');
+    console.log('file meta:', fileMeta);
+    console.log('got from:', targetPeer);
+    // TODO-sprint: accept to join, update isAccepting to true
+
+    // joinFileChannel(connectionId)
+    // ...update isAccepting to true in joinFileChannel together with created answer
+
+    // TODO-sprint: reject and close connection in room
+    // ...
+  }
+
   useEffect(() => {
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(publicID);
@@ -171,21 +192,21 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           let data = change.doc.data();
           console.log(`Got new connection: ${JSON.stringify(data)}`);
         }
+        if (change.type === 'modified') {
+          let data = change.doc.data();
+          if (data.p2p && data.fileMeta && !data.answer && data.p2p.answer === localID) {
+            const {isAccepting, isSent} = data.fileMeta as IFileMeta;
+            if (!isAccepting) promptsIncomingFileTransferPopper(data.fileMeta, change.doc.id);
+            if (isAccepting && !isSent) sendData();
+          }
+        }
         if (change.type === 'removed') {
           let connectionId = change.doc.id;
           if (connectionId === connectionIdRef.current) closeDataChannels();
         }
-
-        if (change.type === 'modified') {
-          let data = change.doc.data();
-          // TODO-sprint: UI to prompts should join or not
-          if (data.p2p && data.fileMeta && !data.answer && data.p2p.answer === localID) {
-            console.log(change.doc.id);
-            joinFileChannel(change.doc.id);
-          }
-        }
       });
     });
+
     return () => {
       // TODO-sprint: close connection and delete the document on peer presence drop
       unsubscribe();
@@ -196,7 +217,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   /**
    * Receive Data Channel
    * TODO-sprint: chain promise
-   * TODO-sprint: only create Receive when
    */
   function createReceiveDataChannel() {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
@@ -258,7 +278,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         console.log(received);
         console.log(name, size);
 
-        // TODO-sprint: download progress popper UI
+        // TODO-sprint: download progress popper UI (to self holder)
         // downloadAnchor.textContent = '';
         downloadAnchor.href = URL.createObjectURL(received);
         downloadAnchor.download = name;

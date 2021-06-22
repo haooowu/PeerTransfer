@@ -17,12 +17,8 @@ interface Props {
   publicID: string;
 }
 
-// TODO-sprint: UI to prompts received filed progress
-// onAccept: ...
-// onDecline: ...
-
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
-  // TODO-sprint: peerID to connection map and receive progress callback
+  // TODO-sprint: peerID to connection map and receive progress callback？
 
   return (
     <Wrapper>
