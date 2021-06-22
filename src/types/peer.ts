@@ -1,6 +1,6 @@
 export interface IPeerField {
   emoji: string;
   id: string;
-  name: string;
+  browser: string;
   platform: string;
 }

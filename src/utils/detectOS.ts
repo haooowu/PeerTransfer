@@ -4,7 +4,7 @@ const detectOS = () => {
   const parsedAgent = Bowser.parse(window.navigator.userAgent);
 
   return {
-    name: parsedAgent.browser.name,
+    browser: parsedAgent.browser.name,
     platform: parsedAgent.platform.type,
   };
 };

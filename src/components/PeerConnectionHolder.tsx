@@ -4,8 +4,10 @@ import styled from 'styled-components';
 import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
-import LinearProgress from 'src/components/LinearProgress';
-import WaitResponsePopper from 'src/components/Poppers/WaitResponsePopper';
+
+import ProgressPopper, {IProgressPopperData} from 'src/components/Poppers/ProgressPopper';
+import NotifyOfferPopper, {INotifyOfferPopperData} from 'src/components/Poppers/NotifyOfferPopper';
+import WaitResponsePopper, {IWaitResponsePopperData} from 'src/components/Poppers/WaitResponsePopper';
 
 interface Props {
   targetPeer: IPeerField;
@@ -40,17 +42,19 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const sentFileReaderRef = useRef<FileReader | null>(null);
 
   const anchorRef = useRef(null);
-  const [isOpen, setOpen] = React.useState(true);
   const [anchorElement, setAnchorElement] = React.useState(null);
-
-  const [openNotifyOfferPopper, setOpenNotifyPopperOffer] = React.useState(false);
-  const [openReceiveProgressPopper, setOpenReceiveProgressPopper] = React.useState(false);
-  const [openSendProgressPopper, setOpenSendProgressPopper] = React.useState(false);
-  const [openWaitResponsePopper, setOpenWaitResponsePopper] = React.useState(false);
-
   useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef]);
+
+  const [fileMeta, setFileMeta] = React.useState<IFileMeta>();
+  const [notifyOfferPopperData, setNotifyPopperOfferData] = React.useState<INotifyOfferPopperData>({isOpen: false});
+  const [waitResponsePopperData, setWaitResponsePopperData] = React.useState<IWaitResponsePopperData>({isOpen: false});
+  const [progressPopperData, setProgressPopperData] = React.useState<IProgressPopperData>({
+    isOpen: false,
+    progressType: null,
+    fileProgress: 0,
+  });
 
   function handleFileAbort() {
     if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
@@ -118,6 +122,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         readSlice(offset);
       } else {
         console.log('done');
+        // TODO-sprint: update isSent to true
       }
     });
     const readSlice = (o: number) => {
@@ -164,22 +169,21 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       });
       await connectionRef.delete();
     }
-
-    document.location.reload(true);
   }
 
   async function promptsIncomingFileTransferPopper(fileMeta: IFileMeta, connectionId: string) {
-    alert('incoming file request');
-    console.log('file meta:', fileMeta);
+    console.log('incoming file meta:', fileMeta);
     console.log('got from:', targetPeer);
-    // TODO-sprint: accept to join, update isAccepting to true
-
+    // TODO-sprint: accept to join and update isAccepting to true
     // joinFileChannel(connectionId)
-    // ...update isAccepting to true in joinFileChannel together with created answer
 
     // TODO-sprint: reject and close connection in room
     // ...
   }
+
+  async function onAcceptFileTransfer() {}
+
+  async function onRejectFileTransfer() {}
 
   useEffect(() => {
     const db = firebase.firestore();
@@ -360,6 +364,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
       // Code for creating SDP answer below
       const offer = connectionSnapshot!.data()!.offer;
+      const fileMeta = connectionSnapshot!.data()!.fileMeta;
       console.log('Got offer:', offer);
       await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
       const answer = await peerConnectionRef.current.createAnswer();
@@ -370,6 +375,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         answer: {
           type: answer.type,
           sdp: answer.sdp,
+        },
+        fileMeta: {
+          ...fileMeta,
+          isAccepting: true,
         },
       };
       await connectionRef.update(roomWithAnswer);
@@ -478,9 +487,35 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         />
       </Button>
 
-      <LinearProgress id={`sendProgress-${targetPeer.id}`} progress={20} />
+      {notifyOfferPopperData.isOpen && (
+        <WaitResponsePopper
+          isOpen={notifyOfferPopperData.isOpen}
+          targetPeer={targetPeer}
+          setClose={() => setNotifyPopperOfferData({...notifyOfferPopperData, isOpen: false})}
+          anchorElement={anchorElement}
+        />
+      )}
 
-      <WaitResponsePopper isOpen={isOpen} setOpen={setOpen} anchorElement={anchorElement} />
+      {progressPopperData.isOpen && (
+        <ProgressPopper
+          isOpen={progressPopperData.isOpen}
+          fileProgress={progressPopperData.fileProgress}
+          progressType={progressPopperData.progressType}
+          targetPeer={targetPeer}
+          setClose={() => setProgressPopperData({...progressPopperData, isOpen: false})}
+          anchorElement={anchorElement}
+        />
+      )}
+
+      {notifyOfferPopperData.isOpen && (
+        <NotifyOfferPopper
+          isOpen={notifyOfferPopperData.isOpen}
+          targetPeer={targetPeer}
+          fileMeta={fileMeta}
+          setClose={() => setWaitResponsePopperData({...waitResponsePopperData, isOpen: false})}
+          anchorElement={anchorElement}
+        />
+      )}
     </div>
   );
 };
