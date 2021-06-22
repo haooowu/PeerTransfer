@@ -46,7 +46,7 @@ const ProgressPopper: React.FC<Props> = ({isOpen, setClose, targetPeer, fileProg
         </DialogContent>
 
         <DialogActions>
-          <Button onClick={setClose} color="primary">
+          <Button onClick={() => setClose()} color="primary">
             cancel
           </Button>
         </DialogActions>

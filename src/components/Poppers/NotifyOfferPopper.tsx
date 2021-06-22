@@ -51,10 +51,10 @@ const NotifyOfferPopper: React.FC<Props> = ({isOpen, setClose, anchorElement, fi
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={setClose} color="primary">
+          <Button onClick={() => setClose()} color="primary">
             Decline
           </Button>
-          <Button onClick={setClose} color="primary">
+          <Button onClick={() => setClose()} color="primary">
             Accept
           </Button>
         </DialogActions>

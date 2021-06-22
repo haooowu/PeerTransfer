@@ -49,7 +49,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   const [fileMeta, setFileMeta] = React.useState<IFileMeta>();
   const [notifyOfferPopperData, setNotifyPopperOfferData] = React.useState<INotifyOfferPopperData>({isOpen: false});
-  const [waitResponsePopperData, setWaitResponsePopperData] = React.useState<IWaitResponsePopperData>({isOpen: false});
+  const [waitResponsePopperData, setWaitResponsePopperData] = React.useState<IWaitResponsePopperData>({isOpen: true});
   const [progressPopperData, setProgressPopperData] = React.useState<IProgressPopperData>({
     isOpen: false,
     progressType: null,
@@ -487,11 +487,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         />
       </Button>
 
-      {notifyOfferPopperData.isOpen && (
+      {waitResponsePopperData.isOpen && (
         <WaitResponsePopper
-          isOpen={notifyOfferPopperData.isOpen}
+          isOpen={waitResponsePopperData.isOpen}
           targetPeer={targetPeer}
-          setClose={() => setNotifyPopperOfferData({...notifyOfferPopperData, isOpen: false})}
+          setClose={() => setWaitResponsePopperData({...waitResponsePopperData, isOpen: false})}
           anchorElement={anchorElement}
         />
       )}
@@ -512,7 +512,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           isOpen={notifyOfferPopperData.isOpen}
           targetPeer={targetPeer}
           fileMeta={fileMeta}
-          setClose={() => setWaitResponsePopperData({...waitResponsePopperData, isOpen: false})}
+          setClose={() => setNotifyPopperOfferData({...waitResponsePopperData, isOpen: false})}
           anchorElement={anchorElement}
         />
       )}

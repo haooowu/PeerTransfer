@@ -34,7 +34,7 @@ const WaitResponsePopper: React.FC<Props> = ({isOpen, targetPeer, setClose, anch
       <Paper className={classes.paper}>
         <DialogTitle>Waiting for {targetPeer.emoji}'s response.</DialogTitle>
         <DialogActions>
-          <Button onClick={setClose} color="primary">
+          <Button onClick={() => setClose()} color="primary">
             Cancel
           </Button>
         </DialogActions>
