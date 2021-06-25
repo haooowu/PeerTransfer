@@ -6,6 +6,7 @@ import {IPeerField} from 'src/types';
 
 export interface IWaitResponsePopperData {
   isOpen: boolean;
+  gotRemoteDesc: boolean;
 }
 interface Props extends IWaitResponsePopperData {
   targetPeer: IPeerField;
@@ -13,13 +14,13 @@ interface Props extends IWaitResponsePopperData {
   anchorElement: any;
 }
 
-const WaitResponsePopper: React.FC<Props> = ({isOpen, targetPeer, setClose, anchorElement}) => {
+const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, setClose, anchorElement}) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
   return (
     <Popper
-      open={!!anchorElement && isOpen}
+      open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
       disablePortal
@@ -32,12 +33,20 @@ const WaitResponsePopper: React.FC<Props> = ({isOpen, targetPeer, setClose, anch
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        <DialogTitle>Waiting for {targetPeer.emoji}'s response.</DialogTitle>
-        <DialogActions>
-          <Button onClick={() => setClose()} color="primary">
-            Cancel
-          </Button>
-        </DialogActions>
+        {gotRemoteDesc ? (
+          <>
+            <DialogTitle>Preparing data channel with {targetPeer.emoji} ...</DialogTitle>
+          </>
+        ) : (
+          <>
+            <DialogTitle>Waiting for {targetPeer.emoji}'s response.</DialogTitle>
+            <DialogActions>
+              <Button onClick={() => setClose()} color="primary">
+                Cancel
+              </Button>
+            </DialogActions>
+          </>
+        )}
       </Paper>
     </Popper>
   );

@@ -13,17 +13,25 @@ export interface IProgressPopperData {
 
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
+  onRejectFileTransfer: () => Promise<void>;
   setClose: () => void;
   anchorElement: any;
 }
 
-const ProgressPopper: React.FC<Props> = ({isOpen, setClose, targetPeer, fileProgress, progressType, anchorElement}) => {
+const ProgressPopper: React.FC<Props> = ({
+  setClose,
+  targetPeer,
+  fileProgress,
+  progressType,
+  anchorElement,
+  onRejectFileTransfer,
+}) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
   return (
     <Popper
-      open={!!anchorElement && isOpen}
+      open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
       disablePortal

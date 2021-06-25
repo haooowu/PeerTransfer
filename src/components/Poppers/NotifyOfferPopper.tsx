@@ -14,22 +14,41 @@ import usePopperStyles from 'src/styles/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
 export interface INotifyOfferPopperData {
   isOpen: boolean;
+  fileMeta: IFileMeta | null;
 }
 
 interface Props extends INotifyOfferPopperData {
-  fileMeta: IFileMeta | undefined;
   targetPeer: IPeerField;
+  onRejectFileTransfer: () => Promise<void>;
+  onAcceptFileTransfer: () => Promise<void>;
   setClose: () => void;
   anchorElement: any;
 }
 
-const NotifyOfferPopper: React.FC<Props> = ({isOpen, setClose, anchorElement, fileMeta, targetPeer}) => {
+const NotifyOfferPopper: React.FC<Props> = ({
+  setClose,
+  anchorElement,
+  fileMeta,
+  targetPeer,
+  onRejectFileTransfer,
+  onAcceptFileTransfer,
+}) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
+  const handleDecline = () => {
+    onRejectFileTransfer();
+    setClose();
+  };
+
+  const handleAccept = () => {
+    onAcceptFileTransfer();
+    setClose();
+  };
+
   return (
     <Popper
-      open={!!anchorElement && isOpen}
+      open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
       disablePortal
@@ -47,14 +66,14 @@ const NotifyOfferPopper: React.FC<Props> = ({isOpen, setClose, anchorElement, fi
         </DialogTitle>
         <DialogContent>
           <DialogContentText>
-            {fileMeta!.name} ({fileMeta!.size})
+            {fileMeta!.name} ({fileMeta!.size} bytes)
           </DialogContentText>
         </DialogContent>
         <DialogActions>
-          <Button onClick={() => setClose()} color="primary">
+          <Button onClick={handleDecline} color="primary">
             Decline
           </Button>
-          <Button onClick={() => setClose()} color="primary">
+          <Button onClick={handleAccept} color="primary">
             Accept
           </Button>
         </DialogActions>
