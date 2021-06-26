@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, ChangeEvent} from 'react';
+import React, {useState, useEffect, useRef, ChangeEvent, useCallback} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 import {Button} from '@material-ui/core';
@@ -24,8 +24,6 @@ interface Props {
 // TODO-sprint: UI for join BY roomID dialog (that should only add to presenceDB)
 
 // TODO-sprint: once connection is established disable reselection
-
-// TODO-sprint: useCallback for all popper state
 
 // 1. receiver upon listen to connectionIDs snapshot, for every connection that p2p contains self,
 //   and there is not yet both answer and offer created, show UI indicate fileMeta and UI to accept/decline
@@ -146,32 +144,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     readSlice(0);
   }
 
-  function closeDataChannels() {
-    console.log('Closing data channels');
-    if (sendChannelRef.current) {
-      sendChannelRef.current.close();
-      console.log(`Closed data channel with label: ${sendChannelRef.current.label}`);
-    }
-    if (receiveChannelRef.current) {
-      receiveChannelRef.current.close();
-      console.log(`Closed data channel with label: ${receiveChannelRef.current.label}`);
-    }
-    clearFirebaseConnection();
-  }
-
-  function destroyExistingPC() {
-    if (peerConnectionRef.current) {
-      console.log('closing peer');
-      peerConnectionRef.current.close();
-    }
-  }
-
-  async function clearFirebaseConnection() {
+  const clearFirebaseConnection = useCallback(async () => {
     const connectionId = connectionIdRef.current;
-    destroyExistingPC();
-    // Delete room on hangup
     if (connectionId) {
-      const connectionId = connectionIdRef.current as string;
       const db = firebase.firestore();
       const roomRef = db.collection('rooms').doc(`${publicID}`);
       const connectionRef = roomRef.collection('connections').doc(connectionId);
@@ -185,7 +160,31 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       });
       await connectionRef.delete();
     }
-  }
+  }, [connectionIdRef, publicID]);
+
+  const closeDataChannels = useCallback(() => {
+    console.log('Closing data channels');
+    console.log(sendChannelRef.current);
+    console.log(receiveChannelRef.current);
+    if (sendChannelRef.current) {
+      sendChannelRef.current.close();
+      console.log(`Closed data channel with label: ${sendChannelRef.current.label}`);
+    }
+    if (receiveChannelRef.current) {
+      receiveChannelRef.current.close();
+      console.log(`Closed data channel with label: ${receiveChannelRef.current.label}`);
+    }
+    clearFirebaseConnection();
+  }, [sendChannelRef, receiveChannelRef, clearFirebaseConnection]);
+
+  const destroyExistingPC = useCallback(() => {
+    if (peerConnectionRef.current) {
+      console.log('closing peer');
+      peerConnectionRef.current.close();
+      peerConnectionRef.current = null;
+      // window.location.reload();
+    }
+  }, [peerConnectionRef]);
 
   async function promptsIncomingFileTransferPopper(fileMeta: IFileMeta, connectionId: string) {
     console.log('incoming file meta:', fileMeta);
@@ -217,43 +216,47 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
+        let data = change.doc.data();
         if (change.type === 'added') {
-          let data = change.doc.data();
           console.log(`Got new connection: ${JSON.stringify(data)}`);
         }
         if (change.type === 'modified') {
-          let data = change.doc.data();
           const {isAccepting} = data.fileMeta as IFileMeta;
-          if (data.p2p && data.fileMeta && !data.answer && data.p2p.answer === localID) {
+          if (
+            data.p2p &&
+            data.fileMeta &&
+            !data.answer &&
+            data.p2p.answer === localID &&
+            data.p2p.offer === targetPeer.id
+          ) {
             if (!isAccepting) {
               promptsIncomingFileTransferPopper(data.fileMeta, change.doc.id);
             }
           }
         }
         if (change.type === 'removed') {
-          let data = change.doc.data();
           let connectionId = change.doc.id;
+          console.log('remove connection: ');
           console.log(connectionId, connectionIdRef.current);
-          if (connectionId === connectionIdRef.current) closeDataChannels();
-          if (data.p2p && (data.p2p.answer === localID || data.p2p.offer === localID)) {
-            console.log('clear connection');
-            clearFirebaseConnection();
+          if (
+            connectionId === connectionIdRef.current ||
+            (data.p2p && (data.p2p.answer === localID || data.p2p.offer === localID))
+          ) {
+            closeDataChannels();
           }
         }
       });
     });
 
     return () => {
-      // TODO-sprint: close connection and delete the document on peer presence drop
+      // close connection and delete the document on peer presence drop
       unsubscribe();
       closeDataChannels();
+      destroyExistingPC();
     };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  /**
-   * Receive Data Channel
-   * TODO-sprint: chain promise
-   */
   function createReceiveDataChannel() {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
     const id = connectionIdRef.current as string;
@@ -310,7 +313,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         console.log(received);
         console.log(name, size);
 
-        // TODO-sprint: download progress popper UI (to self holder)
+        // TODO-sprint: show download ready than automatically download?
         // downloadAnchor.textContent = '';
         let url = URL.createObjectURL(received);
         downloadAnchor.href = URL.createObjectURL(received);
@@ -330,24 +333,32 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
 
     async function onReceiveChannelStateChange() {
+      console.log(receiveChannelRef.current);
+      console.log(receiveChannelRef.current);
       if (receiveChannelRef.current) {
         const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
-        if (readyState === 'closed') receiveChannelRef.current = null;
+        if (readyState === 'open') {
+          setWaitResponsePopperData({
+            gotRemoteDesc: false,
+            isOpen: false,
+          });
+        }
+        if (readyState === 'closed') {
+          receiveChannelRef.current.close();
+          receiveChannelRef.current = null;
+        }
       }
     }
   }
 
-  /**
-   * TODO-sprint: chain promise
-   * Send Data Channel
-   */
   function createSendDataChannel() {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
     sendChannelRef.current.binaryType = 'arraybuffer';
     console.log('Created send data channel: ', sendChannelRef.current);
 
     function onSendChannelStateChange() {
+      console.log('send channel:');
       console.log(sendChannelRef.current);
       if (sendChannelRef.current) {
         const {readyState} = sendChannelRef.current;
@@ -362,6 +373,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         }
 
         if (readyState === 'closed') {
+          sendChannelRef.current.close();
           sendChannelRef.current = null;
         }
       }
@@ -386,7 +398,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     if (connectionSnapshot.exists) {
       connectionIdRef.current = connectionID;
-      destroyExistingPC();
       peerConnectionRef.current = new RTCPeerConnection(pcConfig);
 
       console.log(connectionSnapshot.data());
@@ -434,6 +445,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           if (change.type === 'added') {
             let data = change.doc.data();
             console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
+            console.log(peerConnectionRef.current);
             await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
           }
         });
@@ -457,7 +469,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     const callerCandidatesCollection = targetConnectionRef.collection('callerCandidates');
 
-    destroyExistingPC();
     peerConnectionRef.current = new RTCPeerConnection(pcConfig);
     console.log('created pc', peerConnectionRef.current);
     connectionIdRef.current = targetConnectionRef.id;
@@ -497,6 +508,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         console.log('Got remote description: ', data.answer);
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         await peerConnectionRef.current!.setRemoteDescription(rtcSessionDescription);
+
         setWaitResponsePopperData((prev) => ({
           ...prev,
           gotRemoteDesc: true,

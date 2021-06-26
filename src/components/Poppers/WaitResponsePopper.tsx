@@ -18,6 +18,17 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, setClos
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
+  // TODO-sprint: localhost notify user timeout
+  React.useEffect(() => {
+    let timeoutReload: NodeJS.Timeout;
+    if (gotRemoteDesc) {
+      timeoutReload = setTimeout(() => window.location.reload(), 3000);
+    }
+    return () => {
+      clearTimeout(timeoutReload);
+    };
+  }, [gotRemoteDesc]);
+
   return (
     <Popper
       open={!!anchorElement}
