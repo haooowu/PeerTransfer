@@ -5,11 +5,23 @@ import LinearProgress from 'src/components/LinearProgress';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IPeerField} from 'src/types';
 
+const StyledAnchor = styled.a``;
+
 export interface IProgressPopperData {
   isOpen: boolean;
   fileProgress: number;
+  fileBlobUrl: string;
+  fileName: string;
   progressType: 'send' | 'receive' | null;
 }
+
+export const initialProgressPopperData: IProgressPopperData = {
+  isOpen: false,
+  progressType: null,
+  fileProgress: 0,
+  fileBlobUrl: '',
+  fileName: '',
+};
 
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
@@ -20,14 +32,25 @@ interface Props extends IProgressPopperData {
 
 const ProgressPopper: React.FC<Props> = ({
   setClose,
-  targetPeer,
   fileProgress,
+  fileName,
+  fileBlobUrl,
   progressType,
   anchorElement,
   onRejectFileTransfer,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
+
+  const handleDownload = () => {
+    window.URL.revokeObjectURL(fileBlobUrl);
+    setClose();
+  };
+
+  const handleCancel = () => {
+    onRejectFileTransfer();
+    setClose();
+  };
 
   return (
     <Popper
@@ -44,17 +67,31 @@ const ProgressPopper: React.FC<Props> = ({
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        <DialogTitle>{progressType === 'send' ? 'Sending' : 'Receiving'}...</DialogTitle>
-        <DialogContent>
-          <DialogContentText>Waiting for file transfer to complete...</DialogContentText>
-          <LinearProgress progress={fileProgress} />
-        </DialogContent>
-
-        <DialogActions>
-          <Button onClick={() => setClose()} color="primary">
-            cancel
-          </Button>
-        </DialogActions>
+        {fileBlobUrl && fileProgress === 100 ? (
+          <>
+            <DialogTitle>Success</DialogTitle>
+            <DialogContent>
+              <DialogContentText onClick={handleDownload}>
+                <StyledAnchor download={fileName} href={fileBlobUrl}>
+                  click here to download {fileName}
+                </StyledAnchor>
+              </DialogContentText>
+            </DialogContent>
+          </>
+        ) : (
+          <>
+            <DialogTitle>{progressType === 'send' ? 'Sending' : 'Receiving'}...</DialogTitle>
+            <DialogContent>
+              <DialogContentText>Waiting for file transfer to complete...</DialogContentText>
+              <LinearProgress progress={fileProgress} />
+            </DialogContent>
+            <DialogActions>
+              <Button onClick={handleCancel} color="primary">
+                cancel
+              </Button>
+            </DialogActions>
+          </>
+        )}
       </Paper>
     </Popper>
   );

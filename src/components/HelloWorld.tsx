@@ -1,17 +1,17 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useLayoutEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 
 import getRandomFaceEmoji from 'src/utils/getRandomFaceEmoji';
 import detectOS from 'src/utils/detectOS';
 
-import {Button} from '@material-ui/core';
-import CircularProgress from '@material-ui/core/CircularProgress';
+import {Button, CircularProgress} from '@material-ui/core';
 import backgroundRipple from 'src/assets/backgroundRipple.svg';
 
 import {IdentityContext, IIdentityContextVariable} from 'src/components/IdentityProvider';
 
 import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
+import TimeoutAlert from 'src/components/TimeoutAlert';
 import PeersListener from 'src/components/PeersListener';
 import {IPeerField} from 'src/types';
 
@@ -80,12 +80,15 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
   }, []);
 
   return (
-    <Wrapper>
-      <StyledP>Hello World</StyledP>
-      {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
-      <PeersListener publicID={publicID} localID={localID} />
-      <RippleHolder />
-    </Wrapper>
+    <>
+      <Wrapper>
+        <StyledP>Hello World</StyledP>
+        {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
+        <PeersListener publicID={publicID} localID={localID} />
+        <RippleHolder />
+      </Wrapper>
+      <TimeoutAlert />
+    </>
   );
 };
 

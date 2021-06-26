@@ -11,6 +11,13 @@ interface Props {
   localID: string;
 }
 
+// TODO-sprint: UI for join BY roomID dialog (that should only add to presenceDB)
+
+// TODO-sprint: provide
+// const db = firebase.firestore();
+// const roomRef = db.collection('rooms').doc(publicID);
+// - as firebase provider?
+
 const PeersListener: React.FC<Props> = ({publicID, localID}) => {
   const [otherPeers, setOtherPeers] = useState<IPeerField[]>([]);
 

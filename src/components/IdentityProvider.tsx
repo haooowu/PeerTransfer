@@ -23,15 +23,16 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
   useEffect(() => {
     let publicIP: string;
     let channel: RTCDataChannel | null;
-    const pc = new RTCPeerConnection(pcConfig);
+    let pc: RTCPeerConnection | null = new RTCPeerConnection(pcConfig);
     channel = pc.createDataChannel('');
-    pc.createOffer().then((offer) => pc.setLocalDescription(offer));
+    pc.createOffer().then((offer) => pc?.setLocalDescription(offer));
 
     pc.onicecandidate = (ice) => {
       if (!ice || !ice.candidate || !ice.candidate.candidate) {
         if (channel) channel.close();
         channel = null;
-        pc.close();
+        pc?.close();
+        pc = null;
         return;
       }
       let split = ice.candidate.candidate.split(' ');

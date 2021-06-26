@@ -5,7 +5,7 @@ import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 
-import ProgressPopper, {IProgressPopperData} from 'src/components/Poppers/ProgressPopper';
+import ProgressPopper, {IProgressPopperData, initialProgressPopperData} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {INotifyOfferPopperData} from 'src/components/Poppers/NotifyOfferPopper';
 import WaitResponsePopper, {IWaitResponsePopperData} from 'src/components/Poppers/WaitResponsePopper';
 
@@ -19,20 +19,9 @@ interface Props {
 
 // TODO-sprint: react-dropzone to wrap input and drop to change file
 
-// TODO-sprint: if reject delete doc and all nested data
+// TODO-sprint: on any rejection delete doc and all nested data
 
-// TODO-sprint: UI for join BY roomID dialog (that should only add to presenceDB)
-
-// TODO-sprint: once connection is established disable reselection
-
-// 1. receiver upon listen to connectionIDs snapshot, for every connection that p2p contains self,
-//   and there is not yet both answer and offer created, show UI indicate fileMeta and UI to accept/decline
-// - accept: add callee candidates collection, create answer
-// - decline: delete the target connection document
-
-// 2. offer end:
-// - decline: upon listen to snapshot iff no such room, or manual cannel, close peerconnection
-// - accept: upon got all answer from connectionId, send file Data
+// TODO-sprint: once waiting connection / transferring disable event on same peer
 
 const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -55,11 +44,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     isOpen: false,
     fileMeta: null,
   });
-  const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({
-    isOpen: false,
-    progressType: null,
-    fileProgress: 0,
-  });
+  const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({...initialProgressPopperData});
 
   function handleFileAbort() {
     if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
@@ -123,17 +108,15 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         isOpen: true,
         progressType: 'send',
         fileProgress: Math.round((offset / file.size) * 100),
+        fileBlobUrl: '',
+        fileName: '',
       });
 
       if (offset < file.size) {
         readSlice(offset);
       } else {
         console.log('done');
-        setProgressPopperData({
-          isOpen: false,
-          progressType: null,
-          fileProgress: 0,
-        });
+        setProgressPopperData({...initialProgressPopperData});
       }
     });
     const readSlice = (o: number) => {
@@ -261,10 +244,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
     const id = connectionIdRef.current as string;
 
-    let completeFlag = 0;
     let receivedSize = 0;
     let receiveBuffer: ArrayBuffer[] = [];
-    let downloadAnchor = document.createElement('a');
 
     function receiveChannelCallback(event: RTCDataChannelEvent) {
       console.log('Receive Channel Callback');
@@ -293,40 +274,27 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       receivedSize += event.data.byteLength;
       let receivedValue = Math.round((receivedSize / size) * 100);
 
-      setProgressPopperData({
+      setProgressPopperData((prev) => ({
+        ...prev,
         isOpen: true,
         progressType: 'receive',
         fileProgress: receivedValue,
-      });
+      }));
 
-      if (receivedSize === size && completeFlag === 0) {
-        setProgressPopperData({
-          isOpen: false,
-          progressType: null,
-          fileProgress: 0,
-        });
-
-        completeFlag = 1;
+      if (receivedSize === size) {
         const received = new Blob(receiveBuffer);
         receiveBuffer = [];
+        receivedSize = 0;
 
         console.log(received);
         console.log(name, size);
 
-        // TODO-sprint: show download ready than automatically download?
-        // downloadAnchor.textContent = '';
-        let url = URL.createObjectURL(received);
-        downloadAnchor.href = URL.createObjectURL(received);
-        downloadAnchor.download = name;
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        document.body.removeChild(downloadAnchor);
-        window.URL.revokeObjectURL(url);
-        // downloadAnchor.textContent =
-        //   `Click to download '${name}' (${size} bytes)`;
-
-        completeFlag = 0;
-        receivedSize = 0;
+        setProgressPopperData((prev) => ({
+          ...prev,
+          fileProgress: 100,
+          fileName: name,
+          fileBlobUrl: URL.createObjectURL(received),
+        }));
 
         closeDataChannels();
       }
@@ -354,8 +322,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   function createSendDataChannel() {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
-    sendChannelRef.current.binaryType = 'arraybuffer';
     console.log('Created send data channel: ', sendChannelRef.current);
+
+    sendChannelRef.current.binaryType = 'arraybuffer';
+    sendChannelRef.current.onopen = onSendChannelStateChange;
+    sendChannelRef.current.onclose = onSendChannelStateChange;
+    sendChannelRef.current.onerror = onError;
 
     function onSendChannelStateChange() {
       console.log('send channel:');
@@ -385,9 +357,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       }
       console.log('Error in sendChannel which is already closed:', errorEvent);
     }
-    sendChannelRef.current.onopen = onSendChannelStateChange;
-    sendChannelRef.current.onclose = onSendChannelStateChange;
-    sendChannelRef.current.onerror = onError;
   }
 
   const joinFileChannel = async (connectionID: string) => {
@@ -563,6 +532,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         <ProgressPopper
           isOpen={progressPopperData.isOpen}
           fileProgress={progressPopperData.fileProgress}
+          fileBlobUrl={progressPopperData.fileBlobUrl}
+          fileName={progressPopperData.fileName}
           onRejectFileTransfer={onRejectFileTransfer}
           progressType={progressPopperData.progressType}
           targetPeer={targetPeer}

@@ -3,7 +3,7 @@ import styled from 'styled-components';
 import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IPeerField} from 'src/types';
-
+import {DATA_CHANNEL_TIMEOUT} from 'src/constants';
 export interface IWaitResponsePopperData {
   isOpen: boolean;
   gotRemoteDesc: boolean;
@@ -22,7 +22,10 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, setClos
   React.useEffect(() => {
     let timeoutReload: NodeJS.Timeout;
     if (gotRemoteDesc) {
-      timeoutReload = setTimeout(() => window.location.reload(), 3000);
+      timeoutReload = setTimeout(() => {
+        sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, '1');
+        window.location.reload();
+      }, 3000);
     }
     return () => {
       clearTimeout(timeoutReload);
