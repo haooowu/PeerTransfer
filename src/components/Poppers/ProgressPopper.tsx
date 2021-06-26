@@ -47,10 +47,7 @@ const ProgressPopper: React.FC<Props> = ({
         <DialogTitle>{progressType === 'send' ? 'Sending' : 'Receiving'}...</DialogTitle>
         <DialogContent>
           <DialogContentText>Waiting for file transfer to complete...</DialogContentText>
-          {progressType === 'send' && <LinearProgress id={`sendProgress-${targetPeer.id}`} progress={fileProgress} />}
-          {progressType === 'receive' && (
-            <LinearProgress id={`receiveProgress-${targetPeer.id}`} progress={fileProgress} />
-          )}
+          <LinearProgress progress={fileProgress} />
         </DialogContent>
 
         <DialogActions>

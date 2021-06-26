@@ -25,6 +25,8 @@ interface Props {
 
 // TODO-sprint: once connection is established disable reselection
 
+// TODO-sprint: useCallback for all popper state
+
 // 1. receiver upon listen to connectionIDs snapshot, for every connection that p2p contains self,
 //   and there is not yet both answer and offer created, show UI indicate fileMeta and UI to accept/decline
 // - accept: add callee candidates collection, create answer
@@ -68,10 +70,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   }
 
-  async function handleFileInputChange(e: ChangeEvent<HTMLInputElement>) {
+  async function handleFileInputChange(e: ChangeEvent<HTMLInputElement>, targetPeer: IPeerField) {
     let file = e.target?.files && e.target?.files[0];
-
     if (file) {
+      await tryCreatePeerConnection(targetPeer);
+
       const fileMeta = {
         fileMeta: {
           name: file.name,
@@ -121,7 +124,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       setProgressPopperData({
         isOpen: true,
         progressType: 'send',
-        fileProgress: Math.round(offset / file.size),
+        fileProgress: Math.round((offset / file.size) * 100),
       });
 
       if (offset < file.size) {
@@ -141,10 +144,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       sentFileReaderRef.current!.readAsArrayBuffer(slice);
     };
     readSlice(0);
-    setWaitResponsePopperData((prev) => ({
-      ...prev,
-      isOpen: false,
-    }));
   }
 
   function closeDataChannels() {
@@ -152,12 +151,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     if (sendChannelRef.current) {
       sendChannelRef.current.close();
       console.log(`Closed data channel with label: ${sendChannelRef.current.label}`);
-      sendChannelRef.current = null;
     }
     if (receiveChannelRef.current) {
       receiveChannelRef.current.close();
       console.log(`Closed data channel with label: ${receiveChannelRef.current.label}`);
-      receiveChannelRef.current = null;
     }
     clearFirebaseConnection();
   }
@@ -166,7 +163,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     if (peerConnectionRef.current) {
       console.log('closing peer');
       peerConnectionRef.current.close();
-      peerConnectionRef.current = null;
     }
   }
 
@@ -201,6 +197,13 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   async function onAcceptFileTransfer() {
     joinFileChannel(connectionIdRef.current as string);
+
+    if (!waitResponsePopperData.isOpen) {
+      setWaitResponsePopperData({
+        isOpen: true,
+        gotRemoteDesc: true,
+      });
+    }
   }
 
   async function onRejectFileTransfer() {
@@ -285,7 +288,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       const {name, size} = fileMeta;
 
       receivedSize += event.data.byteLength;
-      let receivedValue = Math.round(receivedSize / size);
+      let receivedValue = Math.round((receivedSize / size) * 100);
 
       setProgressPopperData({
         isOpen: true,
@@ -330,6 +333,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       if (receiveChannelRef.current) {
         const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
+        if (readyState === 'closed') receiveChannelRef.current = null;
       }
     }
   }
@@ -349,7 +353,17 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         const {readyState} = sendChannelRef.current;
         console.log(`Send channel state is: ${readyState}`);
 
-        if (readyState === 'open') sendData();
+        if (readyState === 'open') {
+          sendData();
+          setWaitResponsePopperData({
+            gotRemoteDesc: false,
+            isOpen: false,
+          });
+        }
+
+        if (readyState === 'closed') {
+          sendChannelRef.current = null;
+        }
       }
     }
     function onError(errorEvent: RTCErrorEvent) {
@@ -428,7 +442,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   };
 
-  const tryCreatePeerConnection = async (e: React.MouseEvent<HTMLElement>, peer: IPeerField) => {
+  const tryCreatePeerConnection = async (peer: IPeerField) => {
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(publicID);
     const connectionsRef = roomRef.collection('connections');
@@ -478,16 +492,15 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     // Listening for remote session description below
     targetConnectionRef.onSnapshot(async (snapshot) => {
       const data = snapshot.data();
-      if (peerConnectionRef.current && !peerConnectionRef.current!.currentRemoteDescription && data && data.answer) {
+      if (!data || !data.answer) return;
+      if (peerConnectionRef.current && !peerConnectionRef.current!.currentRemoteDescription) {
         console.log('Got remote description: ', data.answer);
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         await peerConnectionRef.current!.setRemoteDescription(rtcSessionDescription);
-        if (!waitResponsePopperData.gotRemoteDesc) {
-          setWaitResponsePopperData((prev) => ({
-            ...prev,
-            gotRemoteDesc: true,
-          }));
-        }
+        setWaitResponsePopperData((prev) => ({
+          ...prev,
+          gotRemoteDesc: true,
+        }));
       }
     });
     // Listening for remote session description above
@@ -512,13 +525,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   return (
     <div>
-      <Button
-        ref={anchorRef}
-        color="primary"
-        variant="contained"
-        component="label"
-        onClick={(e: React.MouseEvent<HTMLElement>) => tryCreatePeerConnection(e, targetPeer)}
-      >
+      <Button ref={anchorRef} color="primary" variant="contained" component="label">
         {targetPeer.emoji}
         <input
           type="file"
@@ -526,7 +533,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           id={`fileInput-${targetPeer.id}`}
           hidden
           onClick={(e) => e.stopPropagation()}
-          onChange={handleFileInputChange}
+          onChange={(e) => handleFileInputChange(e, targetPeer)}
         />
       </Button>
 
