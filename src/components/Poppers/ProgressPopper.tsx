@@ -22,7 +22,7 @@ export const initialProgressPopperData: IProgressPopperData = {
 };
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
-  onRejectFileTransfer: () => Promise<void>;
+  onCancelFileTransfer: () => Promise<void>;
   setClose: () => void;
   anchorElement: any;
 }
@@ -34,7 +34,7 @@ const ProgressPopper: React.FC<Props> = ({
   downloadableFiles,
   progressType,
   anchorElement,
-  onRejectFileTransfer,
+  onCancelFileTransfer,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const [receivedFiles, setReceivedFiles] = React.useState<IDownloadableFile[] | null>(null);
@@ -55,10 +55,15 @@ const ProgressPopper: React.FC<Props> = ({
     }
   };
 
+  console.log(downloadableFiles);
+  console.log(receivedFiles);
+
   const handleCancel = () => {
-    onRejectFileTransfer();
-    setClose();
+    onCancelFileTransfer();
+    handleClose();
   };
+
+  const handleClose = () => setClose();
 
   return (
     <Popper
@@ -77,7 +82,7 @@ const ProgressPopper: React.FC<Props> = ({
       <Paper className={classes.paper}>
         {progressType === 'receive' ? (
           <>
-            <DialogTitle>Success file will show below</DialogTitle>
+            <DialogTitle>Downloadable file will show below</DialogTitle>
             <DialogContent>
               {receivedFiles &&
                 receivedFiles.map((file, i) => (
@@ -91,8 +96,19 @@ const ProgressPopper: React.FC<Props> = ({
                     </StyledAnchor>
                   </DialogContentText>
                 ))}
-              <LinearProgress progress={fileProgress} />
+              {fileProgress !== 100 && <LinearProgress progress={fileProgress} />}
             </DialogContent>
+            <DialogActions>
+              {fileProgress === 100 ? (
+                <Button onClick={handleClose} color="primary">
+                  close
+                </Button>
+              ) : (
+                <Button onClick={handleCancel} color="primary">
+                  cancel
+                </Button>
+              )}
+            </DialogActions>
           </>
         ) : (
           <>

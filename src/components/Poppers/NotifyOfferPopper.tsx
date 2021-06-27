@@ -3,6 +3,12 @@ import styled from 'styled-components';
 import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
+
+export const initialNotifyOfferPopperData: INotifyOfferPopperData = {
+  isOpen: false,
+  fileMetas: null,
+};
+
 export interface INotifyOfferPopperData {
   isOpen: boolean;
   fileMetas: IFileMeta[] | null;
@@ -10,7 +16,7 @@ export interface INotifyOfferPopperData {
 
 interface Props extends INotifyOfferPopperData {
   targetPeer: IPeerField;
-  onRejectFileTransfer: () => Promise<void>;
+  onCancelFileTransfer: () => Promise<void>;
   onAcceptFileTransfer: () => Promise<void>;
   setClose: () => void;
   anchorElement: any;
@@ -21,14 +27,14 @@ const NotifyOfferPopper: React.FC<Props> = ({
   anchorElement,
   fileMetas,
   targetPeer,
-  onRejectFileTransfer,
+  onCancelFileTransfer,
   onAcceptFileTransfer,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
   const handleDecline = () => {
-    onRejectFileTransfer();
+    onCancelFileTransfer();
     setClose();
   };
 
