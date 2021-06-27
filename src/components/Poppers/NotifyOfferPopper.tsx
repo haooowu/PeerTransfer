@@ -1,20 +1,11 @@
 import React from 'react';
 import styled from 'styled-components';
-import {
-  Button,
-  Popper,
-  Typography,
-  Paper,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
-  DialogContentText,
-} from '@material-ui/core';
+import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
 export interface INotifyOfferPopperData {
   isOpen: boolean;
-  fileMeta: IFileMeta | null;
+  fileMetas: IFileMeta[] | null;
 }
 
 interface Props extends INotifyOfferPopperData {
@@ -28,7 +19,7 @@ interface Props extends INotifyOfferPopperData {
 const NotifyOfferPopper: React.FC<Props> = ({
   setClose,
   anchorElement,
-  fileMeta,
+  fileMetas,
   targetPeer,
   onRejectFileTransfer,
   onAcceptFileTransfer,
@@ -65,9 +56,11 @@ const NotifyOfferPopper: React.FC<Props> = ({
           {targetPeer.emoji} from {targetPeer.platform} {targetPeer.browser} wants to send:
         </DialogTitle>
         <DialogContent>
-          <DialogContentText>
-            {fileMeta!.name} ({fileMeta!.size} bytes)
-          </DialogContentText>
+          {fileMetas?.map((fileMeta, i) => (
+            <DialogContentText key={`${targetPeer.id}-meta-${i}`}>
+              {fileMeta!.name} ({fileMeta!.size} bytes)
+            </DialogContentText>
+          ))}
         </DialogContent>
         <DialogActions>
           <Button onClick={handleDecline} color="primary">

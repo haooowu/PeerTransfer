@@ -17,8 +17,6 @@ interface Props {
   publicID: string;
 }
 
-// TODO-sprint: multiple files support e.g. add files collection and move fileMeta there
-
 // TODO-sprint: on any rejection delete doc and all nested data
 
 // TODO-sprint: once waiting connection / transferring disable event on same peer
@@ -31,6 +29,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const sendChannelRef = useRef<RTCDataChannel | null>(null);
   const receiveChannelRef = useRef<RTCDataChannel | null>(null);
   const sentFileReaderRef = useRef<FileReader | null>(null);
+  const totalFileSizeRef = useRef<number>(0);
 
   const anchorRef = useRef(null);
   const [anchorElement, setAnchorElement] = useState(null);
@@ -44,32 +43,36 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   });
   const [notifyOfferPopperData, setNotifyPopperOfferData] = useState<INotifyOfferPopperData>({
     isOpen: false,
-    fileMeta: null,
+    fileMetas: null,
   });
   const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({...initialProgressPopperData});
 
-  async function handleFileInputChange(file: File | null, targetPeer: IPeerField) {
-    if (file) {
+  async function handleFileInputChange(files: File[], targetPeer: IPeerField) {
+    if (files.length > 0) {
       await tryCreatePeerConnection(targetPeer);
-
-      const fileMeta = {
-        fileMeta: {
-          name: file.name,
-          size: file.size,
-          type: file.type,
-          isAccepting: false,
-        },
-      };
-
-      console.log('got file', fileMeta);
-
       const connectionId = connectionIdRef.current as string;
 
       const db = firebase.firestore();
       const roomRef = db.collection('rooms').doc(publicID);
       const connectionsRef = roomRef.collection('connections');
       const targetConnectionRef = connectionsRef.doc(connectionId);
-      await targetConnectionRef.update(fileMeta);
+
+      let metas: IFileMeta[] = [];
+
+      files.forEach((file) => {
+        metas.push({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+        totalFileSizeRef.current += file.size;
+      });
+
+      let fileMetas = {
+        fileMetas: metas,
+      };
+
+      await targetConnectionRef.update(fileMetas);
     }
   }
 
@@ -115,12 +118,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   }, [peerConnectionRef]);
 
-  async function promptsIncomingFileTransferPopper(fileMeta: IFileMeta, connectionId: string) {
-    console.log('incoming file meta:', fileMeta);
+  async function promptsIncomingFileTransferPopper(fileMetas: IFileMeta[], connectionId: string) {
+    console.log('incoming file metas:', fileMetas);
     console.log('got from:', targetPeer);
 
     connectionIdRef.current = connectionId;
-    setNotifyPopperOfferData({isOpen: true, fileMeta});
+    setNotifyPopperOfferData({isOpen: true, fileMetas});
   }
 
   async function onAcceptFileTransfer() {
@@ -136,17 +139,23 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   const sendFileData = useCallback(async () => {
     const fileInput = document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement;
-    const file = fileInput!.files && fileInput!.files[0];
-    if (!file) return;
-    console.log(`File is ${[file.name, file.size, file.type].join(' ')}`);
-    if (file.size === 0) {
-      console.log('File is empty, please select a non-empty file');
-      closeDataChannels();
-      return;
-    }
+    const files = fileInput!.files;
+
+    if (!files) return;
+    console.log(`Files:`, files);
 
     const chunkSize = 16384;
-    let offset = 0;
+    let singularOffset = 0;
+    let targetFileIndex = 0;
+    let totalOffset = 0;
+
+    function onTransferSuccess() {
+      toast.success('Success Notification !');
+      singularOffset = 0;
+      targetFileIndex = 0;
+      totalOffset = 0;
+      setProgressPopperData({...initialProgressPopperData});
+    }
 
     sentFileReaderRef.current = new FileReader();
     sentFileReaderRef.current.addEventListener('error', (error) => console.error('Error reading file:', error));
@@ -156,32 +165,52 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       let result = e!.target!.result as ArrayBuffer;
 
       (sendChannelRef.current as RTCDataChannel).send(result);
-      offset += result.byteLength;
 
-      setProgressPopperData({
+      totalOffset += result.byteLength;
+      singularOffset += result.byteLength;
+
+      setProgressPopperData((prev) => ({
+        ...prev,
         isOpen: true,
         progressType: 'send',
-        fileProgress: Math.round((offset / file.size) * 100),
-        fileBlobUrl: '',
-        fileName: '',
-      });
+        fileProgress: Math.round((totalOffset / totalFileSizeRef.current) * 100),
+      }));
 
-      if (offset < file.size) {
-        readSlice(offset);
+      if (totalOffset < totalFileSizeRef.current) {
+        readSlice(singularOffset);
       } else {
         console.log('done');
-        toast.success('Success Notification !');
-        setProgressPopperData({...initialProgressPopperData});
+        onTransferSuccess();
       }
     });
+
     const readSlice = (o: number) => {
-      console.log('readSlice ', o);
-      const slice = file.slice(offset, o + chunkSize);
+      console.log(`read ${files[targetFileIndex].name} slice `, o);
+      console.log('total fileChunks', totalOffset);
+
+      let slice: Blob;
+
+      if (o < files[targetFileIndex].size) {
+        let nextChunk: number = o + chunkSize;
+
+        if (nextChunk > files[targetFileIndex].size) nextChunk = files[targetFileIndex].size;
+
+        slice = files[targetFileIndex].slice(singularOffset, nextChunk);
+      } else {
+        targetFileIndex += 1;
+        singularOffset = 0;
+        if (!files[targetFileIndex]) {
+          onTransferSuccess();
+          return;
+        }
+        slice = files[targetFileIndex].slice(singularOffset, chunkSize);
+      }
+
       sentFileReaderRef.current!.readAsArrayBuffer(slice);
     };
 
     readSlice(0);
-  }, [sentFileReaderRef, sendChannelRef, closeDataChannels, targetPeer.id]);
+  }, [totalFileSizeRef, sentFileReaderRef, sendChannelRef, targetPeer.id]);
 
   async function onRejectFileTransfer() {
     // TODO-sprint: diff abort and reject
@@ -200,20 +229,17 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
         let data = change.doc.data();
-        if (change.type === 'added') {
-          console.log(`Got new connection: ${JSON.stringify(data)}`);
-        }
         if (change.type === 'modified') {
-          const {isAccepting} = data.fileMeta as IFileMeta;
+          const {isAccepting} = data;
           if (
             data.p2p &&
-            data.fileMeta &&
+            data.fileMetas &&
             !data.answer &&
             data.p2p.answer === localID &&
             data.p2p.offer === targetPeer.id
           ) {
             if (!isAccepting) {
-              promptsIncomingFileTransferPopper(data.fileMeta, change.doc.id);
+              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
             }
           }
         }
@@ -242,9 +268,13 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
-    const id = connectionIdRef.current as string;
+    const db = firebase.firestore();
+    const roomRef = db.collection('rooms').doc(publicID);
+    const connectionRef = roomRef.collection('connections').doc(connectionIdRef.current as string);
 
     let receivedSize = 0;
+    let targetFileIndex = 0;
+    let targetFileSize = 0;
     let receiveBuffer: ArrayBuffer[] = [];
 
     function receiveChannelCallback(event: RTCDataChannelEvent) {
@@ -257,22 +287,21 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
 
     async function onReceiveMessageCallback(event: MessageEvent<ArrayBuffer>) {
-      console.log(`Received Message ${event.data.byteLength}`);
-      console.log(event.data);
-      receiveBuffer.push(event.data);
-
-      const db = firebase.firestore();
-      const roomRef = db.collection('rooms').doc(publicID);
-      const connectionRef = roomRef.collection('connections').doc(id);
       const connectionSnapShot = await connectionRef.get();
-
       if (!connectionSnapShot.data()) return;
 
-      const fileMeta = connectionSnapShot.data()!.fileMeta as IFileMeta;
-      const {name, size} = fileMeta;
+      console.log(`Received Message ${event.data.byteLength}`);
+      console.log(event.data);
 
+      receiveBuffer.push(event.data);
       receivedSize += event.data.byteLength;
-      let receivedValue = Math.round((receivedSize / size) * 100);
+      targetFileSize += event.data.byteLength;
+
+      const fileMetas = connectionSnapShot.data()!.fileMetas as IFileMeta[];
+      const totalSize = fileMetas.reduce((acc, file) => acc + file.size, 0);
+
+      let {name, size} = fileMetas[targetFileIndex];
+      let receivedValue = Math.round((receivedSize / totalSize) * 100);
 
       setProgressPopperData((prev) => ({
         ...prev,
@@ -281,23 +310,25 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         fileProgress: receivedValue,
       }));
 
-      if (receivedSize === size) {
+      // chunk size sent up to a exact file size in order, set to next
+      if (targetFileSize === size) {
         const received = new Blob(receiveBuffer);
         receiveBuffer = [];
-        receivedSize = 0;
-
-        console.log(received);
-        console.log(name, size);
+        targetFileSize = 0;
+        targetFileIndex += 1;
 
         setProgressPopperData((prev) => ({
           ...prev,
-          fileProgress: 100,
-          fileName: name,
-          fileBlobUrl: URL.createObjectURL(received),
+          downloadableFiles: [
+            ...prev.downloadableFiles,
+            {
+              fileName: name,
+              fileBlobUrl: URL.createObjectURL(received),
+            },
+          ],
         }));
-
-        closeDataChannels();
       }
+      if (receivedSize === totalSize) closeDataChannels();
     }
 
     async function onReceiveChannelStateChange() {
@@ -386,7 +417,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
       // Code for creating SDP answer below
       const offer = connectionSnapshot!.data()!.offer;
-      const fileMeta = connectionSnapshot!.data()!.fileMeta;
       console.log('Got offer:', offer);
       await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
       const answer = await peerConnectionRef.current.createAnswer();
@@ -398,10 +428,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           type: answer.type,
           sdp: answer.sdp,
         },
-        fileMeta: {
-          ...fileMeta,
-          isAccepting: true,
-        },
+        isAccepting: true,
       };
       await connectionRef.update(roomWithAnswer);
       // Code for creating SDP answer above
@@ -460,6 +487,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         type: offer.type,
         sdp: offer.sdp,
       },
+      isAccepting: false,
     };
 
     await targetConnectionRef.set({
@@ -505,10 +533,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   return (
     <div>
       <Dropzone
-        multiple={false}
         onDragEnter={() => console.log('drag enter')}
         onDragLeave={() => console.log('drag leave')}
-        onDrop={(acceptedFiles) => handleFileInputChange(acceptedFiles[0], targetPeer)}
+        onDrop={(acceptedFiles) => handleFileInputChange(acceptedFiles, targetPeer)}
       >
         {({getRootProps, getInputProps}) => (
           <div {...getRootProps()}>
@@ -539,12 +566,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         <ProgressPopper
           isOpen={progressPopperData.isOpen}
           fileProgress={progressPopperData.fileProgress}
-          fileBlobUrl={progressPopperData.fileBlobUrl}
-          fileName={progressPopperData.fileName}
+          downloadableFiles={progressPopperData.downloadableFiles}
           onRejectFileTransfer={onRejectFileTransfer}
           progressType={progressPopperData.progressType}
           targetPeer={targetPeer}
-          setClose={() => setProgressPopperData({...progressPopperData, isOpen: false})}
+          setClose={() => setProgressPopperData({...initialProgressPopperData})}
           anchorElement={anchorElement}
         />
       )}
@@ -552,7 +578,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       {notifyOfferPopperData.isOpen && (
         <NotifyOfferPopper
           isOpen={notifyOfferPopperData.isOpen}
-          fileMeta={notifyOfferPopperData.fileMeta}
+          fileMetas={notifyOfferPopperData.fileMetas}
           onAcceptFileTransfer={onAcceptFileTransfer}
           onRejectFileTransfer={onRejectFileTransfer}
           targetPeer={targetPeer}

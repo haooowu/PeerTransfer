@@ -3,15 +3,14 @@ import styled from 'styled-components';
 import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
 import LinearProgress from 'src/components/LinearProgress';
 import usePopperStyles from 'src/styles/usePopperStyles';
-import {IPeerField} from 'src/types';
+import {IPeerField, IDownloadableFile} from 'src/types';
 
 const StyledAnchor = styled.a``;
 
 export interface IProgressPopperData {
   isOpen: boolean;
   fileProgress: number;
-  fileBlobUrl: string;
-  fileName: string;
+  downloadableFiles: IDownloadableFile[];
   progressType: 'send' | 'receive' | null;
 }
 
@@ -19,10 +18,8 @@ export const initialProgressPopperData: IProgressPopperData = {
   isOpen: false,
   progressType: null,
   fileProgress: 0,
-  fileBlobUrl: '',
-  fileName: '',
+  downloadableFiles: [],
 };
-
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
   onRejectFileTransfer: () => Promise<void>;
@@ -31,20 +28,31 @@ interface Props extends IProgressPopperData {
 }
 
 const ProgressPopper: React.FC<Props> = ({
+  targetPeer,
   setClose,
   fileProgress,
-  fileName,
-  fileBlobUrl,
+  downloadableFiles,
   progressType,
   anchorElement,
   onRejectFileTransfer,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
+  const [receivedFiles, setReceivedFiles] = React.useState<IDownloadableFile[] | null>(null);
   const classes = usePopperStyles();
 
-  const handleDownload = () => {
-    setTimeout(() => window.URL.revokeObjectURL(fileBlobUrl), 0);
-    setClose();
+  React.useEffect(() => {
+    setReceivedFiles(downloadableFiles);
+  }, [downloadableFiles]);
+
+  const handleDownloadClick = (file: IDownloadableFile) => {
+    setTimeout(() => window.URL.revokeObjectURL(file.fileBlobUrl), 0);
+    let filteredFiles = receivedFiles!.filter((prevFile) => prevFile.fileBlobUrl !== file.fileBlobUrl);
+
+    if (filteredFiles.length > 0) {
+      setReceivedFiles(filteredFiles);
+    } else {
+      setClose();
+    }
   };
 
   const handleCancel = () => {
@@ -67,20 +75,28 @@ const ProgressPopper: React.FC<Props> = ({
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        {fileBlobUrl && fileProgress === 100 ? (
+        {progressType === 'receive' ? (
           <>
-            <DialogTitle>Success</DialogTitle>
+            <DialogTitle>Success file will show below</DialogTitle>
             <DialogContent>
-              <DialogContentText>
-                <StyledAnchor onClick={handleDownload} download={fileName} href={fileBlobUrl}>
-                  click here to download {fileName}
-                </StyledAnchor>
-              </DialogContentText>
+              {receivedFiles &&
+                receivedFiles.map((file, i) => (
+                  <DialogContentText key={`${targetPeer.id}-download-${i}`}>
+                    <StyledAnchor
+                      onClick={() => handleDownloadClick(file)}
+                      download={file.fileName}
+                      href={file.fileBlobUrl}
+                    >
+                      click here to download {file.fileName}
+                    </StyledAnchor>
+                  </DialogContentText>
+                ))}
+              <LinearProgress progress={fileProgress} />
             </DialogContent>
           </>
         ) : (
           <>
-            <DialogTitle>{progressType === 'send' ? 'Sending' : 'Receiving'}...</DialogTitle>
+            <DialogTitle>Sending...</DialogTitle>
             <DialogContent>
               <DialogContentText>Waiting for file transfer to complete...</DialogContentText>
               <LinearProgress progress={fileProgress} />
