@@ -18,19 +18,19 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, setClos
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 
-  // TODO-sprint: localhost notify user timeout
-  React.useEffect(() => {
-    let timeoutReload: NodeJS.Timeout;
-    if (gotRemoteDesc) {
-      timeoutReload = setTimeout(() => {
-        sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, '1');
-        window.location.reload();
-      }, 3000);
-    }
-    return () => {
-      clearTimeout(timeoutReload);
-    };
-  }, [gotRemoteDesc]);
+  // React.useEffect(() => {
+  //   let timeoutReload: NodeJS.Timeout;
+  //   if (gotRemoteDesc) {
+  //     timeoutReload = setTimeout(() => {
+  //       sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, '1');
+  //       window.location.reload();
+  //       console.log('here')
+  //     }, 3000);
+  //   }
+  //   return () => {
+  //     clearTimeout(timeoutReload);
+  //   };
+  // }, [gotRemoteDesc]);
 
   return (
     <Popper
@@ -49,16 +49,11 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, setClos
       <Paper className={classes.paper}>
         {gotRemoteDesc ? (
           <>
-            <DialogTitle>Preparing data channel with {targetPeer.emoji} ...</DialogTitle>
+            <DialogTitle>Preparing data channel with {targetPeer.emoji}...</DialogTitle>
           </>
         ) : (
           <>
-            <DialogTitle>Waiting for {targetPeer.emoji}'s response.</DialogTitle>
-            <DialogActions>
-              <Button onClick={() => setClose()} color="primary">
-                Cancel
-              </Button>
-            </DialogActions>
+            <DialogTitle>Waiting for {targetPeer.emoji}'s response...</DialogTitle>
           </>
         )}
       </Paper>

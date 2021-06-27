@@ -43,7 +43,7 @@ const ProgressPopper: React.FC<Props> = ({
   const classes = usePopperStyles();
 
   const handleDownload = () => {
-    window.URL.revokeObjectURL(fileBlobUrl);
+    setTimeout(() => window.URL.revokeObjectURL(fileBlobUrl), 0);
     setClose();
   };
 
@@ -71,8 +71,8 @@ const ProgressPopper: React.FC<Props> = ({
           <>
             <DialogTitle>Success</DialogTitle>
             <DialogContent>
-              <DialogContentText onClick={handleDownload}>
-                <StyledAnchor download={fileName} href={fileBlobUrl}>
+              <DialogContentText>
+                <StyledAnchor onClick={handleDownload} download={fileName} href={fileBlobUrl}>
                   click here to download {fileName}
                 </StyledAnchor>
               </DialogContentText>

@@ -4,6 +4,8 @@ import styled from 'styled-components';
 import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
+import {toast} from 'react-toastify';
+import Dropzone from 'react-dropzone';
 
 import ProgressPopper, {IProgressPopperData, initialProgressPopperData} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {INotifyOfferPopperData} from 'src/components/Poppers/NotifyOfferPopper';
@@ -15,13 +17,13 @@ interface Props {
   publicID: string;
 }
 
-// TODO-sprint: UI to abort fileReader transfer
-
-// TODO-sprint: react-dropzone to wrap input and drop to change file
+// TODO-sprint: multiple files support e.g. add files collection and move fileMeta there
 
 // TODO-sprint: on any rejection delete doc and all nested data
 
 // TODO-sprint: once waiting connection / transferring disable event on same peer
+
+// TODO-sprint: polish detail styling
 
 const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -46,15 +48,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   });
   const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({...initialProgressPopperData});
 
-  function handleFileAbort() {
-    if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
-      console.log('Abort read!');
-      sentFileReaderRef.current.abort();
-    }
-  }
-
-  async function handleFileInputChange(e: ChangeEvent<HTMLInputElement>, targetPeer: IPeerField) {
-    let file = e.target?.files && e.target?.files[0];
+  async function handleFileInputChange(file: File | null, targetPeer: IPeerField) {
     if (file) {
       await tryCreatePeerConnection(targetPeer);
 
@@ -74,57 +68,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       const db = firebase.firestore();
       const roomRef = db.collection('rooms').doc(publicID);
       const connectionsRef = roomRef.collection('connections');
-      const targetConnectionRef = await connectionsRef.doc(connectionId);
+      const targetConnectionRef = connectionsRef.doc(connectionId);
       await targetConnectionRef.update(fileMeta);
     }
-  }
-
-  async function sendData() {
-    const fileInput = document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement;
-    const file = fileInput!.files && fileInput!.files[0];
-    if (!file) return;
-    console.log(`File is ${[file.name, file.size, file.type].join(' ')}`);
-    if (file.size === 0) {
-      console.log('File is empty, please select a non-empty file');
-      closeDataChannels();
-      return;
-    }
-
-    const chunkSize = 16384;
-    let offset = 0;
-
-    sentFileReaderRef.current = new FileReader();
-
-    sentFileReaderRef.current.addEventListener('error', (error) => console.error('Error reading file:', error));
-    sentFileReaderRef.current.addEventListener('abort', (event) => console.log('File reading aborted:', event));
-    sentFileReaderRef.current.addEventListener('load', async (e) => {
-      console.log('FileRead.onload ', e);
-      let result = e!.target!.result as ArrayBuffer;
-
-      (sendChannelRef.current as RTCDataChannel).send(result);
-      offset += result.byteLength;
-
-      setProgressPopperData({
-        isOpen: true,
-        progressType: 'send',
-        fileProgress: Math.round((offset / file.size) * 100),
-        fileBlobUrl: '',
-        fileName: '',
-      });
-
-      if (offset < file.size) {
-        readSlice(offset);
-      } else {
-        console.log('done');
-        setProgressPopperData({...initialProgressPopperData});
-      }
-    });
-    const readSlice = (o: number) => {
-      console.log('readSlice ', o);
-      const slice = file.slice(offset, o + chunkSize);
-      sentFileReaderRef.current!.readAsArrayBuffer(slice);
-    };
-    readSlice(0);
   }
 
   const clearFirebaseConnection = useCallback(async () => {
@@ -188,8 +134,62 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     }
   }
 
+  const sendFileData = useCallback(async () => {
+    const fileInput = document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement;
+    const file = fileInput!.files && fileInput!.files[0];
+    if (!file) return;
+    console.log(`File is ${[file.name, file.size, file.type].join(' ')}`);
+    if (file.size === 0) {
+      console.log('File is empty, please select a non-empty file');
+      closeDataChannels();
+      return;
+    }
+
+    const chunkSize = 16384;
+    let offset = 0;
+
+    sentFileReaderRef.current = new FileReader();
+    sentFileReaderRef.current.addEventListener('error', (error) => console.error('Error reading file:', error));
+    sentFileReaderRef.current.addEventListener('abort', (event) => console.log('File reading aborted:', event));
+    sentFileReaderRef.current.addEventListener('load', async (e) => {
+      console.log('FileRead.onload ', e);
+      let result = e!.target!.result as ArrayBuffer;
+
+      (sendChannelRef.current as RTCDataChannel).send(result);
+      offset += result.byteLength;
+
+      setProgressPopperData({
+        isOpen: true,
+        progressType: 'send',
+        fileProgress: Math.round((offset / file.size) * 100),
+        fileBlobUrl: '',
+        fileName: '',
+      });
+
+      if (offset < file.size) {
+        readSlice(offset);
+      } else {
+        console.log('done');
+        toast.success('Success Notification !');
+        setProgressPopperData({...initialProgressPopperData});
+      }
+    });
+    const readSlice = (o: number) => {
+      console.log('readSlice ', o);
+      const slice = file.slice(offset, o + chunkSize);
+      sentFileReaderRef.current!.readAsArrayBuffer(slice);
+    };
+
+    readSlice(0);
+  }, [sentFileReaderRef, sendChannelRef, closeDataChannels, targetPeer.id]);
+
   async function onRejectFileTransfer() {
-    closeDataChannels();
+    // TODO-sprint: diff abort and reject
+    if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
+      console.log('Abort read!');
+      sentFileReaderRef.current.abort();
+      closeDataChannels();
+    }
   }
 
   useEffect(() => {
@@ -240,7 +240,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  function createReceiveDataChannel() {
+  const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
     const id = connectionIdRef.current as string;
 
@@ -313,14 +313,14 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           });
         }
         if (readyState === 'closed') {
-          receiveChannelRef.current.close();
+          receiveChannelRef.current?.close();
           receiveChannelRef.current = null;
         }
       }
     }
-  }
+  }, [peerConnectionRef, receiveChannelRef, publicID, closeDataChannels]);
 
-  function createSendDataChannel() {
+  const createSendDataChannel = useCallback(() => {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
     console.log('Created send data channel: ', sendChannelRef.current);
 
@@ -337,7 +337,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         console.log(`Send channel state is: ${readyState}`);
 
         if (readyState === 'open') {
-          sendData();
+          sendFileData();
           setWaitResponsePopperData({
             gotRemoteDesc: false,
             isOpen: false,
@@ -345,7 +345,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         }
 
         if (readyState === 'closed') {
-          sendChannelRef.current.close();
+          sendChannelRef.current?.close();
           sendChannelRef.current = null;
         }
       }
@@ -357,19 +357,17 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       }
       console.log('Error in sendChannel which is already closed:', errorEvent);
     }
-  }
+  }, [peerConnectionRef, sendChannelRef, sendFileData]);
 
   const joinFileChannel = async (connectionID: string) => {
     const db = firebase.firestore();
-    const roomRef = await db.collection('rooms').doc(publicID);
+    const roomRef = db.collection('rooms').doc(publicID);
     const connectionRef = roomRef.collection('connections').doc(connectionID);
     const connectionSnapshot = await connectionRef.get();
 
     if (connectionSnapshot.exists) {
       connectionIdRef.current = connectionID;
       peerConnectionRef.current = new RTCPeerConnection(pcConfig);
-
-      console.log(connectionSnapshot.data());
 
       createReceiveDataChannel();
 
@@ -427,7 +425,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const db = firebase.firestore();
     const roomRef = db.collection('rooms').doc(publicID);
     const connectionsRef = roomRef.collection('connections');
-    const targetConnectionRef = await connectionsRef.doc();
+    const targetConnectionRef = connectionsRef.doc();
 
     const p2pData = {
       p2p: {
@@ -506,17 +504,26 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   return (
     <div>
-      <Button ref={anchorRef} color="primary" variant="contained" component="label">
-        {targetPeer.emoji}
-        <input
-          type="file"
-          name="peer-file"
-          id={`fileInput-${targetPeer.id}`}
-          hidden
-          onClick={(e) => e.stopPropagation()}
-          onChange={(e) => handleFileInputChange(e, targetPeer)}
-        />
-      </Button>
+      <Dropzone
+        multiple={false}
+        onDragEnter={() => console.log('drag enter')}
+        onDragLeave={() => console.log('drag leave')}
+        onDrop={(acceptedFiles) => handleFileInputChange(acceptedFiles[0], targetPeer)}
+      >
+        {({getRootProps, getInputProps}) => (
+          <div {...getRootProps()}>
+            <Button
+              ref={anchorRef}
+              onClick={() => ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '')}
+              color="primary"
+              variant="contained"
+            >
+              <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
+              <span>{targetPeer.emoji}</span>
+            </Button>
+          </div>
+        )}
+      </Dropzone>
 
       {waitResponsePopperData.isOpen && (
         <WaitResponsePopper
