@@ -1,12 +1,12 @@
-import React, {useState, useEffect, useRef, ChangeEvent, useCallback} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
-import Dropzone from 'react-dropzone';
-
+import {FileRejection} from 'react-dropzone';
+import PeerFileDropZone from 'src/components/PeerFileDropZone';
 import ProgressPopper, {IProgressPopperData, initialProgressPopperData} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {
   INotifyOfferPopperData,
@@ -16,7 +16,7 @@ import WaitResponsePopper, {
   IWaitResponsePopperData,
   initialWaitResponsePopperData,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {CHUNK_SIZE, MAXIMUM_BYTE} from 'src/constants/numericValues';
+import {CHUNK_SIZE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 import {GOT_REMOTE_DESC} from 'src/constants';
 
 interface Props {
@@ -24,8 +24,6 @@ interface Props {
   localID: string;
   publicID: string;
 }
-
-// TODO-sprint: once waiting connection / transferring disable event on same peer
 
 // TODO-sprint: polish detail styling
 
@@ -38,12 +36,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const totalFileSizeRef = useRef<number>(0);
   const acceptedFileListRef = useRef<File[]>([]);
 
-  const anchorRef = useRef(null);
   const [anchorElement, setAnchorElement] = useState(null);
-  useEffect(() => {
-    if (anchorRef.current) setAnchorElement(anchorRef.current);
-  }, [anchorRef]);
-
   const [waitResponsePopperData, setWaitResponsePopperData] = useState<IWaitResponsePopperData>({
     isOpen: false,
     gotRemoteDesc: false,
@@ -53,8 +46,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   });
   const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({...initialProgressPopperData});
 
-  async function handleFileInputChange(files: File[], targetPeer: IPeerField) {
-    // TODO-sprint: total file size limit and rejection
+  async function handleFileInputChange(files: File[]) {
     if (files.length > 0) {
       acceptedFileListRef.current = files;
 
@@ -549,26 +541,11 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
   return (
     <div>
-      <Dropzone
-        maxSize={MAXIMUM_BYTE}
-        onDragEnter={() => console.log('drag enter')}
-        onDragLeave={() => console.log('drag leave')}
-        onDrop={(acceptedFiles) => handleFileInputChange(acceptedFiles, targetPeer)}
-      >
-        {({getRootProps, getInputProps}) => (
-          <div {...getRootProps()}>
-            <Button
-              ref={anchorRef}
-              onClick={() => ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '')}
-              color="primary"
-              variant="contained"
-            >
-              <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
-              <span>{targetPeer.emoji}</span>
-            </Button>
-          </div>
-        )}
-      </Dropzone>
+      <PeerFileDropZone
+        handleFileInputChange={handleFileInputChange}
+        targetPeer={targetPeer}
+        setAnchorElement={setAnchorElement}
+      />
 
       {waitResponsePopperData.isOpen && (
         <WaitResponsePopper

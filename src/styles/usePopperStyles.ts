@@ -8,6 +8,7 @@ const usePopperStyles = makeStyles((theme) => ({
   },
   popper: {
     zIndex: 1,
+    top: '-8px !important',
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,
