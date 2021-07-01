@@ -9,7 +9,6 @@ import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValue
 import usePopperStyles from 'src/styles/usePopperStyles';
 
 // TODO-sprint: once waiting connection / transferring disable event on same peer
-
 interface Props {
   handleFileInputChange: (files: File[]) => Promise<void>;
   targetPeer: IPeerField;
