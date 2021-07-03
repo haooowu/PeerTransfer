@@ -49,8 +49,7 @@ const RippleHolder = styled.div`
   background-position: bottom;
   background-size: cover;
   width: 100%;
-  max-width: 1200px;
-  height: 600px;
+  height: 100%;
 `;
 
 const Wrapper = styled.div`
@@ -159,6 +158,12 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
                 <GitHubIcon />
               </ListItemIcon>
               <ListItemText primary={'Source'} />
+            </ListItem>
+            <ListItem button>
+              <ListItemIcon className={classes.listItemIcon}>
+                <AccountTreeIcon />
+              </ListItemIcon>
+              <ListItemText primary={'Join a room'} />
             </ListItem>
           </List>
         </Drawer>

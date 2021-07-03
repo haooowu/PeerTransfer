@@ -11,7 +11,8 @@ interface Props {
   localID: string;
 }
 
-// TODO-sprint: UI for join BY roomID dialog (that should only add to presenceDB)
+// TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB)
+// TODO-sprint: UI popup for general FAQ
 
 // TODO-sprint: provide db as firebase provider?
 // const db = firebase.firestore();

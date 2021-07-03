@@ -19,6 +19,7 @@ interface Props {
 
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
   // TODO-sprint: peer icon styling (ripple effects)
+  // TODO-sprint: send to all existing peer when click on self
 
   return (
     <Wrapper>

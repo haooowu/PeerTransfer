@@ -37,6 +37,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const totalFileSizeRef = useRef<number>(0);
   const acceptedFileListRef = useRef<File[]>([]);
 
+  const shouldAutoAccept = true;
+  const shouldAutoDownload = true;
+
   const [anchorElement, setAnchorElement] = useState(null);
   const [waitResponsePopperData, setWaitResponsePopperData] = useState<IWaitResponsePopperData>({
     isOpen: false,
@@ -129,6 +132,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   async function promptsIncomingFileTransferPopper(fileMetas: IFileMeta[], connectionId: string) {
     console.log('incoming file metas:', fileMetas);
     console.log('got from:', targetPeer);
+
+    // TODO-sprint: if auto accept then immediately start download
 
     connectionIdRef.current = connectionId;
     setNotifyPopperOfferData({isOpen: true, fileMetas});
@@ -336,6 +341,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         targetFileSize = 0;
         targetFileIndex += 1;
 
+        // TODO-sprint: if set auto download no need to set downloadableFiles but directly download and then revoke the URL
         setProgressPopperData((prev) => ({
           ...prev,
           downloadableFiles: [

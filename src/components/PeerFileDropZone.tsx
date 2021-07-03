@@ -58,7 +58,14 @@ const PeerFileDropZone: React.FC<Props> = ({handleFileInputChange, targetPeer, s
       >
         {({getRootProps, getInputProps}) => (
           <div {...getRootProps()}>
-            <Button ref={anchorRef} onClick={avatarButtonClick} color="primary" variant="contained">
+            <Button
+              ref={anchorRef}
+              onMouseOver={() => console.log('mouse over')}
+              onMouseLeave={() => console.log('mouse leave')}
+              onClick={avatarButtonClick}
+              color="primary"
+              variant="contained"
+            >
               <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
               <span>{targetPeer.emoji}</span>
             </Button>
