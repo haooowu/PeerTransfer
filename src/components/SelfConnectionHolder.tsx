@@ -18,7 +18,7 @@ interface Props {
 }
 
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
-  // TODO-sprint: peerID to connection map and receive progress callback？
+  // TODO-sprint: peer icon styling (ripple effects)
 
   return (
     <Wrapper>

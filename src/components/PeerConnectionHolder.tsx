@@ -5,7 +5,7 @@ import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
-import {FileRejection} from 'react-dropzone';
+
 import PeerFileDropZone from 'src/components/PeerFileDropZone';
 import ProgressPopper, {IProgressPopperData, initialProgressPopperData} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {
@@ -16,7 +16,7 @@ import WaitResponsePopper, {
   IWaitResponsePopperData,
   initialWaitResponsePopperData,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {CHUNK_SIZE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
+import {MIN_CHUNK_SIZE} from 'src/constants/numericValues';
 import {GOT_REMOTE_DESC} from 'src/constants';
 
 interface Props {
@@ -151,7 +151,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
     const files = [...acceptedFileListRef.current];
 
-    const chunkSize = CHUNK_SIZE;
+    const maxMessageSize = peerConnectionRef.current?.sctp?.maxMessageSize;
+    console.log('maximum message size is: ', maxMessageSize);
+
+    const chunkSize = maxMessageSize || MIN_CHUNK_SIZE;
     let singularOffset = 0;
     let targetFileIndex = 0;
     let totalOffset = 0;

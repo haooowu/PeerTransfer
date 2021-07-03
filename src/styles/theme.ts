@@ -1,11 +1,11 @@
 const theme = {
   light: {
-    foreground: '#000000',
-    background: '#eeeeee',
+    primary: '#000000',
+    secondary: '#eeeeee',
   },
   dark: {
-    foreground: '#ffffff',
-    background: '#222222',
+    primary: '#303846',
+    secondary: '#222222',
   },
 };
 
