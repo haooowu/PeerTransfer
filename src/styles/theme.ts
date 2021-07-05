@@ -8,6 +8,8 @@ export const brightnessTheme = {
     },
     secondary: {
       main: '#1565C0',
+      dark: '#0e4686',
+      light: '#4383cc',
       contrastText: '#fff',
     },
   },
@@ -20,6 +22,8 @@ export const brightnessTheme = {
     },
     secondary: {
       main: '#1565C0',
+      dark: '#0e4686',
+      light: '#4383cc',
       contrastText: '#fff',
     },
   },
@@ -27,16 +31,7 @@ export const brightnessTheme = {
 
 const theme = {
   drawerMinWidth: '55px',
-  primary: {
-    main: '',
-    light: '',
-    dark: '',
-    contrastText: '',
-  },
-  secondary: {
-    main: '',
-    contrastText: '',
-  },
+  ...brightnessTheme.dark, // default dark
 };
 
 export default theme;

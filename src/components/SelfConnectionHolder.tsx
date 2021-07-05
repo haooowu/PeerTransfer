@@ -14,7 +14,11 @@ const Wrapper = styled.div`
 const StyledButton = styled(Button)`
   background-color: ${(props) => props.theme.secondary.main};
   color: ${(props) => props.theme.secondary.contrastText};
+  &:hover {
+    background: ${(props) => props.theme.secondary.dark};
+  }
 `;
+
 interface Props {
   selfIdentity: IPeerField;
   localID: string;
@@ -27,9 +31,7 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}
 
   return (
     <Wrapper>
-      <StyledButton variant="contained" disableTouchRipple>
-        You: {selfIdentity?.emoji}
-      </StyledButton>
+      <StyledButton variant="contained">You: {selfIdentity?.emoji}</StyledButton>
       <div>Test</div>
     </Wrapper>
   );
