@@ -1,4 +1,5 @@
 import {createStyles, makeStyles, Theme} from '@material-ui/core/styles';
+import appTheme from 'src/styles/theme';
 
 const useDrawerStyles = makeStyles((theme: Theme) =>
   createStyles({
@@ -11,17 +12,13 @@ const useDrawerStyles = makeStyles((theme: Theme) =>
     },
     drawerOpen: {
       width: 280,
-      color: 'white',
-      backgroundColor: '#3c4350',
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
       }),
     },
     drawerClose: {
-      width: 55,
-      color: 'white',
-      backgroundColor: '#3c4350',
+      width: appTheme.drawerMinWidth,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.leavingScreen,
@@ -38,14 +35,6 @@ const useDrawerStyles = makeStyles((theme: Theme) =>
       alignItems: 'center',
       height: 60,
       justifyContent: 'flex-end',
-    },
-    iconBtn: {
-      width: 55,
-      height: 55,
-      color: 'whitesmoke',
-    },
-    listItemIcon: {
-      color: 'whitesmoke',
     },
   }),
 );

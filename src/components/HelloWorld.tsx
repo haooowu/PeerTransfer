@@ -15,6 +15,7 @@ import TimeoutAlert from 'src/components/TimeoutAlert';
 import PeersListener from 'src/components/PeersListener';
 import {IPeerField} from 'src/types';
 
+// TODO-sprint: swipe detection
 // TODO-sprint: organize theme with styled-components
 // https://material-ui.com/components/drawers/
 import clsx from 'clsx';
@@ -39,7 +40,26 @@ import useDrawerStyles from 'src/styles/useDrawerStyles';
 
 const Loader = styled(CircularProgress)``;
 
-const StyledP = styled.p``;
+const StyledP = styled.p`
+  color: ${(props) => props.theme.primary.contrastText};
+`;
+
+const StyledIconButton = styled(IconButton)`
+  width: ${(props) => props.theme.drawerMinWidth};
+  height: ${(props) => props.theme.drawerMinWidth};
+  color: ${(props) => props.theme.primary.contrastText};
+`;
+
+const StyledListItemIcon = styled(ListItemIcon)`
+  color: ${(props) => props.theme.primary.contrastText};
+`;
+
+const StyledDrawer = styled(Drawer)`
+  .MuiDrawer-paper {
+    background-color: ${(props) => props.theme.primary.light};
+    color: ${(props) => props.theme.primary.contrastText};
+  }
+`;
 
 const RippleHolder = styled.div`
   position: absolute;
@@ -50,14 +70,15 @@ const RippleHolder = styled.div`
   background-size: cover;
   width: 100%;
   height: 100%;
+  max-height: 1600px;
 `;
 
 const Wrapper = styled.div`
   position: relative;
-  background-color: #303846;
+  background-color: ${(props) => props.theme.primary.main};
   min-height: 100vh;
   max-width: 100vw;
-  margin-left: 55px; // TODO-sprint: global css var
+  margin-left: ${(props) => props.theme.drawerMinWidth};
   overflow-x: hidden;
   overflow-y: hidden;
   display: flex;
@@ -67,6 +88,7 @@ const Wrapper = styled.div`
   justify-content: center;
   font-size: calc(10px + 2vmin);
   color: white;
+  p,
   button,
   label {
     z-index: 1;
@@ -107,7 +129,7 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
   return (
     <>
       <Wrapper>
-        <Drawer
+        <StyledDrawer
           variant="permanent"
           className={clsx(classes.drawer, {
             [classes.drawerOpen]: open,
@@ -122,25 +144,21 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
         >
           <div className={classes.titleBar}>
             {open && <div className={classes.titleText}>PeerTransfer</div>}
-            <IconButton disableRipple className={classes.iconBtn} onClick={handleToggle}>
+            <StyledIconButton disableRipple onClick={handleToggle}>
               {open ? <ArrowBackIcon /> : <MenuIcon />}
-            </IconButton>
+            </StyledIconButton>
           </div>
           <Divider />
           <List>
             {['Auto Accept Request', 'Auto Download Files'].map((text, index) => (
               <ListItem button key={text}>
-                <ListItemIcon className={classes.listItemIcon}>
-                  {index % 2 === 0 ? <CloudIcon /> : <CloudOffIcon />}
-                </ListItemIcon>
+                <StyledListItemIcon>{index % 2 === 0 ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
                 <ListItemText primary={text} />
               </ListItem>
             ))}
             {['Dark Mode', 'Light Mode'].map((text, index) => (
               <ListItem button key={text}>
-                <ListItemIcon className={classes.listItemIcon}>
-                  {index % 2 === 0 ? <DesktopIcon /> : <DesktopOffIcon />}
-                </ListItemIcon>
+                <StyledListItemIcon>{index % 2 === 0 ? <DesktopIcon /> : <DesktopOffIcon />}</StyledListItemIcon>
                 <ListItemText primary={text} />
               </ListItem>
             ))}
@@ -148,25 +166,25 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
           <Divider />
           <List>
             <ListItem button>
-              <ListItemIcon className={classes.listItemIcon}>
+              <StyledListItemIcon>
                 <HelpIcon />
-              </ListItemIcon>
+              </StyledListItemIcon>
               <ListItemText primary={'FAQ'} />
             </ListItem>
             <ListItem button>
-              <ListItemIcon className={classes.listItemIcon}>
+              <StyledListItemIcon>
                 <GitHubIcon />
-              </ListItemIcon>
+              </StyledListItemIcon>
               <ListItemText primary={'Source'} />
             </ListItem>
             <ListItem button>
-              <ListItemIcon className={classes.listItemIcon}>
+              <StyledListItemIcon>
                 <AccountTreeIcon />
-              </ListItemIcon>
+              </StyledListItemIcon>
               <ListItemText primary={'Join a room'} />
             </ListItem>
           </List>
-        </Drawer>
+        </StyledDrawer>
 
         <StyledP>Hello World</StyledP>
         {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}

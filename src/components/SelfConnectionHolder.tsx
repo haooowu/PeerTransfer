@@ -11,6 +11,10 @@ const Wrapper = styled.div`
   bottom: 1em;
 `;
 
+const StyledButton = styled(Button)`
+  background-color: ${(props) => props.theme.secondary.main};
+  color: ${(props) => props.theme.secondary.contrastText};
+`;
 interface Props {
   selfIdentity: IPeerField;
   localID: string;
@@ -19,13 +23,13 @@ interface Props {
 
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
   // TODO-sprint: peer icon styling (ripple effects)
-  // TODO-sprint: send to all existing peer when click on self
+  // TODO-sprint: send to all existing peer when click on self - offline load and send when online?
 
   return (
     <Wrapper>
-      <Button color="primary" variant="contained" disableTouchRipple>
+      <StyledButton variant="contained" disableTouchRipple>
         You: {selfIdentity?.emoji}
-      </Button>
+      </StyledButton>
       <div>Test</div>
     </Wrapper>
   );

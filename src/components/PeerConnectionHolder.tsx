@@ -25,7 +25,6 @@ interface Props {
   publicID: string;
 }
 
-// TODO-sprint: polish detail styling
 // TODO-sprint: useReducer for multiple popper state management
 
 const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
@@ -180,7 +179,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       console.log('FileRead.onload ', e);
       let result = e!.target!.result as ArrayBuffer;
 
-      // TODO-sprint: offline load and send when online
       (sendChannelRef.current as RTCDataChannel).send(result);
 
       totalOffset += result.byteLength;
