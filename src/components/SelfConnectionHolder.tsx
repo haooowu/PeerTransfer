@@ -7,6 +7,7 @@ import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 
 const Wrapper = styled.div`
+  z-index: 1;
   position: absolute;
   bottom: 1em;
   left: 50%;
@@ -14,10 +15,10 @@ const Wrapper = styled.div`
 `;
 
 const StyledButton = styled(Button)`
-  background-color: ${(props) => props.theme.secondary.main};
-  color: ${(props) => props.theme.secondary.contrastText};
+  background-color: ${(props) => props.theme.secondary.main} !important;
+  color: ${(props) => props.theme.secondary.contrastText} !important;
   &:hover {
-    background: ${(props) => props.theme.secondary.dark};
+    background: ${(props) => props.theme.secondary.dark} !important;
   }
 `;
 

@@ -8,10 +8,10 @@ import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper'
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 
 const StyledButton = styled(Button)`
-  background-color: ${(props) => props.theme.secondary.main};
-  color: ${(props) => props.theme.secondary.contrastText};
+  background-color: ${(props) => props.theme.secondary.main} !important;
+  color: ${(props) => props.theme.secondary.contrastText} !important;
   &:hover {
-    background: ${(props) => props.theme.secondary.dark};
+    background: ${(props) => props.theme.secondary.dark} !important;
   }
 `;
 interface Props {
@@ -33,6 +33,10 @@ const PeerFileDropZone: React.FC<Props> = ({
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef, setAnchorElement]);
+
+  React.useEffect(() => {
+    if (shouldDisableActionBtn) setEnterType(null);
+  }, [shouldDisableActionBtn]);
 
   function handleFileRejected(fileRejections: FileRejection[]) {
     if (fileRejections.length > MAXIMUM_FILE_NUMBER) {
@@ -80,7 +84,6 @@ const PeerFileDropZone: React.FC<Props> = ({
               onMouseOver={onMouseEnter}
               onMouseLeave={onMouseLeave}
               onClick={avatarButtonClick}
-              color="primary"
               variant="contained"
             >
               <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />

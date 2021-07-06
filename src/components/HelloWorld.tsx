@@ -14,7 +14,7 @@ import TimeoutAlert from 'src/components/TimeoutAlert';
 import PeersListener from 'src/components/PeersListener';
 import {IPeerField} from 'src/types';
 
-// TODO-sprint: swipe detection
+// TODO-sprint: swipe detection and click-outside to close drawer
 // TODO-sprint: organize theme with styled-components
 // https://material-ui.com/components/drawers/
 import clsx from 'clsx';
@@ -46,17 +46,17 @@ const StyledP = styled.p`
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};
   height: ${(props) => props.theme.drawerMinWidth};
-  color: ${(props) => props.theme.primary.contrastText};
+  color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
 const StyledListItemIcon = styled(ListItemIcon)`
-  color: ${(props) => props.theme.primary.contrastText};
+  color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
 const StyledDrawer = styled(Drawer)`
   .MuiDrawer-paper {
-    background-color: ${(props) => props.theme.primary.light};
-    color: ${(props) => props.theme.primary.contrastText};
+    background-color: ${(props) => props.theme.primary.light} !important;
+    color: ${(props) => props.theme.primary.contrastText} !important;
   }
 `;
 
@@ -75,7 +75,8 @@ const RippleHolder = styled.div`
 const Wrapper = styled.div`
   position: relative;
   background-color: ${(props) => props.theme.primary.main};
-  min-height: 100vh;
+  height: 100%;
+  min-height: 100%;
   max-width: 100vw;
   margin-left: ${(props) => props.theme.drawerMinWidth};
   overflow-x: hidden;
