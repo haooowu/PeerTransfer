@@ -8,7 +8,7 @@ import theme, {brightnessTheme} from 'src/styles/theme';
 import 'src/App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
-// TODO-sprint: theme read from localstorage
+// TODO-sprint: persist state provider with all the options from drawer in localStorage
 const App: React.FC = () => {
   return (
     <IdentityProvider>
@@ -19,16 +19,7 @@ const App: React.FC = () => {
         }}
       >
         <HelloWorld />
-        <ToastContainer
-          position="top-right"
-          autoClose={5000}
-          hideProgressBar={false}
-          newestOnTop={false}
-          closeOnClick
-          rtl={false}
-          draggable
-          pauseOnHover
-        />
+        <ToastContainer position="top-right" autoClose={5000} newestOnTop={false} closeOnClick rtl={false} draggable />
       </ThemeProvider>
     </IdentityProvider>
   );

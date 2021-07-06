@@ -13,6 +13,7 @@ interface Props {
 
 // TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB)
 // TODO-sprint: UI popup for general FAQ
+// TODO-sprint: random position at larger media, otherwise overflow-scroll list in small
 
 // TODO-sprint: provide db as firebase provider?
 // const db = firebase.firestore();

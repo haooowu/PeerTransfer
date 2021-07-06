@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, {useState, useEffect, useMemo, useRef, useCallback, useReducer} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 import {Button} from '@material-ui/core';
@@ -7,16 +7,16 @@ import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
 
 import PeerFileDropZone from 'src/components/PeerFileDropZone';
-import ProgressPopper, {IProgressPopperData, initialProgressPopperData} from 'src/components/Poppers/ProgressPopper';
+import ProgressPopper, {initialProgressPopperData, progressPopperReducer} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {
-  INotifyOfferPopperData,
+  notifyOfferPopperReducer,
   initialNotifyOfferPopperData,
 } from 'src/components/Poppers/NotifyOfferPopper';
 import WaitResponsePopper, {
-  IWaitResponsePopperData,
   initialWaitResponsePopperData,
+  waitResponsePopperReducer,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {MIN_CHUNK_SIZE} from 'src/constants/numericValues';
+import {MAXIMUM_FILE_NUMBER, MIN_CHUNK_SIZE} from 'src/constants/numericValues';
 import {GOT_REMOTE_DESC} from 'src/constants';
 
 interface Props {
@@ -24,8 +24,6 @@ interface Props {
   localID: string;
   publicID: string;
 }
-
-// TODO-sprint: useReducer for multiple popper state management
 
 const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
@@ -40,14 +38,20 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
   const shouldAutoDownload = true;
 
   const [anchorElement, setAnchorElement] = useState(null);
-  const [waitResponsePopperData, setWaitResponsePopperData] = useState<IWaitResponsePopperData>({
-    isOpen: false,
-    gotRemoteDesc: false,
-  });
-  const [notifyOfferPopperData, setNotifyPopperOfferData] = useState<INotifyOfferPopperData>({
-    ...initialNotifyOfferPopperData,
-  });
-  const [progressPopperData, setProgressPopperData] = useState<IProgressPopperData>({...initialProgressPopperData});
+  const [waitResponsePopperData, dispatchWaitResponsePopperData] = useReducer(
+    waitResponsePopperReducer,
+    initialWaitResponsePopperData,
+  );
+  const [notifyOfferPopperData, dispatchNotifyPopperOfferData] = useReducer(
+    notifyOfferPopperReducer,
+    initialNotifyOfferPopperData,
+  );
+  const [progressPopperData, dispatchProgressPopperData] = useReducer(progressPopperReducer, initialProgressPopperData);
+
+  const shouldDisableActionBtn = useMemo(
+    () => waitResponsePopperData.isOpen || notifyOfferPopperData.isOpen || progressPopperData.isOpen,
+    [waitResponsePopperData.isOpen, notifyOfferPopperData.isOpen, progressPopperData.isOpen],
+  );
 
   async function handleFileInputChange(files: File[]) {
     if (files.length > 0) {
@@ -95,6 +99,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         await candidate.ref.delete();
       });
       await connectionRef.delete();
+      connectionIdRef.current = null;
     }
   }, [connectionIdRef, publicID]);
 
@@ -103,7 +108,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       console.log('Closing data channels');
       console.log(sendChannelRef.current);
       console.log(receiveChannelRef.current);
-      setWaitResponsePopperData(initialWaitResponsePopperData);
+      dispatchWaitResponsePopperData({type: 'clear'});
 
       if (sendChannelRef.current) {
         sendChannelRef.current.close();
@@ -135,17 +140,14 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     // TODO-sprint: if auto accept then immediately start download
 
     connectionIdRef.current = connectionId;
-    setNotifyPopperOfferData({isOpen: true, fileMetas});
+    dispatchNotifyPopperOfferData({type: 'set_file_metas', payload: {fileMetas}});
   }
 
   async function onAcceptFileTransfer() {
     joinFileChannel(connectionIdRef.current as string);
 
     if (!waitResponsePopperData.isOpen) {
-      setWaitResponsePopperData({
-        isOpen: true,
-        gotRemoteDesc: true,
-      });
+      dispatchWaitResponsePopperData({type: 'set_open_with_desc'});
     }
   }
 
@@ -158,6 +160,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const maxMessageSize = peerConnectionRef.current?.sctp?.maxMessageSize;
     console.log('maximum message size is: ', maxMessageSize);
 
+    // TODO-sprint: maxMessageSize is unstable
+
     const chunkSize = maxMessageSize || MIN_CHUNK_SIZE;
     let singularOffset = 0;
     let targetFileIndex = 0;
@@ -168,7 +172,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       singularOffset = 0;
       targetFileIndex = 0;
       totalOffset = 0;
-      setProgressPopperData({...initialProgressPopperData});
+      dispatchProgressPopperData({type: 'clear'});
       acceptedFileListRef.current = [];
     }
 
@@ -184,12 +188,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       totalOffset += result.byteLength;
       singularOffset += result.byteLength;
 
-      setProgressPopperData((prev) => ({
-        ...prev,
-        isOpen: true,
-        progressType: 'send',
-        fileProgress: Math.round((totalOffset / totalFileSizeRef.current) * 100),
-      }));
+      let sentProgress = Math.round((totalOffset / totalFileSizeRef.current) * 100);
+
+      dispatchProgressPopperData({
+        type: 'set_sent_progress',
+        payload: {progress: sentProgress},
+      });
 
       if (totalOffset < totalFileSizeRef.current) {
         readSlice(singularOffset);
@@ -233,7 +237,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       sentFileReaderRef.current.abort();
     }
     if (notifyOfferPopperData.isOpen) {
-      setNotifyPopperOfferData(initialNotifyOfferPopperData);
+      dispatchNotifyPopperOfferData({type: 'clear'});
     }
     closeDataChannels(false);
   }
@@ -325,12 +329,10 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       let {name, size} = fileMetas[targetFileIndex];
       let receivedValue = Math.round((receivedSize / totalSize) * 100);
 
-      setProgressPopperData((prev) => ({
-        ...prev,
-        isOpen: true,
-        progressType: 'receive',
-        fileProgress: receivedValue,
-      }));
+      dispatchProgressPopperData({
+        type: 'set_received_progress',
+        payload: {progress: receivedValue},
+      });
 
       // chunk size sent up to a exact file size in order, set to next
       if (targetFileSize === size) {
@@ -340,16 +342,16 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         targetFileIndex += 1;
 
         // TODO-sprint: if set auto download no need to set downloadableFiles but directly download and then revoke the URL
-        setProgressPopperData((prev) => ({
-          ...prev,
-          downloadableFiles: [
-            ...prev.downloadableFiles,
-            {
+
+        dispatchProgressPopperData({
+          type: 'set_downloadableFiles',
+          payload: {
+            downloadableFile: {
               fileName: name,
               fileBlobUrl: URL.createObjectURL(received),
             },
-          ],
-        }));
+          },
+        });
       }
       if (receivedSize === totalSize) {
         completeFlag = 1;
@@ -364,7 +366,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
         if (readyState === 'open') {
-          setWaitResponsePopperData(initialWaitResponsePopperData);
+          dispatchWaitResponsePopperData({type: 'clear'});
         }
         if (readyState === 'closed') {
           if (!completeFlag) toast.warn('file transfer is cancelled');
@@ -392,7 +394,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         console.log(`Send channel state is: ${readyState}`);
         if (readyState === 'open') {
           sendFileData();
-          setWaitResponsePopperData(initialWaitResponsePopperData);
+          dispatchWaitResponsePopperData({type: 'clear'});
         }
         if (readyState === 'closed') {
           sendChannelRef.current = null;
@@ -522,10 +524,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         await peerConnectionRef.current!.setRemoteDescription(rtcSessionDescription);
 
-        setWaitResponsePopperData((prev) => ({
-          ...prev,
-          gotRemoteDesc: true,
-        }));
+        dispatchWaitResponsePopperData({type: 'set_desc'});
       }
     });
     // Listening for remote session description above
@@ -542,15 +541,13 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     });
     // Listen for remote ICE candidates above
 
-    setWaitResponsePopperData({
-      isOpen: true,
-      gotRemoteDesc: false,
-    });
+    dispatchWaitResponsePopperData({type: 'set_open_without_desc'});
   };
 
   return (
     <div>
       <PeerFileDropZone
+        shouldDisableActionBtn={shouldDisableActionBtn}
         handleFileInputChange={handleFileInputChange}
         targetPeer={targetPeer}
         setAnchorElement={setAnchorElement}
@@ -573,7 +570,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           onCancelFileTransfer={onCancelFileTransfer}
           progressType={progressPopperData.progressType}
           targetPeer={targetPeer}
-          setClose={() => setProgressPopperData({...initialProgressPopperData})}
+          setClose={() => dispatchProgressPopperData({type: 'clear'})}
           anchorElement={anchorElement}
         />
       )}
@@ -585,7 +582,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           onAcceptFileTransfer={onAcceptFileTransfer}
           onCancelFileTransfer={onCancelFileTransfer}
           targetPeer={targetPeer}
-          setClose={() => setNotifyPopperOfferData({...initialNotifyOfferPopperData})}
+          setClose={() => dispatchNotifyPopperOfferData({type: 'clear'})}
           anchorElement={anchorElement}
         />
       )}

@@ -4,3 +4,5 @@ export interface IPeerField {
   browser: string;
   platform: string;
 }
+
+export type EnterType = 'drag' | 'mouse' | null;

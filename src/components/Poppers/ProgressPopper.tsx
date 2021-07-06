@@ -7,7 +7,7 @@ import {IPeerField, IDownloadableFile} from 'src/types';
 
 const StyledAnchor = styled.a``;
 
-export interface IProgressPopperData {
+interface IProgressPopperData {
   isOpen: boolean;
   fileProgress: number;
   downloadableFiles: IDownloadableFile[];
@@ -20,6 +20,46 @@ export const initialProgressPopperData: IProgressPopperData = {
   fileProgress: 0,
   downloadableFiles: [],
 };
+
+type progressPopperReducerAction =
+  | {type: 'clear'}
+  | {type: 'set_received_progress'; payload: {progress: number}}
+  | {type: 'set_sent_progress'; payload: {progress: number}}
+  | {type: 'set_downloadableFiles'; payload: {downloadableFile: IDownloadableFile}};
+
+export const progressPopperReducer = (
+  state: IProgressPopperData,
+  action: progressPopperReducerAction,
+): IProgressPopperData => {
+  switch (action.type) {
+    case 'clear':
+      return {
+        ...initialProgressPopperData,
+      };
+    case 'set_received_progress':
+      return {
+        ...state,
+        isOpen: true,
+        progressType: 'receive',
+        fileProgress: action.payload.progress,
+      };
+    case 'set_sent_progress':
+      return {
+        ...state,
+        isOpen: true,
+        progressType: 'send',
+        fileProgress: action.payload.progress,
+      };
+    case 'set_downloadableFiles':
+      return {
+        ...state,
+        downloadableFiles: [...state.downloadableFiles, action.payload.downloadableFile],
+      };
+    default:
+      return state;
+  }
+};
+
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
   onCancelFileTransfer: () => Promise<void>;

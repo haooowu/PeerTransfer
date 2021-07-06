@@ -4,15 +4,36 @@ import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, Dialog
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
 
+interface INotifyOfferPopperData {
+  isOpen: boolean;
+  fileMetas: IFileMeta[] | null;
+}
+
 export const initialNotifyOfferPopperData: INotifyOfferPopperData = {
   isOpen: false,
   fileMetas: null,
 };
 
-export interface INotifyOfferPopperData {
-  isOpen: boolean;
-  fileMetas: IFileMeta[] | null;
-}
+type NotifyOfferPopperReducerAction = {type: 'clear'} | {type: 'set_file_metas'; payload: {fileMetas: IFileMeta[]}};
+
+export const notifyOfferPopperReducer = (
+  state: INotifyOfferPopperData,
+  action: NotifyOfferPopperReducerAction,
+): INotifyOfferPopperData => {
+  switch (action.type) {
+    case 'clear':
+      return {
+        ...initialNotifyOfferPopperData,
+      };
+    case 'set_file_metas':
+      return {
+        isOpen: true,
+        fileMetas: action.payload.fileMetas,
+      };
+    default:
+      return state;
+  }
+};
 
 interface Props extends INotifyOfferPopperData {
   targetPeer: IPeerField;
