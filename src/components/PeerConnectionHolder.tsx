@@ -1,11 +1,9 @@
 import React, {useState, useEffect, useMemo, useRef, useCallback, useReducer} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
-import {Button} from '@material-ui/core';
 import {IFileMeta, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
-
 import PeerFileDropZone from 'src/components/PeerFileDropZone';
 import ProgressPopper, {initialProgressPopperData, progressPopperReducer} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {
@@ -16,8 +14,7 @@ import WaitResponsePopper, {
   initialWaitResponsePopperData,
   waitResponsePopperReducer,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {MAXIMUM_BUFFER_BYTE, MAXIMUM_FILE_BYTE, MIN_CHUNK_SIZE} from 'src/constants/numericValues';
-import {GOT_REMOTE_DESC} from 'src/constants';
+import {GOT_REMOTE_DESC, MAXIMUM_BUFFER_BYTE, MIN_CHUNK_SIZE} from 'src/constants';
 
 interface Props {
   targetPeer: IPeerField;
@@ -198,7 +195,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       if (totalOffset < totalFileSizeRef.current) {
         (function checkBufferAmount() {
           // for Chrome:
-          if ((sendChannelRef.current as RTCDataChannel).bufferedAmount + result.byteLength < MAXIMUM_FILE_BYTE) {
+          if ((sendChannelRef.current as RTCDataChannel).bufferedAmount + result.byteLength < MAXIMUM_BUFFER_BYTE) {
             readSlice(singularOffset);
           } else {
             setTimeout(checkBufferAmount, 500);

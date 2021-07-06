@@ -9,6 +9,8 @@ import pcConfig from 'src/utils/pcConfig';
 const Wrapper = styled.div`
   position: absolute;
   bottom: 1em;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 
 const StyledButton = styled(Button)`

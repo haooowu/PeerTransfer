@@ -10,7 +10,6 @@ import backgroundRipple from 'src/assets/backgroundRipple.svg';
 
 import {IdentityContext, IIdentityContextVariable} from 'src/components/IdentityProvider';
 
-import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
 import TimeoutAlert from 'src/components/TimeoutAlert';
 import PeersListener from 'src/components/PeersListener';
 import {IPeerField} from 'src/types';
@@ -187,8 +186,7 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
         </StyledDrawer>
 
         <StyledP>Hello World</StyledP>
-        {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
-        <PeersListener publicID={publicID} localID={localID} />
+        <PeersListener selfIdentity={selfIdentity} publicID={publicID} localID={localID} />
         <RippleHolder />
       </Wrapper>
 

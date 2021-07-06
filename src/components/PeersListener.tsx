@@ -1,12 +1,13 @@
 import React, {useState, useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
-import {Button} from '@material-ui/core';
 
+import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
 import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
 import {IPeerField} from 'src/types';
 
 interface Props {
+  selfIdentity: IPeerField | null | undefined;
   publicID: string;
   localID: string;
 }
@@ -19,8 +20,9 @@ interface Props {
 // const db = firebase.firestore();
 // const roomRef = db.collection('rooms').doc(publicID);
 
-const PeersListener: React.FC<Props> = ({publicID, localID}) => {
+const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   const [otherPeers, setOtherPeers] = useState<IPeerField[]>([]);
+  const [sendAllFiles, setSendAllFiles] = useState<File[]>([]);
 
   useEffect(() => {
     const listenPeers = async () => {
@@ -43,6 +45,7 @@ const PeersListener: React.FC<Props> = ({publicID, localID}) => {
 
   return (
     <div>
+      {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
       {otherPeers.map((peer) => (
         <PeerConnectionHolder key={peer.id} targetPeer={peer} publicID={publicID} localID={localID} />
       ))}
