@@ -16,7 +16,7 @@ import WaitResponsePopper, {
   initialWaitResponsePopperData,
   waitResponsePopperReducer,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {MAXIMUM_FILE_NUMBER, MIN_CHUNK_SIZE} from 'src/constants/numericValues';
+import {MAXIMUM_BUFFER_BYTE, MAXIMUM_FILE_BYTE, MIN_CHUNK_SIZE} from 'src/constants/numericValues';
 import {GOT_REMOTE_DESC} from 'src/constants';
 
 interface Props {
@@ -179,9 +179,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     sentFileReaderRef.current = new FileReader();
     sentFileReaderRef.current.addEventListener('error', (error) => console.error('Error reading file:', error));
     sentFileReaderRef.current.addEventListener('abort', (event) => console.log('File reading aborted:', event));
-    sentFileReaderRef.current.addEventListener('load', async (e) => {
-      console.log('FileRead.onload ', e);
-      let result = e!.target!.result as ArrayBuffer;
+    sentFileReaderRef.current.addEventListener('load', (event) => {
+      console.log('FileRead.onload ', event);
+      let result = event!.target!.result as ArrayBuffer;
 
       (sendChannelRef.current as RTCDataChannel).send(result);
 
@@ -196,7 +196,14 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
       });
 
       if (totalOffset < totalFileSizeRef.current) {
-        readSlice(singularOffset);
+        (function checkBufferAmount() {
+          // for Chrome:
+          if ((sendChannelRef.current as RTCDataChannel).bufferedAmount + result.byteLength < MAXIMUM_FILE_BYTE) {
+            readSlice(singularOffset);
+          } else {
+            setTimeout(checkBufferAmount, 500);
+          }
+        })();
       } else {
         console.log('done');
         onTransferSuccess();
@@ -269,8 +276,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
           console.log('remove connection: ');
           console.log(connectionId, connectionIdRef.current);
           if (
-            connectionId === connectionIdRef.current ||
-            (data.p2p && (data.p2p.answer === localID || data.p2p.offer === localID))
+            connectionId === connectionIdRef.current &&
+            data.p2p &&
+            (data.p2p.answer === localID || data.p2p.offer === localID)
           ) {
             closeDataChannels(true);
           }
