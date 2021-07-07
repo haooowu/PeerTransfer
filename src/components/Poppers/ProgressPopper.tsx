@@ -5,7 +5,9 @@ import LinearProgress from 'src/components/LinearProgress';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
 
-const StyledAnchor = styled.a``;
+const StyledAnchor = styled.a`
+  min-width: max-content;
+`;
 
 interface IProgressPopperData {
   isOpen: boolean;

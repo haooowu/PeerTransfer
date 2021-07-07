@@ -4,6 +4,10 @@ import {Popper, Paper, DialogTitle} from '@material-ui/core';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {EnterType} from 'src/types';
 
+const StyledDialogTitle = styled(DialogTitle)`
+  min-width: max-content;
+`;
+
 interface Props {
   enterType: EnterType;
   anchorElement: any;
@@ -28,10 +32,10 @@ const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement}) => {
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        <DialogTitle>
+        <StyledDialogTitle>
           {enterType === 'drag' && 'Drop here to send files'}
           {enterType === 'mouse' && 'Click here to send files'}
-        </DialogTitle>
+        </StyledDialogTitle>
       </Paper>
     </Popper>
   );

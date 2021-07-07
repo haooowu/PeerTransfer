@@ -8,6 +8,7 @@ import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper'
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 
 const StyledButton = styled(Button)`
+  position: absolute;
   background-color: ${(props) => props.theme.secondary.main} !important;
   color: ${(props) => props.theme.secondary.contrastText} !important;
   &:hover {
@@ -29,6 +30,8 @@ const PeerFileDropZone: React.FC<Props> = ({
 }) => {
   const [enterType, setEnterType] = React.useState<EnterType>(null);
   const anchorRef = React.useRef(null);
+
+  React.useLayoutEffect(() => {}, []);
 
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);

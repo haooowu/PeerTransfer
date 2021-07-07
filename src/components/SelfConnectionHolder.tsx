@@ -31,7 +31,7 @@ interface Props {
 const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, localID, publicID}) => {
   // TODO-sprint: peer icon styling (ripple effects)
   // TODO-sprint: once waiting connection / transferring disable event
-  // TODO-sprint: send to all existing peer when click on self - offline load and send when online?
+  // TODO-sprint: send to all existing peer when click on self
 
   return (
     <Wrapper>

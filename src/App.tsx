@@ -7,6 +7,7 @@ import theme, {brightnessTheme} from 'src/styles/theme';
 
 import 'src/App.css';
 import 'react-toastify/dist/ReactToastify.css';
+import StyledToastContainer from 'src/styles/StyledToastContainer';
 
 // TODO-sprint: persist state provider with all the options from drawer in localStorage
 const App: React.FC = () => {
@@ -19,7 +20,14 @@ const App: React.FC = () => {
         }}
       >
         <HelloWorld />
-        <ToastContainer position="top-right" autoClose={5000} newestOnTop={false} closeOnClick rtl={false} draggable />
+        <StyledToastContainer
+          position="top-right"
+          autoClose={5000}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          draggable
+        />
       </ThemeProvider>
     </IdentityProvider>
   );
