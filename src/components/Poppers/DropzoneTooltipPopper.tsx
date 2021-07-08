@@ -10,10 +10,11 @@ const StyledDialogTitle = styled(DialogTitle)`
 
 interface Props {
   enterType: EnterType;
+  isSelf: boolean;
   anchorElement: any;
 }
 
-const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement}) => {
+const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSelf}) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const classes = usePopperStyles();
 

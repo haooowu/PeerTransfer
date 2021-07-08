@@ -3,9 +3,10 @@ import styled from 'styled-components';
 import {toast} from 'react-toastify';
 import {Button} from '@material-ui/core';
 import {EnterType, IPeerField} from 'src/types';
-import Dropzone, {FileRejection} from 'react-dropzone';
+import Dropzone from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
+import handleFileRejectedToast from 'src/utils/handleFileRejectedToast';
 
 const StyledButton = styled(Button)`
   position: absolute;
@@ -31,8 +32,6 @@ const PeerFileDropZone: React.FC<Props> = ({
   const [enterType, setEnterType] = React.useState<EnterType>(null);
   const anchorRef = React.useRef(null);
 
-  React.useLayoutEffect(() => {}, []);
-
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef, setAnchorElement]);
@@ -40,22 +39,6 @@ const PeerFileDropZone: React.FC<Props> = ({
   React.useEffect(() => {
     if (shouldDisableActionBtn) setEnterType(null);
   }, [shouldDisableActionBtn]);
-
-  function handleFileRejected(fileRejections: FileRejection[]) {
-    if (fileRejections.length > MAXIMUM_FILE_NUMBER) {
-      toast.error(`The maximum number of transfer files is set up to ${MAXIMUM_FILE_NUMBER}`);
-    } else {
-      fileRejections.forEach(({file, errors}) => {
-        toast.error(
-          `Unable to transfer ${file.name}${
-            errors.find((error) => error.code === 'file-too-large')
-              ? '. The maximum size per file is set up to 16mb'
-              : ''
-          }`,
-        );
-      });
-    }
-  }
 
   const avatarButtonClick = () =>
     ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '');
@@ -77,7 +60,7 @@ const PeerFileDropZone: React.FC<Props> = ({
         onDragEnter={onDragEnter}
         onDragLeave={onDragLeave}
         onDropAccepted={handleFileInputChange}
-        onDropRejected={handleFileRejected}
+        onDropRejected={handleFileRejectedToast}
       >
         {({getRootProps, getInputProps}) => (
           <div {...getRootProps()}>
@@ -95,7 +78,7 @@ const PeerFileDropZone: React.FC<Props> = ({
           </div>
         )}
       </Dropzone>
-      {enterType && <DropzoneTooltipPopper enterType={enterType} anchorElement={anchorRef.current} />}
+      {enterType && <DropzoneTooltipPopper isSelf={false} enterType={enterType} anchorElement={anchorRef.current} />}
     </>
   );
 };

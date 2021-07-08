@@ -99,17 +99,34 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  function handleFileInputChange(files: File[]) {
+    if (files.length > 0) {
+      console.log('files: ', files);
+      // TODO-sprint: send all
+    }
+  }
+
   let positionTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
 
   return (
     <PeersHolder id="peers-holder">
       {positionTest.map((a) => (
-        <div className="test">{a}</div>
+        <div className="test" key={a}>
+          {a}
+        </div>
       ))}
       {otherPeers.map((peer) => (
         <PeerConnectionHolder key={peer.id} targetPeer={peer} publicID={publicID} localID={localID} />
       ))}
-      {selfIdentity && <SelfConnectionHolder publicID={publicID} localID={localID} selfIdentity={selfIdentity} />}
+      {selfIdentity && (
+        <SelfConnectionHolder
+          shouldDisableActionBtn={sendAllFiles.length > 0}
+          handleFileInputChange={handleFileInputChange}
+          publicID={publicID}
+          localID={localID}
+          selfIdentity={selfIdentity}
+        />
+      )}
     </PeersHolder>
   );
 };
