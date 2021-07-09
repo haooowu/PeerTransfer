@@ -1,5 +1,4 @@
 import React from 'react';
-import {ToastContainer} from 'react-toastify';
 import HelloWorld from 'src/components/HelloWorld';
 import IdentityProvider from 'src/components/IdentityProvider';
 import {ThemeProvider} from 'styled-components';
@@ -23,6 +22,7 @@ const App: React.FC = () => {
         <StyledToastContainer
           position="top-right"
           autoClose={5000}
+          pauseOnFocusLoss={false}
           newestOnTop={false}
           closeOnClick
           rtl={false}

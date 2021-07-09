@@ -5,6 +5,8 @@ import styled from 'styled-components';
 import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
 import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
 import {IPeerField} from 'src/types';
+import {toast} from 'react-toastify';
+import {MAXIMUM_PEER_NUMBER} from 'src/constants';
 
 // TODO-sprint: wrap peers solely
 const PeersHolder = styled.div`
@@ -71,6 +73,7 @@ interface Props {
 // TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB)
 // TODO-sprint: UI popup for general FAQ - data disclaimer, browser support, file and size limit
 // TODO-sprint: fixed position at larger media, otherwise overflow-scroll card list in small
+
 // TODO-sprint: optimize snapshot listeners
 // TODO-sprint: provide db as firebase provider?
 // const db = firebase.firestore();
@@ -91,7 +94,11 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
         for (let id in allPeers) {
           if (id !== localID) peerHolder.push(allPeers[id]);
         }
-        setOtherPeers(peerHolder);
+        if (peerHolder.length > MAXIMUM_PEER_NUMBER) {
+          toast.warn(`The maximum concurrent peers is set to ${MAXIMUM_PEER_NUMBER}`);
+        } else {
+          setOtherPeers(peerHolder);
+        }
       });
     };
     listenPeers();
@@ -100,10 +107,11 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   }, []);
 
   function handleFileInputChange(files: File[]) {
-    if (files.length > 0) {
-      console.log('files: ', files);
-      // TODO-sprint: send all
-    }
+    setSendAllFiles(files);
+  }
+
+  function clearSentAllFiles() {
+    if (sendAllFiles.length > 0) setSendAllFiles([]);
   }
 
   let positionTest = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10];
@@ -116,7 +124,14 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
         </div>
       ))}
       {otherPeers.map((peer) => (
-        <PeerConnectionHolder key={peer.id} targetPeer={peer} publicID={publicID} localID={localID} />
+        <PeerConnectionHolder
+          clearSentAllFiles={clearSentAllFiles}
+          sendAllFiles={sendAllFiles}
+          key={peer.id}
+          targetPeer={peer}
+          publicID={publicID}
+          localID={localID}
+        />
       ))}
       {selfIdentity && (
         <SelfConnectionHolder

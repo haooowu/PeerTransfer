@@ -1,8 +1,7 @@
 import {FileRejection} from 'react-dropzone';
 import {toast} from 'react-toastify';
 import {MAXIMUM_FILE_NUMBER} from 'src/constants';
-
-// TODO-sprint: trim name
+import trimName from 'src/utils/trimName';
 
 function handleFileRejectedToast(fileRejections: FileRejection[]) {
   if (fileRejections.length > MAXIMUM_FILE_NUMBER) {
@@ -10,7 +9,7 @@ function handleFileRejectedToast(fileRejections: FileRejection[]) {
   } else {
     fileRejections.forEach(({file, errors}) => {
       toast.error(
-        `Unable to transfer ${file.name}${
+        `Unable to transfer ${trimName(file.name, 9)}${
           errors.find((error) => error.code === 'file-too-large') ? '. The maximum size per file is set up to 16mb' : ''
         }`,
       );

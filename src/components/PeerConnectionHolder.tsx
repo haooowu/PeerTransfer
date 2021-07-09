@@ -20,9 +20,12 @@ interface Props {
   targetPeer: IPeerField;
   localID: string;
   publicID: string;
+  sendAllFiles: File[];
+  clearSentAllFiles: () => void;
 }
 
-const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
+const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAllFiles, clearSentAllFiles}) => {
+  const isInit = useRef(true);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const connectionIdRef = useRef<string | null>(null);
   const sendChannelRef = useRef<RTCDataChannel | null>(null);
@@ -157,8 +160,6 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     const maxMessageSize = peerConnectionRef.current?.sctp?.maxMessageSize;
     console.log('maximum message size is: ', maxMessageSize);
 
-    // TODO-sprint: maxMessageSize is unstable
-
     const chunkSize = maxMessageSize || MIN_CHUNK_SIZE;
     let singularOffset = 0;
     let targetFileIndex = 0;
@@ -194,7 +195,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
 
       if (totalOffset < totalFileSizeRef.current) {
         (function checkBufferAmount() {
-          // for Chrome:
+          // for Chrome as maxMessageSize is unstable with chromium buffer
           if ((sendChannelRef.current as RTCDataChannel).bufferedAmount + result.byteLength < MAXIMUM_BUFFER_BYTE) {
             readSlice(singularOffset);
           } else {
@@ -295,6 +296,16 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID}) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
+
+  useEffect(() => {
+    if (isInit.current) {
+      isInit.current = false;
+    } else {
+      handleFileInputChange([...sendAllFiles]);
+      clearSentAllFiles();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInit, sendAllFiles]);
 
   const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
