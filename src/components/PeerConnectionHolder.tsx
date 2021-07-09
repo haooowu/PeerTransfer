@@ -1,7 +1,6 @@
 import React, {useState, useEffect, useMemo, useRef, useCallback, useReducer} from 'react';
 import firebase from 'src/services/firebase';
-import styled from 'styled-components';
-import {IFileMeta, IPeerField} from 'src/types';
+import {IFileMeta, IFirebaseConnectionRoomData, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
 import PeerFileDropZone from 'src/components/PeerFileDropZone';
@@ -14,7 +13,16 @@ import WaitResponsePopper, {
   initialWaitResponsePopperData,
   waitResponsePopperReducer,
 } from 'src/components/Poppers/WaitResponsePopper';
-import {GOT_REMOTE_DESC, MAXIMUM_BUFFER_BYTE, MIN_CHUNK_SIZE} from 'src/constants';
+import {
+  CALLEE,
+  CALLER,
+  CONNECTIONS,
+  FILE_METAS,
+  GOT_REMOTE_DESC,
+  MAXIMUM_BUFFER_BYTE,
+  MIN_CHUNK_SIZE,
+  ROOT_COLLECTION,
+} from 'src/constants';
 
 interface Props {
   targetPeer: IPeerField;
@@ -22,9 +30,17 @@ interface Props {
   publicID: string;
   sendAllFiles: File[];
   clearSentAllFiles: () => void;
+  firestoreDbRef: firebase.firestore.Firestore;
 }
 
-const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAllFiles, clearSentAllFiles}) => {
+const PeerIdentifier: React.FC<Props> = ({
+  targetPeer,
+  localID,
+  publicID,
+  firestoreDbRef,
+  sendAllFiles,
+  clearSentAllFiles,
+}) => {
   const isInit = useRef(true);
   const peerConnectionRef = useRef<RTCPeerConnection | null>(null);
   const connectionIdRef = useRef<string | null>(null);
@@ -60,9 +76,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
       await tryCreatePeerConnection(targetPeer);
       const connectionId = connectionIdRef.current as string;
 
-      const db = firebase.firestore();
-      const roomRef = db.collection('rooms').doc(publicID);
-      const connectionsRef = roomRef.collection('connections');
+      const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+      const connectionsRef = roomRef.collection(CONNECTIONS);
       const targetConnectionRef = connectionsRef.doc(connectionId);
 
       let metas: IFileMeta[] = [];
@@ -77,7 +92,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
       });
 
       let fileMetas = {
-        fileMetas: metas,
+        [FILE_METAS]: metas,
       };
 
       await targetConnectionRef.update(fileMetas);
@@ -87,21 +102,20 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
   const clearFirebaseConnection = useCallback(async () => {
     const connectionId = connectionIdRef.current;
     if (connectionId) {
-      const db = firebase.firestore();
-      const roomRef = db.collection('rooms').doc(`${publicID}`);
-      const connectionRef = roomRef.collection('connections').doc(connectionId);
-      const calleeCandidates = await connectionRef.collection('calleeCandidates').get();
+      const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+      const connectionRef = roomRef.collection(CONNECTIONS).doc(connectionId);
+      const calleeCandidates = await connectionRef.collection(CALLEE).get();
       calleeCandidates.forEach(async (candidate) => {
         await candidate.ref.delete();
       });
-      const callerCandidates = await connectionRef.collection('callerCandidates').get();
+      const callerCandidates = await connectionRef.collection(CALLER).get();
       callerCandidates.forEach(async (candidate) => {
         await candidate.ref.delete();
       });
       await connectionRef.delete();
       connectionIdRef.current = null;
     }
-  }, [connectionIdRef, publicID]);
+  }, [firestoreDbRef, connectionIdRef, publicID]);
 
   const closeDataChannels = useCallback(
     (shouldWarn: boolean) => {
@@ -248,13 +262,12 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
   }
 
   useEffect(() => {
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc(publicID);
-    const connectionRef = roomRef.collection('connections');
+    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+    const connectionRef = roomRef.collection(CONNECTIONS);
 
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
-        let data = change.doc.data();
+        let data = change.doc.data() as IFirebaseConnectionRoomData;
         if (change.type === 'modified') {
           const {isAccepting} = data;
           if (
@@ -309,9 +322,9 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
 
   const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc(publicID);
-    const connectionRef = roomRef.collection('connections').doc(connectionIdRef.current as string);
+
+    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+    const connectionRef = roomRef.collection(CONNECTIONS).doc(connectionIdRef.current as string);
 
     let completeFlag = 0;
     let receivedSize = 0;
@@ -391,7 +404,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
         }
       }
     }
-  }, [peerConnectionRef, receiveChannelRef, publicID, closeDataChannels]);
+  }, [firestoreDbRef, peerConnectionRef, receiveChannelRef, publicID, closeDataChannels]);
 
   const createSendDataChannel = useCallback(() => {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
@@ -427,9 +440,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
   }, [peerConnectionRef, sendChannelRef, sendFileData]);
 
   const joinFileChannel = async (connectionID: string) => {
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc(publicID);
-    const connectionRef = roomRef.collection('connections').doc(connectionID);
+    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+    const connectionRef = roomRef.collection(CONNECTIONS).doc(connectionID);
     const connectionSnapshot = await connectionRef.get();
 
     if (connectionSnapshot.exists) {
@@ -439,7 +451,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
       createReceiveDataChannel();
 
       // Code for collecting ICE candidates below
-      const calleeCandidatesCollection = connectionRef.collection('calleeCandidates');
+      const calleeCandidatesCollection = connectionRef.collection(CALLEE);
 
       peerConnectionRef.current.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
@@ -470,7 +482,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
       // Code for creating SDP answer above
 
       // Listening for remote ICE candidates below
-      connectionRef.collection('callerCandidates').onSnapshot((snapshot) => {
+      connectionRef.collection(CALLER).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
             let data = change.doc.data();
@@ -485,9 +497,8 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
   };
 
   const tryCreatePeerConnection = async (peer: IPeerField) => {
-    const db = firebase.firestore();
-    const roomRef = db.collection('rooms').doc(publicID);
-    const connectionsRef = roomRef.collection('connections');
+    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+    const connectionsRef = roomRef.collection(CONNECTIONS);
     const targetConnectionRef = connectionsRef.doc();
 
     const p2pData = {
@@ -497,7 +508,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
       },
     };
 
-    const callerCandidatesCollection = targetConnectionRef.collection('callerCandidates');
+    const callerCandidatesCollection = targetConnectionRef.collection(CALLER);
 
     peerConnectionRef.current = new RTCPeerConnection(pcConfig);
     console.log('created pc', peerConnectionRef.current);
@@ -546,7 +557,7 @@ const PeerIdentifier: React.FC<Props> = ({targetPeer, localID, publicID, sendAll
     // Listening for remote session description above
 
     // Listen for remote ICE candidates below
-    targetConnectionRef.collection('calleeCandidates').onSnapshot((snapshot) => {
+    targetConnectionRef.collection(CALLEE).onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
         if (change.type === 'added') {
           let data = change.doc.data();
