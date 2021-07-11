@@ -10,6 +10,7 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
+import Switch from '@material-ui/core/Switch';
 
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import GitHubIcon from '@material-ui/icons/GitHub';
@@ -21,8 +22,9 @@ import DesktopIcon from '@material-ui/icons/DesktopWindows';
 import DesktopOffIcon from '@material-ui/icons/DesktopAccessDisabled';
 import useDrawerStyles from 'src/styles/useDrawerStyles';
 
-// TODO-sprint: organize theme with styled-components
-// https://material-ui.com/components/drawers/
+// TODO-sprint: persist state provider with all the options from drawer in localStorage
+
+// TODO-sprint: update drawer styling
 
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};
@@ -31,6 +33,7 @@ const StyledIconButton = styled(IconButton)`
 `;
 
 const StyledListItemIcon = styled(ListItemIcon)`
+  margin-right: -16px;
   color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
@@ -83,12 +86,14 @@ const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
           <ListItem button key={text}>
             <StyledListItemIcon>{index % 2 === 0 ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
             <ListItemText primary={text} />
+            <Switch checked={true} inputProps={{'aria-label': 'secondary checkbox'}} />
           </ListItem>
         ))}
         {['Dark Mode', 'Light Mode'].map((text, index) => (
           <ListItem button key={text}>
             <StyledListItemIcon>{index % 2 === 0 ? <DesktopIcon /> : <DesktopOffIcon />}</StyledListItemIcon>
             <ListItemText primary={text} />
+            <Switch checked={false} inputProps={{'aria-label': 'secondary checkbox'}} />
           </ListItem>
         ))}
       </List>

@@ -71,7 +71,9 @@ interface Props {
 }
 
 // TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB)
+
 // TODO-sprint: UI popup for general FAQ - data disclaimer, browser support, file and size limit
+
 // TODO-sprint: fixed position at larger media, otherwise overflow-scroll card list in small
 
 const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
