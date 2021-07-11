@@ -94,7 +94,7 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, shouldDisableActio
           <span>{selfIdentity?.emoji}</span>
           <input id={`fileInput-self`} {...getInputProps()} />
         </StyledButton>
-        <div>Test</div>
+        <div>You</div>
       </div>
       {enterType && <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />}
     </Wrapper>

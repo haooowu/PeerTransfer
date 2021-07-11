@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {memo, useState, useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 
@@ -144,4 +144,4 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   );
 };
 
-export default PeersListener;
+export default memo(PeersListener);
