@@ -12,12 +12,14 @@ import 'src/App.css';
 import 'react-toastify/dist/ReactToastify.css';
 
 const App: React.FC = () => {
+  // TODO-sprint: update setting and themes provider
+
   const {appTheme} = useAppTheme();
 
   const MuiAppTheme = createMuiTheme({
     palette: {
       primary: {main: brightnessTheme[appTheme].primary.main},
-      secondary: {main: brightnessTheme[appTheme].secondary.main},
+      secondary: {main: brightnessTheme[appTheme].secondary.light},
     },
   });
 

@@ -1,5 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
+import {useAppTheme, useTransferSetting} from 'src/hooks';
 
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
@@ -16,14 +17,15 @@ import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import MenuIcon from '@material-ui/icons/Menu';
 import HelpIcon from '@material-ui/icons/Help';
-import CloudIcon from '@material-ui/icons/CloudQueue';
+import CloudIcon from '@material-ui/icons/CloudDownloadSharp';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
-import DesktopIcon from '@material-ui/icons/DesktopWindows';
-import DesktopOffIcon from '@material-ui/icons/DesktopAccessDisabled';
+import ChatIcon from '@material-ui/icons/Chat';
+import ChatOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import useDrawerStyles from 'src/styles/useDrawerStyles';
+import LightBrightnessIcon from '@material-ui/icons/Brightness7';
+import DarkBrightnessIcon from '@material-ui/icons/Brightness4';
 
-// TODO-sprint: persist state provider with all the options from drawer in localStorage
-
+// TODO-sprint: update hooks to provider useContext (on singleton support natively yet)
 // TODO-sprint: update drawer styling
 
 const StyledIconButton = styled(IconButton)`
@@ -51,6 +53,10 @@ interface Props {
 const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
   const classes = useDrawerStyles();
   const [open, setOpen] = React.useState(false);
+
+  const {shouldAutoAccept, shouldAutoDownload, toggleAutoAccept, toggleAutoDownload} = useTransferSetting();
+
+  const {appTheme, toggleLightDarkTheme} = useAppTheme();
 
   React.useEffect(() => {
     if (gestureDirection === 'left') setOpen(false);
@@ -82,20 +88,26 @@ const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
       </div>
       <Divider />
       <List>
-        {['Auto Accept Request', 'Auto Download Files'].map((text, index) => (
-          <ListItem button key={text}>
-            <StyledListItemIcon>{index % 2 === 0 ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
-            <ListItemText primary={text} />
-            <Switch checked={true} inputProps={{'aria-label': 'secondary checkbox'}} />
-          </ListItem>
-        ))}
-        {['Dark Mode', 'Light Mode'].map((text, index) => (
-          <ListItem button key={text}>
-            <StyledListItemIcon>{index % 2 === 0 ? <DesktopIcon /> : <DesktopOffIcon />}</StyledListItemIcon>
-            <ListItemText primary={text} />
-            <Switch checked={false} inputProps={{'aria-label': 'secondary checkbox'}} />
-          </ListItem>
-        ))}
+        <ListItem button onClick={toggleAutoAccept}>
+          <StyledListItemIcon>{shouldAutoAccept ? <ChatIcon /> : <ChatOffIcon />}</StyledListItemIcon>
+          <ListItemText primary={'Auto Accept Request'} />
+          <Switch checked={shouldAutoAccept} inputProps={{'aria-label': 'secondary checkbox'}} />
+        </ListItem>
+
+        <ListItem button onClick={toggleAutoDownload}>
+          <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
+          <ListItemText primary={'Auto Download Files'} />
+          <Switch checked={shouldAutoDownload} inputProps={{'aria-label': 'secondary checkbox'}} />
+        </ListItem>
+      </List>
+      <Divider />
+      <List>
+        <ListItem button onClick={toggleLightDarkTheme}>
+          <StyledListItemIcon>
+            {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
+          </StyledListItemIcon>
+          <ListItemText primary={'Light / Dark Themes'} />
+        </ListItem>
       </List>
       <Divider />
       <List>

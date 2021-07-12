@@ -1,4 +1,5 @@
 import {useEffect, useState} from 'react';
+import {APP_THEME} from 'src/constants';
 
 type AppTheme = 'light' | 'dark';
 
@@ -7,16 +8,16 @@ export const useAppTheme = () => {
 
   const toggleLightDarkTheme = () => {
     let target: AppTheme = appTheme === 'dark' ? 'light' : 'dark';
-    window.localStorage.setItem('appTheme', target);
+    window.localStorage.setItem(APP_THEME, target);
     setAppTheme(target);
   };
 
   useEffect(() => {
-    const currentTheme = window.localStorage.getItem('appTheme');
+    const currentTheme = window.localStorage.getItem(APP_THEME);
     if (currentTheme) {
       setAppTheme(currentTheme as AppTheme);
     } else {
-      window.localStorage.setItem('appTheme', 'dark');
+      window.localStorage.setItem(APP_THEME, 'dark');
     }
   }, []);
 
