@@ -1,10 +1,10 @@
 export const brightnessTheme = {
   light: {
     primary: {
-      main: '#fff6ec',
-      light: '#fff7ef',
-      dark: '#b2aca5',
-      contrastText: '#434343',
+      main: '#f0f0f0',
+      light: '#f5f5f5',
+      dark: '#ababab',
+      contrastText: '#5b5b5b',
     },
     secondary: {
       main: '#1565C0',

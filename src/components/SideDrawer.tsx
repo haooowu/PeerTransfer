@@ -1,6 +1,5 @@
 import React from 'react';
 import styled from 'styled-components';
-import {useAppTheme, useTransferSetting} from 'src/hooks';
 
 import clsx from 'clsx';
 import Drawer from '@material-ui/core/Drawer';
@@ -26,9 +25,7 @@ import ChatOffIcon from '@material-ui/icons/SpeakerNotesOff';
 import useDrawerStyles from 'src/styles/useDrawerStyles';
 import LightBrightnessIcon from '@material-ui/icons/Brightness7';
 import DarkBrightnessIcon from '@material-ui/icons/Brightness4';
-
-// TODO-sprint: update hooks to provider useContext (on singleton support natively yet)
-// TODO-sprint: update drawer styling
+import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};
@@ -52,13 +49,19 @@ interface Props {
   gestureDirection: 'left' | 'right' | undefined;
 }
 
-const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
+interface ISideDrawer extends Props, IAppSettingContextVariable {}
+
+const SideDrawer: React.FC<ISideDrawer> = ({
+  gestureDirection,
+  shouldAutoAccept,
+  shouldAutoDownload,
+  appTheme,
+  toggleAutoAccept,
+  toggleAutoDownload,
+  toggleLightDarkTheme,
+}) => {
   const classes = useDrawerStyles();
   const [open, setOpen] = React.useState(false);
-
-  const {shouldAutoAccept, shouldAutoDownload, toggleAutoAccept, toggleAutoDownload} = useTransferSetting();
-
-  const {appTheme, toggleLightDarkTheme} = useAppTheme();
 
   React.useEffect(() => {
     if (gestureDirection === 'left') setOpen(false);
@@ -146,4 +149,10 @@ const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
   );
 };
 
-export default SideDrawer;
+const ConsumedSideDrawer = (props: Props) => (
+  <AppSettingContext.Consumer>
+    {(appSettingContext: IAppSettingContextVariable) => <SideDrawer {...props} {...appSettingContext} />}
+  </AppSettingContext.Consumer>
+);
+
+export default ConsumedSideDrawer;
