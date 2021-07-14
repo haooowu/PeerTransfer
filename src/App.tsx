@@ -1,12 +1,12 @@
 import React from 'react';
 import HelloWorld from 'src/components/HelloWorld';
-import IdentityProvider from 'src/components/IdentityProvider';
+import IdentityProvider from 'src/providers/IdentityProvider';
 import {useAppTheme} from 'src/hooks';
 import StyledToastContainer from 'src/styles/StyledToastContainer';
 import theme, {brightnessTheme} from 'src/styles/theme';
 import {ThemeProvider} from 'styled-components';
 import MuiThemeProvider from '@material-ui/styles/ThemeProvider';
-import {createMuiTheme} from '@material-ui/core/styles';
+import {createTheme} from '@material-ui/core/styles';
 
 import 'src/App.css';
 import 'react-toastify/dist/ReactToastify.css';
@@ -16,7 +16,7 @@ const App: React.FC = () => {
 
   const {appTheme} = useAppTheme();
 
-  const MuiAppTheme = createMuiTheme({
+  const MuiAppTheme = createTheme({
     palette: {
       primary: {main: brightnessTheme[appTheme].primary.main},
       secondary: {main: brightnessTheme[appTheme].secondary.light},

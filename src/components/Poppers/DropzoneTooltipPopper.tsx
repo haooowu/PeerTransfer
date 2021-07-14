@@ -35,7 +35,7 @@ const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSel
       <Paper className={classes.paper}>
         <StyledDialogTitle>
           {enterType === 'drag' && 'Drop here to send files'}
-          {enterType === 'mouse' && 'Click here to send files'}
+          {enterType === 'mouse' && `Click here to ${isSelf ? 'send to all' : 'send files'}`}
         </StyledDialogTitle>
       </Paper>
     </Popper>

@@ -13,6 +13,8 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Switch from '@material-ui/core/Switch';
 
+import Tooltip from '@material-ui/core/Tooltip';
+
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import GitHubIcon from '@material-ui/icons/GitHub';
 import MenuIcon from '@material-ui/icons/Menu';
@@ -82,32 +84,48 @@ const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
     >
       <div className={classes.titleBar}>
         {open && <div className={classes.titleText}>PeerTransfer</div>}
-        <StyledIconButton disableRipple onClick={handleToggle}>
-          {open ? <ArrowBackIcon /> : <MenuIcon />}
-        </StyledIconButton>
+        <Tooltip title={open ? 'Close Menu' : 'Open Menu'} placement="right">
+          <StyledIconButton disableRipple onClick={handleToggle}>
+            {open ? <ArrowBackIcon /> : <MenuIcon />}
+          </StyledIconButton>
+        </Tooltip>
       </div>
       <Divider />
       <List>
-        <ListItem button onClick={toggleAutoAccept}>
-          <StyledListItemIcon>{shouldAutoAccept ? <ChatIcon /> : <ChatOffIcon />}</StyledListItemIcon>
-          <ListItemText primary={'Auto Accept Request'} />
-          <Switch checked={shouldAutoAccept} inputProps={{'aria-label': 'secondary checkbox'}} />
-        </ListItem>
+        <Tooltip title={'Auto Accept Toggle'} placement="right">
+          <ListItem button onClick={toggleAutoAccept}>
+            <StyledListItemIcon>{shouldAutoAccept ? <ChatIcon /> : <ChatOffIcon />}</StyledListItemIcon>
+            <ListItemText primary={'Auto Accept Request'} />
+            <Switch checked={shouldAutoAccept} inputProps={{'aria-label': 'secondary checkbox'}} />
+          </ListItem>
+        </Tooltip>
 
-        <ListItem button onClick={toggleAutoDownload}>
-          <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
-          <ListItemText primary={'Auto Download Files'} />
-          <Switch checked={shouldAutoDownload} inputProps={{'aria-label': 'secondary checkbox'}} />
-        </ListItem>
+        <Tooltip title={'Auto Download Toggle'} placement="right">
+          <ListItem button onClick={toggleAutoDownload}>
+            <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
+            <ListItemText primary={'Auto Download Files'} />
+            <Switch checked={shouldAutoDownload} inputProps={{'aria-label': 'secondary checkbox'}} />
+          </ListItem>
+        </Tooltip>
       </List>
       <Divider />
       <List>
-        <ListItem button onClick={toggleLightDarkTheme}>
-          <StyledListItemIcon>
-            {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
-          </StyledListItemIcon>
-          <ListItemText primary={'Light / Dark Themes'} />
-        </ListItem>
+        <Tooltip title="Brightness Theme Toggle" placement="right">
+          <ListItem button onClick={toggleLightDarkTheme}>
+            <StyledListItemIcon>
+              {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
+            </StyledListItemIcon>
+            <ListItemText primary={'Light / Dark Themes'} />
+          </ListItem>
+        </Tooltip>
+        <Tooltip title="Join Another Room" placement="right">
+          <ListItem button>
+            <StyledListItemIcon>
+              <AccountTreeIcon />
+            </StyledListItemIcon>
+            <ListItemText primary={'Join a room'} />
+          </ListItem>
+        </Tooltip>
       </List>
       <Divider />
       <List>
@@ -115,19 +133,13 @@ const SideDrawer: React.FC<Props> = ({gestureDirection}) => {
           <StyledListItemIcon>
             <HelpIcon />
           </StyledListItemIcon>
-          <ListItemText primary={'FAQ'} />
+          <ListItemText primary={'About'} />
         </ListItem>
         <ListItem button>
           <StyledListItemIcon>
             <GitHubIcon />
           </StyledListItemIcon>
           <ListItemText primary={'Source'} />
-        </ListItem>
-        <ListItem button>
-          <StyledListItemIcon>
-            <AccountTreeIcon />
-          </StyledListItemIcon>
-          <ListItemText primary={'Join a room'} />
         </ListItem>
       </List>
     </StyledDrawer>

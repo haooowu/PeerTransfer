@@ -9,7 +9,7 @@ import {CircularProgress} from '@material-ui/core';
 import backgroundRipple from 'src/assets/backgroundRipple.svg';
 
 import {useGesture} from 'react-use-gesture';
-import {IdentityContext, IIdentityContextVariable} from 'src/components/IdentityProvider';
+import {IdentityContext, IIdentityContextVariable} from 'src/providers/IdentityProvider';
 import PeersListener from 'src/components/PeersListener';
 import SideDrawer from 'src/components/SideDrawer';
 import {IPeerField} from 'src/types';
