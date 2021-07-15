@@ -4,6 +4,20 @@ import styled from 'styled-components';
 
 // TODO-sprint: fixed position at larger media, otherwise overflow-scroll card list in small
 
+/**
+ * e.g. peerHolder
+ *  ...unset
+ *  position: relative;
+    width: 100%;
+    height: 100px;
+ * 
+ * e.g. button:
+ * border-radius: unset !important;
+    width: 100%;
+    animation: unset;
+ * 
+ */
+
 const StyledPeerPosition = styled.div`
   .peerHolder {
     border-radius: 50%;

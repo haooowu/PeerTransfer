@@ -67,7 +67,7 @@ interface Props {
   publicID: string;
 }
 
-const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
+const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
   const [selfIdentity, setSelfIdentity] = useState<IPeerField | null>();
   const [gestureDirection, setGestureDirection] = useState<'left' | 'right' | undefined>();
 
@@ -119,11 +119,11 @@ const ConsumedHelloWorld: React.FC<Props> = ({publicID, localID}) => {
   );
 };
 
-const HelloWorld = () => (
+const IdentityLayout = () => (
   <IdentityContext.Consumer>
     {({localID, publicID}: IIdentityContextVariable) =>
       localID && publicID ? (
-        <ConsumedHelloWorld localID={localID} publicID={publicID} />
+        <ConsumedIdentityLayout localID={localID} publicID={publicID} />
       ) : (
         <LoadingWrapper>
           <Loader />
@@ -133,4 +133,4 @@ const HelloWorld = () => (
   </IdentityContext.Consumer>
 );
 
-export default HelloWorld;
+export default IdentityLayout;

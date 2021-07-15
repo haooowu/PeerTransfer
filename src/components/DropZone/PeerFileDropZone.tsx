@@ -32,6 +32,11 @@ const PeerFileDropZone: React.FC<Props> = ({
   const [enterType, setEnterType] = React.useState<EnterType>(null);
   const anchorRef = React.useRef(null);
 
+  const onDragEnter = () => setEnterType('drag');
+  const onDragLeave = () => setEnterType(null);
+  const onMouseEnter = () => setEnterType('mouse');
+  const onMouseLeave = () => setEnterType(null);
+
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef, setAnchorElement]);
@@ -42,14 +47,6 @@ const PeerFileDropZone: React.FC<Props> = ({
 
   const avatarButtonClick = () =>
     ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '');
-
-  const onDragEnter = () => setEnterType('drag');
-
-  const onDragLeave = () => setEnterType(null);
-
-  const onMouseEnter = () => setEnterType('mouse');
-
-  const onMouseLeave = () => setEnterType(null);
 
   return (
     <>

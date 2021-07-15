@@ -2,7 +2,7 @@ import React, {memo, useState, useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
 import StyledPeerPosition from 'src/styles/StyledPeerPosition';
-import SelfConnectionHolder from 'src/components/SelfConnectionHolder';
+import SelfFileDropZone from 'src/components/DropZone/SelfFileDropZone';
 import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
 import {IPeerField} from 'src/types';
 import {toast} from 'react-toastify';
@@ -76,7 +76,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
         />
       ))}
       {selfIdentity && (
-        <SelfConnectionHolder
+        <SelfFileDropZone
           shouldDisableActionBtn={sendAllFiles.length > 0}
           handleFileInputChange={handleFileInputChange}
           publicID={publicID}

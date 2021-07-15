@@ -3,7 +3,7 @@ import firebase from 'src/services/firebase';
 import {IFileMeta, IFirebaseConnectionRoomData, IPeerField} from 'src/types';
 import pcConfig from 'src/utils/pcConfig';
 import {toast} from 'react-toastify';
-import PeerFileDropZone from 'src/components/PeerFileDropZone';
+import PeerFileDropZone from 'src/components/DropZone/PeerFileDropZone';
 import ProgressPopper, {initialProgressPopperData, progressPopperReducer} from 'src/components/Poppers/ProgressPopper';
 import NotifyOfferPopper, {
   notifyOfferPopperReducer,

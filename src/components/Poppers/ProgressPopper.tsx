@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
-import LinearProgress from 'src/components/LinearProgress';
+import LinearProgress from 'src/components/Poppers/views/LinearProgress';
 import usePopperStyles from 'src/styles/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
 

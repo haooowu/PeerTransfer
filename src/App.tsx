@@ -1,5 +1,5 @@
 import React from 'react';
-import HelloWorld from 'src/components/HelloWorld';
+import IdentityLayout from 'src/components/IdentityLayout';
 import IdentityProvider from 'src/providers/IdentityProvider';
 import AppSettingProvider, {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 import StyledToastContainer from 'src/styles/StyledToastContainer';
@@ -31,7 +31,7 @@ const AppContent: React.FC<Props> = ({appTheme}) => {
       }}
     >
       <MuiThemeProvider theme={MuiAppTheme}>
-        <HelloWorld />
+        <IdentityLayout />
         <StyledToastContainer
           position="top-right"
           autoClose={5000}
