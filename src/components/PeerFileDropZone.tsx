@@ -1,20 +1,20 @@
 import React from 'react';
 import styled from 'styled-components';
-import {toast} from 'react-toastify';
-import {Button} from '@material-ui/core';
+import {StyledCircleButton} from 'src/styles/StyledCircleButton';
 import {EnterType, IPeerField} from 'src/types';
 import Dropzone from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 import handleFileRejectedToast from 'src/utils/handleFileRejectedToast';
 
-const StyledButton = styled(Button)`
-  position: absolute;
-  background-color: ${(props) => props.theme.secondary.main} !important;
-  color: ${(props) => props.theme.secondary.contrastText} !important;
-  &:hover {
-    background: ${(props) => props.theme.secondary.dark} !important;
-  }
+const IdentityWrapper = styled.div`
+  position: relative;
+  font-size: 14px;
+  color: ${(props) => props.theme.primary.contrastText};
+  text-transform: capitalize;
+  min-width: max-content;
+  left: 50%;
+  transform: translateX(-50%);
 `;
 interface Props {
   shouldDisableActionBtn: boolean;
@@ -64,7 +64,8 @@ const PeerFileDropZone: React.FC<Props> = ({
       >
         {({getRootProps, getInputProps}) => (
           <div {...getRootProps()}>
-            <StyledButton
+            <StyledCircleButton
+              className="peerBtn"
               ref={anchorRef}
               disabled={shouldDisableActionBtn}
               onMouseOver={onMouseEnter}
@@ -74,10 +75,13 @@ const PeerFileDropZone: React.FC<Props> = ({
             >
               <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
               <span>{targetPeer.emoji}</span>
-            </StyledButton>
+            </StyledCircleButton>
           </div>
         )}
       </Dropzone>
+      <IdentityWrapper>
+        {targetPeer.platform}-{targetPeer.browser}
+      </IdentityWrapper>
       {enterType && <DropzoneTooltipPopper isSelf={false} enterType={enterType} anchorElement={anchorRef.current} />}
     </>
   );

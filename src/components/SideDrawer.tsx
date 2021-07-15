@@ -42,6 +42,7 @@ const StyledDrawer = styled(Drawer)`
   .MuiDrawer-paper {
     background-color: ${(props) => props.theme.primary.light} !important;
     color: ${(props) => props.theme.primary.contrastText} !important;
+    overflow-x: hidden;
   }
 `;
 

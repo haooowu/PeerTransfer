@@ -1,13 +1,11 @@
 import React from 'react';
-import {rgba} from 'polished';
-import {toast} from 'react-toastify';
-import styled, {keyframes} from 'styled-components';
-import {Button} from '@material-ui/core';
-import {EnterType, IFileMeta, IPeerField} from 'src/types';
-import {useDropzone, FileRejection} from 'react-dropzone';
+import styled from 'styled-components';
+import {EnterType, IPeerField} from 'src/types';
+import {useDropzone} from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 import handleFileRejectedToast from 'src/utils/handleFileRejectedToast';
+import {OwnStyledCircleButton} from 'src/styles/StyledCircleButton';
 
 const Wrapper = styled.div`
   z-index: 1;
@@ -17,35 +15,10 @@ const Wrapper = styled.div`
   transform: translateX(-50%);
 `;
 
-const color = rgba('#468266', 0.3);
-
-const circleRipple = keyframes`
-  0% {
-    box-shadow: 
-      0 0 0 0 ${color}, 
-      0 0 0 1em ${color}, 
-      0 0 0 3em ${color}, 
-      0 0 0 5em ${color};
-  }
-  100% {
-    box-shadow:
-      0 0 0 1em ${color}, 
-      0 0 0 3em ${color},
-      0 0 0 5em ${color}, 
-      0 0 0 8em transparent;
-  }
-`;
-
-const StyledButton = styled(Button)`
-  background-color: ${(props) => props.theme.secondary.main} !important;
-  color: ${(props) => props.theme.secondary.contrastText} !important;
-  &:hover {
-    background: ${(props) => props.theme.secondary.dark} !important;
-  }
-  border-radius: 50% !important;
-  height: 64px;
-  width: 64px;
-  animation: ${circleRipple} 0.7s linear infinite;
+const IdentityWrapper = styled.div`
+  font-size: 14px;
+  color: ${(props) => props.theme.primary.contrastText};
+  text-transform: capitalize;
 `;
 
 interface Props {
@@ -84,17 +57,19 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, shouldDisableActio
   return (
     <Wrapper>
       <div {...getRootProps()}>
-        <StyledButton
+        <OwnStyledCircleButton
           ref={anchorRef}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
           onClick={avatarButtonClick}
           variant="contained"
         >
-          <span>{selfIdentity?.emoji}</span>
+          <span>{selfIdentity.emoji}</span>
           <input id={`fileInput-self`} {...getInputProps()} />
-        </StyledButton>
-        <div>You</div>
+        </OwnStyledCircleButton>
+        <IdentityWrapper>
+          You: {selfIdentity.platform}-{selfIdentity.browser}
+        </IdentityWrapper>
       </div>
       {enterType && <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />}
     </Wrapper>

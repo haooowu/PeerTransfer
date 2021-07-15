@@ -572,7 +572,7 @@ const PeerIdentifier: React.FC<Props> = ({
   };
 
   return (
-    <div>
+    <div className="peerHolder">
       <PeerFileDropZone
         shouldDisableActionBtn={shouldDisableActionBtn}
         handleFileInputChange={handleFileInputChange}

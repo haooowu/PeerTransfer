@@ -90,10 +90,10 @@ const NotifyOfferPopper: React.FC<Props> = ({
           ))}
         </DialogContent>
         <DialogActions>
-          <Button onClick={handleDecline} color="primary">
+          <Button onClick={handleDecline} color="secondary">
             Decline
           </Button>
-          <Button onClick={handleAccept} color="primary">
+          <Button onClick={handleAccept} color="secondary">
             Accept
           </Button>
         </DialogActions>

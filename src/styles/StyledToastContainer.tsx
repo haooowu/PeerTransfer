@@ -1,4 +1,3 @@
-import React from 'react';
 import styled from 'styled-components';
 import {ToastContainer, ToastContainerProps} from 'react-toastify';
 
