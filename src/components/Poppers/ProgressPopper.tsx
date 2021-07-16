@@ -1,14 +1,17 @@
 import React from 'react';
-import styled from 'styled-components';
-import {Button, Popper, Paper, DialogActions} from '@material-ui/core';
+import {Popper} from '@material-ui/core';
+import {
+  PopperContentWrapper,
+  ContentTitle,
+  ContentBody,
+  ContentFooter,
+  StyledPopperButton,
+  DownloadLinksHolder,
+  StyledDownloadLink,
+} from 'src/styles/styled-components/StyledPopperContent';
 import LinearProgress from 'src/components/Poppers/views/LinearProgress';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
-
-const StyledAnchor = styled.a`
-  min-width: max-content;
-  margin-bottom: 4px;
-`;
 
 interface IProgressPopperData {
   isOpen: boolean;
@@ -128,54 +131,54 @@ const ProgressPopper: React.FC<Props> = ({
       }}
     >
       <div className={classes.arrow} ref={setArrowRef} />
-      <Paper className={classes.paper}>
+      <PopperContentWrapper>
         {progressType === 'receive' ? (
           <>
-            <div className={classes.title}>Downloadable file will show below</div>
-            <div className={classes.body}>
+            <ContentTitle>Downloadable file will show below</ContentTitle>
+            <ContentBody>
               {receivedFiles &&
                 receivedFiles.map((file, i) => (
-                  <div key={`${targetPeer.id}-download-${i}`}>
-                    <StyledAnchor
+                  <DownloadLinksHolder key={`${targetPeer.id}-download-${i}`}>
+                    <StyledDownloadLink
                       onClick={() => handleDownloadClick(file)}
                       download={file.fileName}
                       href={file.fileBlobUrl}
                     >
-                      click here to download {file.fileName}
-                    </StyledAnchor>
-                  </div>
+                      Download {file.fileName}
+                    </StyledDownloadLink>
+                  </DownloadLinksHolder>
                 ))}
               {fileProgress !== 100 && <LinearProgress progress={fileProgress} />}
-            </div>
-            <DialogActions>
+            </ContentBody>
+            <ContentFooter>
               {fileProgress === 100 ? (
-                <Button variant="outlined" size="small" onClick={handleClose} color="secondary">
+                <StyledPopperButton variant="outlined" size="small" onClick={handleClose} color="secondary">
                   close
-                </Button>
+                </StyledPopperButton>
               ) : (
-                <Button variant="outlined" size="small" onClick={handleCancel} color="secondary">
+                <StyledPopperButton variant="outlined" size="small" onClick={handleCancel} color="secondary">
                   cancel
-                </Button>
+                </StyledPopperButton>
               )}
-            </DialogActions>
+            </ContentFooter>
           </>
         ) : (
           <>
-            <div className={classes.title}>Sending...</div>
+            <ContentTitle>Sending...</ContentTitle>
 
-            <div className={classes.body}>
+            <ContentBody>
               <div>Waiting for file transfer to complete...</div>
               <LinearProgress progress={fileProgress} />
-            </div>
+            </ContentBody>
 
-            <div className={classes.footer}>
-              <Button variant="outlined" onClick={handleCancel} color="secondary">
+            <ContentFooter>
+              <StyledPopperButton variant="outlined" onClick={handleCancel} color="secondary">
                 cancel
-              </Button>
-            </div>
+              </StyledPopperButton>
+            </ContentFooter>
           </>
         )}
-      </Paper>
+      </PopperContentWrapper>
     </Popper>
   );
 };

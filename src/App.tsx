@@ -18,8 +18,11 @@ interface Props {
 const AppContent: React.FC<Props> = ({appTheme}) => {
   const MuiAppTheme = createTheme({
     palette: {
-      primary: {main: brightnessTheme[appTheme].primary.main},
-      secondary: {main: brightnessTheme[appTheme].secondary.light},
+      primary: {
+        main: brightnessTheme[appTheme].primary.main,
+        dark: brightnessTheme[appTheme].primary.dark,
+      },
+      secondary: {main: brightnessTheme[appTheme].secondary.main},
     },
   });
 

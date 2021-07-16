@@ -1,5 +1,6 @@
 import React from 'react';
-import {Popper, Paper} from '@material-ui/core';
+import {Popper} from '@material-ui/core';
+import {PopperContentWrapper, ContentTitle} from 'src/styles/styled-components/StyledPopperContent';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {EnterType} from 'src/types';
 
@@ -33,12 +34,12 @@ const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSel
       }}
     >
       <div className={classes.arrow} ref={setArrowRef} />
-      <Paper className={classes.paper}>
-        <div className={classes.title}>
+      <PopperContentWrapper>
+        <ContentTitle>
           {enterType === 'drag' && 'Drop here to send files'}
           {enterType === 'mouse' && `Click here to ${isSelf ? 'send to all' : 'send files'}`}
-        </div>
-      </Paper>
+        </ContentTitle>
+      </PopperContentWrapper>
     </Popper>
   );
 };

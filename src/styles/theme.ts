@@ -3,13 +3,13 @@ export const brightnessTheme = {
     primary: {
       main: '#f1f0ea',
       light: '#f3f3ee',
-      dark: '#aaaaa6',
-      contrastText: '#008080',
+      dark: '#d7d7d3',
+      contrastText: '#025855',
     },
     secondary: {
-      main: '#1565C0',
-      dark: '#0e4686',
-      light: '#4383cc',
+      main: '#cd5521',
+      dark: '#8f3b17',
+      light: '#d7774d',
       contrastText: '#fff',
     },
   },

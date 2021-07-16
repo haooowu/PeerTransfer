@@ -1,17 +1,16 @@
 import React from 'react';
-import styled from 'styled-components';
-import {Button, Popper, Paper, DialogContentText} from '@material-ui/core';
+import {Popper} from '@material-ui/core';
+import {
+  PopperContentWrapper,
+  ContentTitle,
+  ContentBody,
+  ContentText,
+  ContentFooter,
+  StyledPopperButton,
+} from 'src/styles/styled-components/StyledPopperContent';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
 import readableBytes from 'src/utils/readableBytes';
-
-const StyledDialogContentText = styled(DialogContentText)`
-  font-size: calc(10px + 1vmin) !important;
-`;
-
-const StyledButton = styled(Button)`
-  margin-left: 8px !important;
-`;
 
 interface INotifyOfferPopperData {
   isOpen: boolean;
@@ -93,26 +92,26 @@ const NotifyOfferPopper: React.FC<Props> = ({
       }}
     >
       <div className={classes.arrow} ref={setArrowRef} />
-      <Paper className={classes.paper}>
-        <div className={classes.title}>
+      <PopperContentWrapper>
+        <ContentTitle>
           {targetPeer.emoji} from {targetPeer.platform} {targetPeer.browser} wants to send:
-        </div>
-        <div className={classes.body}>
+        </ContentTitle>
+        <ContentBody>
           {fileMetas?.map((fileMeta, i) => (
-            <StyledDialogContentText key={`${targetPeer.id}-meta-${i}`}>
+            <ContentText key={`${targetPeer.id}-meta-${i}`}>
               {fileMeta!.name} ({readableBytes(fileMeta!.size)})
-            </StyledDialogContentText>
+            </ContentText>
           ))}
-        </div>
-        <div className={classes.footer}>
-          <StyledButton variant="contained" size="small" onClick={handleAccept} color="secondary">
+        </ContentBody>
+        <ContentFooter>
+          <StyledPopperButton variant="contained" size="small" onClick={handleAccept} color="secondary">
             Accept
-          </StyledButton>
-          <StyledButton variant="outlined" size="small" onClick={handleDecline} color="secondary">
+          </StyledPopperButton>
+          <StyledPopperButton variant="outlined" size="small" onClick={handleDecline} color="secondary">
             Decline
-          </StyledButton>
-        </div>
-      </Paper>
+          </StyledPopperButton>
+        </ContentFooter>
+      </PopperContentWrapper>
     </Popper>
   );
 };

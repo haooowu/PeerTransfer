@@ -1,30 +1,6 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 const usePopperStyles = makeStyles((theme) => ({
-  root: {
-    zIndex: 9,
-  },
-  paper: {
-    maxWidth: 400,
-    overflow: 'auto',
-    textAlign: 'left',
-    padding: 14,
-  },
-  title: {
-    fontSize: 'calc(8px + 1vmin)',
-    minWidth: 'max-content',
-  },
-  body: {
-    marginTop: 16,
-    marginBottom: 8,
-    maxHeight: 200,
-    overflowY: 'auto',
-    userSelect: 'none',
-  },
-  footer: {
-    display: 'flex',
-    flexDirection: 'row-reverse',
-  },
   popper: {
     zIndex: 99,
     '&[x-placement*="top"]': {
@@ -38,7 +14,7 @@ const usePopperStyles = makeStyles((theme) => ({
       height: '1em',
       '&::before': {
         borderWidth: '0 1em 1em 1em',
-        borderColor: `transparent transparent ${theme.palette.background.paper} transparent`,
+        borderColor: `transparent transparent ${theme.palette.primary.dark} transparent`,
       },
     },
     '&[x-placement*="top"] $arrow': {
@@ -49,7 +25,7 @@ const usePopperStyles = makeStyles((theme) => ({
       height: '1em',
       '&::before': {
         borderWidth: '1em 1em 0 1em',
-        borderColor: `${theme.palette.background.paper} transparent transparent transparent`,
+        borderColor: `${theme.palette.primary.dark} transparent transparent transparent`,
       },
     },
     '&[x-placement*="right"] $arrow': {
@@ -59,7 +35,7 @@ const usePopperStyles = makeStyles((theme) => ({
       width: '1em',
       '&::before': {
         borderWidth: '1em 1em 1em 0',
-        borderColor: `transparent ${theme.palette.background.paper} transparent transparent`,
+        borderColor: `transparent ${theme.palette.primary.dark} transparent transparent`,
       },
     },
     '&[x-placement*="left"] $arrow': {
@@ -69,7 +45,7 @@ const usePopperStyles = makeStyles((theme) => ({
       width: '1em',
       '&::before': {
         borderWidth: '1em 0 1em 1em',
-        borderColor: `transparent transparent transparent ${theme.palette.background.paper}`,
+        borderColor: `transparent transparent transparent ${theme.palette.primary.dark}`,
       },
     },
   },

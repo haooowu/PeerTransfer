@@ -1,5 +1,6 @@
 import React from 'react';
-import {Popper, Paper} from '@material-ui/core';
+import {Popper} from '@material-ui/core';
+import {PopperContentWrapper, ContentTitle} from 'src/styles/styled-components/StyledPopperContent';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField} from 'src/types';
 import {DATA_CHANNEL_TIMEOUT, GOT_REMOTE_DESC} from 'src/constants';
@@ -94,13 +95,13 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
       }}
     >
       <div className={classes.arrow} ref={setArrowRef} />
-      <Paper className={classes.paper}>
-        <div className={classes.title}>
+      <PopperContentWrapper>
+        <ContentTitle>
           {gotRemoteDesc
             ? `Preparing data channel with ${targetPeer.emoji}...`
             : `Waiting for ${targetPeer.emoji}'s response...`}
-        </div>
-      </Paper>
+        </ContentTitle>
+      </PopperContentWrapper>
     </Popper>
   );
 };
