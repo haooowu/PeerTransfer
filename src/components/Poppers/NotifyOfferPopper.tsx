@@ -1,8 +1,17 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
+import {Button, Popper, Paper, DialogContentText} from '@material-ui/core';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
+import readableBytes from 'src/utils/readableBytes';
+
+const StyledDialogContentText = styled(DialogContentText)`
+  font-size: calc(10px + 1vmin) !important;
+`;
+
+const StyledButton = styled(Button)`
+  margin-left: 8px !important;
+`;
 
 interface INotifyOfferPopperData {
   isOpen: boolean;
@@ -69,9 +78,15 @@ const NotifyOfferPopper: React.FC<Props> = ({
       open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
-      disablePortal
       className={classes.popper}
       modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
         arrow: {
           element: arrowRef,
         },
@@ -79,24 +94,24 @@ const NotifyOfferPopper: React.FC<Props> = ({
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        <DialogTitle>
+        <div className={classes.title}>
           {targetPeer.emoji} from {targetPeer.platform} {targetPeer.browser} wants to send:
-        </DialogTitle>
-        <DialogContent>
+        </div>
+        <div className={classes.body}>
           {fileMetas?.map((fileMeta, i) => (
-            <DialogContentText key={`${targetPeer.id}-meta-${i}`}>
-              {fileMeta!.name} ({fileMeta!.size} bytes)
-            </DialogContentText>
+            <StyledDialogContentText key={`${targetPeer.id}-meta-${i}`}>
+              {fileMeta!.name} ({readableBytes(fileMeta!.size)})
+            </StyledDialogContentText>
           ))}
-        </DialogContent>
-        <DialogActions>
-          <Button onClick={handleDecline} color="secondary">
-            Decline
-          </Button>
-          <Button onClick={handleAccept} color="secondary">
+        </div>
+        <div className={classes.footer}>
+          <StyledButton variant="contained" size="small" onClick={handleAccept} color="secondary">
             Accept
-          </Button>
-        </DialogActions>
+          </StyledButton>
+          <StyledButton variant="outlined" size="small" onClick={handleDecline} color="secondary">
+            Decline
+          </StyledButton>
+        </div>
       </Paper>
     </Popper>
   );

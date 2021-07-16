@@ -1,14 +1,35 @@
 import {makeStyles} from '@material-ui/core/styles';
 
 const usePopperStyles = makeStyles((theme) => ({
+  root: {
+    zIndex: 9,
+  },
   paper: {
     maxWidth: 400,
     overflow: 'auto',
     textAlign: 'left',
+    padding: 14,
+  },
+  title: {
+    fontSize: 'calc(8px + 1vmin)',
+    minWidth: 'max-content',
+  },
+  body: {
+    marginTop: 16,
+    marginBottom: 8,
+    maxHeight: 200,
+    overflowY: 'auto',
+    userSelect: 'none',
+  },
+  footer: {
+    display: 'flex',
+    flexDirection: 'row-reverse',
   },
   popper: {
-    zIndex: 1,
-    top: '-8px !important',
+    zIndex: 99,
+    '&[x-placement*="top"]': {
+      top: '-8px !important',
+    },
     '&[x-placement*="bottom"] $arrow': {
       top: 0,
       left: 0,

@@ -14,9 +14,9 @@ const StyledPeerPosition = styled.div`
       left: unset !important;
       right: unset !important;
       transform: unset !important;
-      margin-right: auto;
       margin-left: auto;
-      margin-bottom: 2em;
+      margin-right: auto;
+      margin-bottom: 3em;
     }
   }
   & .peerHolder:nth-child(1) {

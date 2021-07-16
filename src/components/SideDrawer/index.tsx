@@ -96,7 +96,7 @@ const SideDrawer: React.FC<ISideDrawer> = ({
       </div>
       <Divider />
       <List>
-        <Tooltip title={'Auto Accept Toggle'} placement="right">
+        <Tooltip title={'Auto Accept'} placement="right">
           <ListItem button onClick={toggleAutoAccept}>
             <StyledListItemIcon>{shouldAutoAccept ? <ChatIcon /> : <ChatOffIcon />}</StyledListItemIcon>
             <ListItemText primary={'Auto Accept Request'} />
@@ -104,7 +104,7 @@ const SideDrawer: React.FC<ISideDrawer> = ({
           </ListItem>
         </Tooltip>
 
-        <Tooltip title={'Auto Download Toggle'} placement="right">
+        <Tooltip title={'Auto Download'} placement="right">
           <ListItem button onClick={toggleAutoDownload}>
             <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
             <ListItemText primary={'Auto Download Files'} />
@@ -114,7 +114,7 @@ const SideDrawer: React.FC<ISideDrawer> = ({
       </List>
       <Divider />
       <List>
-        <Tooltip title="Brightness Theme Toggle" placement="right">
+        <Tooltip title="Brightness Theme" placement="right">
           <ListItem button onClick={toggleLightDarkTheme}>
             <StyledListItemIcon>
               {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}

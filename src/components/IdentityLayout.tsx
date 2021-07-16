@@ -97,11 +97,14 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
 
   const bind = useGesture({
     onDragEnd: (state) => {
-      let swipeX = state.swipe[0];
-      let swipeY = state.swipe[1];
-      if (swipeX === -1) setGestureDirection('left');
-      if (swipeX === 1) setGestureDirection('right');
-      if (swipeX === 0 && swipeY === 0) setGestureDirection(undefined);
+      let movementX = Math.sign(state.movement[0]);
+      let movementY = Math.sign(state.movement[1]);
+      let distanceX = Math.abs(state.movement[0]);
+      if (distanceX > 4) {
+        if (movementX === -1) setGestureDirection('left');
+        if (movementX === 1) setGestureDirection('right');
+      }
+      if (movementX === 0 && movementY === 0) setGestureDirection(undefined);
     },
   });
 

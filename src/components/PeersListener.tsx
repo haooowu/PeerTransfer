@@ -19,11 +19,14 @@ const PeersHolder = styled(StyledPeerPosition)`
   width: 100%;
   z-index: 1;
   overflow-y: auto;
-  padding-top: 0.5em;
+  padding-top: 1em;
   padding-bottom: 100px;
   @media only screen and (${breakpoints.sm}) {
     padding-bottom: 0;
     margin-bottom: 120px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-around;
   }
 `;
 
@@ -34,6 +37,8 @@ interface Props {
 }
 
 // TODO-sprint: polish all popper styling
+
+// TODO-sprint: popper disablePortal bugs
 
 // TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB, child(publicID) remove, then add another new publicID)
 

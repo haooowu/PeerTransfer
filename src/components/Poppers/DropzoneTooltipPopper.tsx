@@ -1,12 +1,7 @@
 import React from 'react';
-import styled from 'styled-components';
-import {Popper, Paper, DialogTitle} from '@material-ui/core';
+import {Popper, Paper} from '@material-ui/core';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {EnterType} from 'src/types';
-
-const StyledDialogTitle = styled(DialogTitle)`
-  min-width: max-content;
-`;
 
 interface Props {
   enterType: EnterType;
@@ -20,12 +15,18 @@ const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSel
 
   return (
     <Popper
-      open={!!anchorElement}
+      open={!!anchorElement && !!enterType}
       anchorEl={anchorElement}
       placement="top"
-      disablePortal
       className={classes.popper}
       modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
         arrow: {
           element: arrowRef,
         },
@@ -33,10 +34,10 @@ const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSel
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        <StyledDialogTitle>
+        <div className={classes.title}>
           {enterType === 'drag' && 'Drop here to send files'}
           {enterType === 'mouse' && `Click here to ${isSelf ? 'send to all' : 'send files'}`}
-        </StyledDialogTitle>
+        </div>
       </Paper>
     </Popper>
   );

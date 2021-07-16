@@ -1,12 +1,13 @@
 import React from 'react';
 import styled from 'styled-components';
-import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
+import {Button, Popper, Paper, DialogActions} from '@material-ui/core';
 import LinearProgress from 'src/components/Poppers/views/LinearProgress';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
 
 const StyledAnchor = styled.a`
   min-width: max-content;
+  margin-bottom: 4px;
 `;
 
 interface IProgressPopperData {
@@ -112,9 +113,15 @@ const ProgressPopper: React.FC<Props> = ({
       open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
-      disablePortal
       className={classes.popper}
       modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
         arrow: {
           element: arrowRef,
         },
@@ -124,11 +131,11 @@ const ProgressPopper: React.FC<Props> = ({
       <Paper className={classes.paper}>
         {progressType === 'receive' ? (
           <>
-            <DialogTitle>Downloadable file will show below</DialogTitle>
-            <DialogContent>
+            <div className={classes.title}>Downloadable file will show below</div>
+            <div className={classes.body}>
               {receivedFiles &&
                 receivedFiles.map((file, i) => (
-                  <DialogContentText key={`${targetPeer.id}-download-${i}`}>
+                  <div key={`${targetPeer.id}-download-${i}`}>
                     <StyledAnchor
                       onClick={() => handleDownloadClick(file)}
                       download={file.fileName}
@@ -136,17 +143,17 @@ const ProgressPopper: React.FC<Props> = ({
                     >
                       click here to download {file.fileName}
                     </StyledAnchor>
-                  </DialogContentText>
+                  </div>
                 ))}
               {fileProgress !== 100 && <LinearProgress progress={fileProgress} />}
-            </DialogContent>
+            </div>
             <DialogActions>
               {fileProgress === 100 ? (
-                <Button onClick={handleClose} color="primary">
+                <Button variant="outlined" size="small" onClick={handleClose} color="secondary">
                   close
                 </Button>
               ) : (
-                <Button onClick={handleCancel} color="primary">
+                <Button variant="outlined" size="small" onClick={handleCancel} color="secondary">
                   cancel
                 </Button>
               )}
@@ -154,16 +161,18 @@ const ProgressPopper: React.FC<Props> = ({
           </>
         ) : (
           <>
-            <DialogTitle>Sending...</DialogTitle>
-            <DialogContent>
-              <DialogContentText>Waiting for file transfer to complete...</DialogContentText>
+            <div className={classes.title}>Sending...</div>
+
+            <div className={classes.body}>
+              <div>Waiting for file transfer to complete...</div>
               <LinearProgress progress={fileProgress} />
-            </DialogContent>
-            <DialogActions>
-              <Button onClick={handleCancel} color="primary">
+            </div>
+
+            <div className={classes.footer}>
+              <Button variant="outlined" onClick={handleCancel} color="secondary">
                 cancel
               </Button>
-            </DialogActions>
+            </div>
           </>
         )}
       </Paper>

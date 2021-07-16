@@ -73,7 +73,7 @@ const SelfFileDropZone: React.FC<Props> = ({selfIdentity, shouldDisableActionBtn
           You: {selfIdentity.platform}-{selfIdentity.browser}
         </IdentityWrapper>
       </div>
-      {enterType && <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />}
+      {'mouse' && <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />}
     </Wrapper>
   );
 };

@@ -32,7 +32,7 @@ const extendCircleRipple = keyframes`
   }
 `;
 
-export const StyledCircleButton = styled(Button)`
+const StyledCircleButton = styled(Button)`
   background-color: ${(props) => props.theme.secondary.main} !important;
   color: ${(props) => props.theme.secondary.contrastText} !important;
   &:hover {
@@ -41,6 +41,9 @@ export const StyledCircleButton = styled(Button)`
   border-radius: 50% !important;
   height: 64px;
   width: 64px;
+`;
+
+export const PeerStyledCircleButton = styled(StyledCircleButton)`
   animation: ${normalCircleRipple} 1s linear infinite;
 `;
 

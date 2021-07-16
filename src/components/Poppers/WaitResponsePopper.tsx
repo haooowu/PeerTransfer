@@ -1,6 +1,5 @@
 import React from 'react';
-import styled from 'styled-components';
-import {Popper, Paper, DialogTitle} from '@material-ui/core';
+import {Popper, Paper} from '@material-ui/core';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField} from 'src/types';
 import {DATA_CHANNEL_TIMEOUT, GOT_REMOTE_DESC} from 'src/constants';
@@ -80,9 +79,15 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
       open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
-      disablePortal
       className={classes.popper}
       modifiers={{
+        flip: {
+          enabled: true,
+        },
+        preventOverflow: {
+          enabled: true,
+          boundariesElement: 'scrollParent',
+        },
         arrow: {
           element: arrowRef,
         },
@@ -90,15 +95,11 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
     >
       <div className={classes.arrow} ref={setArrowRef} />
       <Paper className={classes.paper}>
-        {gotRemoteDesc ? (
-          <>
-            <DialogTitle>Preparing data channel with {targetPeer.emoji}...</DialogTitle>
-          </>
-        ) : (
-          <>
-            <DialogTitle>Waiting for {targetPeer.emoji}'s response...</DialogTitle>
-          </>
-        )}
+        <div className={classes.title}>
+          {gotRemoteDesc
+            ? `Preparing data channel with ${targetPeer.emoji}...`
+            : `Waiting for ${targetPeer.emoji}'s response...`}
+        </div>
       </Paper>
     </Popper>
   );

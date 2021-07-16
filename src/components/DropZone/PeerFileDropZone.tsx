@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {StyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
+import {PeerStyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
 import {EnterType, IPeerField} from 'src/types';
 import Dropzone from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
@@ -61,7 +61,7 @@ const PeerFileDropZone: React.FC<Props> = ({
       >
         {({getRootProps, getInputProps}) => (
           <div {...getRootProps()}>
-            <StyledCircleButton
+            <PeerStyledCircleButton
               className="peerBtn"
               ref={anchorRef}
               disabled={shouldDisableActionBtn}
@@ -72,7 +72,7 @@ const PeerFileDropZone: React.FC<Props> = ({
             >
               <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
               <span>{targetPeer.emoji}</span>
-            </StyledCircleButton>
+            </PeerStyledCircleButton>
           </div>
         )}
       </Dropzone>
