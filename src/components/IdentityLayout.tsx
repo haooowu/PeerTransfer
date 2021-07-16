@@ -19,10 +19,6 @@ import {DATA_CHANNEL_TIMEOUT} from 'src/constants';
 
 const Loader = styled(CircularProgress)``;
 
-const StyledP = styled.p`
-  color: ${(props) => props.theme.primary.contrastText};
-`;
-
 const RippleHolder = styled.div`
   position: absolute;
   bottom: 0;
@@ -112,7 +108,6 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
   return (
     <Wrapper {...bind()}>
       <SideDrawer gestureDirection={gestureDirection} />
-      <StyledP>Hello World</StyledP>
       <PeersListener selfIdentity={selfIdentity} publicID={publicID} localID={localID} />
       <RippleHolder />
     </Wrapper>

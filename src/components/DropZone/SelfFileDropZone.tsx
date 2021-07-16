@@ -5,14 +5,15 @@ import {useDropzone} from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
 import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
 import handleFileRejectedToast from 'src/utils/handleFileRejectedToast';
-import {OwnStyledCircleButton} from 'src/styles/StyledCircleButton';
+import {OwnStyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
 
 const Wrapper = styled.div`
   z-index: 1;
-  position: absolute;
+  position: fixed;
   bottom: 1em;
   left: 50%;
   transform: translateX(-50%);
+  padding-left: ${(props) => props.theme.drawerMinWidth};
 `;
 
 const IdentityWrapper = styled.div`
@@ -29,7 +30,7 @@ interface Props {
   handleFileInputChange: (files: File[]) => void;
 }
 
-const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, shouldDisableActionBtn, handleFileInputChange}) => {
+const SelfFileDropZone: React.FC<Props> = ({selfIdentity, shouldDisableActionBtn, handleFileInputChange}) => {
   const [enterType, setEnterType] = React.useState<EnterType>(null);
   const anchorRef = React.useRef(null);
 
@@ -58,6 +59,7 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, shouldDisableActio
     <Wrapper>
       <div {...getRootProps()}>
         <OwnStyledCircleButton
+          className="peerBtn"
           ref={anchorRef}
           onMouseEnter={onMouseEnter}
           onMouseLeave={onMouseLeave}
@@ -76,4 +78,4 @@ const SelfConnectionHolder: React.FC<Props> = ({selfIdentity, shouldDisableActio
   );
 };
 
-export default SelfConnectionHolder;
+export default SelfFileDropZone;

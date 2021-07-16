@@ -2,7 +2,7 @@ import React from 'react';
 import IdentityLayout from 'src/components/IdentityLayout';
 import IdentityProvider from 'src/providers/IdentityProvider';
 import AppSettingProvider, {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
-import StyledToastContainer from 'src/styles/StyledToastContainer';
+import StyledToastContainer from 'src/styles/styled-components/StyledToastContainer';
 import theme, {brightnessTheme} from 'src/styles/theme';
 import {ThemeProvider} from 'styled-components';
 import MuiThemeProvider from '@material-ui/styles/ThemeProvider';

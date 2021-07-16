@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-import {StyledCircleButton} from 'src/styles/StyledCircleButton';
+import {StyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
 import {EnterType, IPeerField} from 'src/types';
 import Dropzone from 'react-dropzone';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';

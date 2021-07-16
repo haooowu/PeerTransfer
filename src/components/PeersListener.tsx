@@ -1,17 +1,30 @@
 import React, {memo, useState, useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import styled from 'styled-components';
-import StyledPeerPosition from 'src/styles/StyledPeerPosition';
+import breakpoints from 'src/styles/breakpoints';
+import StyledPeerPosition from 'src/styles/styled-components/StyledPeerPosition';
 import SelfFileDropZone from 'src/components/DropZone/SelfFileDropZone';
 import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
 import {IPeerField} from 'src/types';
 import {toast} from 'react-toastify';
 import {MAXIMUM_PEER_NUMBER} from 'src/constants';
 
+const StyledP = styled.p`
+  color: ${(props) => props.theme.primary.contrastText};
+`;
+
 const PeersHolder = styled(StyledPeerPosition)`
   position: relative;
   height: 100%;
   width: 100%;
+  z-index: 1;
+  overflow-y: auto;
+  padding-top: 0.5em;
+  padding-bottom: 100px;
+  @media only screen and (${breakpoints.sm}) {
+    padding-bottom: 0;
+    margin-bottom: 120px;
+  }
 `;
 
 interface Props {
@@ -19,6 +32,8 @@ interface Props {
   publicID: string;
   localID: string;
 }
+
+// TODO-sprint: polish all popper styling
 
 // TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB, child(publicID) remove, then add another new publicID)
 
@@ -63,18 +78,21 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   }
 
   return (
-    <PeersHolder id="peers-holder">
-      {otherPeers.map((peer) => (
-        <PeerConnectionHolder
-          clearSentAllFiles={clearSentAllFiles}
-          sendAllFiles={sendAllFiles}
-          firestoreDbRef={dbRef.current}
-          key={peer.id}
-          targetPeer={peer}
-          publicID={publicID}
-          localID={localID}
-        />
-      ))}
+    <>
+      <StyledP>Hello World</StyledP>
+      <PeersHolder id="peers-holder">
+        {otherPeers.map((peer) => (
+          <PeerConnectionHolder
+            clearSentAllFiles={clearSentAllFiles}
+            sendAllFiles={sendAllFiles}
+            firestoreDbRef={dbRef.current}
+            key={peer.id}
+            targetPeer={peer}
+            publicID={publicID}
+            localID={localID}
+          />
+        ))}
+      </PeersHolder>
       {selfIdentity && (
         <SelfFileDropZone
           shouldDisableActionBtn={sendAllFiles.length > 0}
@@ -84,7 +102,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
           selfIdentity={selfIdentity}
         />
       )}
-    </PeersHolder>
+    </>
   );
 };
 

@@ -1,22 +1,5 @@
 import styled from 'styled-components';
-
-// TODO-sprint: polish all popper styling
-
-// TODO-sprint: fixed position at larger media, otherwise overflow-scroll card list in small
-
-/**
- * e.g. peerHolder
- *  ...unset
- *  position: relative;
-    width: 100%;
-    height: 100px;
- * 
- * e.g. button:
- * border-radius: unset !important;
-    width: 100%;
-    animation: unset;
- * 
- */
+import breakpoints from 'src/styles/breakpoints';
 
 const StyledPeerPosition = styled.div`
   .peerHolder {
@@ -25,6 +8,16 @@ const StyledPeerPosition = styled.div`
     height: 64px;
     position: absolute;
     z-index: 1;
+    @media only screen and (${breakpoints.sm}) {
+      position: relative;
+      bottom: unset !important;
+      left: unset !important;
+      right: unset !important;
+      transform: unset !important;
+      margin-right: auto;
+      margin-left: auto;
+      margin-bottom: 2em;
+    }
   }
   & .peerHolder:nth-child(1) {
     bottom: 33%;

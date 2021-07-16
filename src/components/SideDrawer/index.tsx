@@ -22,7 +22,7 @@ import CloudIcon from '@material-ui/icons/CloudDownloadSharp';
 import CloudOffIcon from '@material-ui/icons/CloudOff';
 import ChatIcon from '@material-ui/icons/Chat';
 import ChatOffIcon from '@material-ui/icons/SpeakerNotesOff';
-import useDrawerStyles from 'src/styles/useDrawerStyles';
+import useDrawerStyles from 'src/styles/hooks/useDrawerStyles';
 import LightBrightnessIcon from '@material-ui/icons/Brightness7';
 import DarkBrightnessIcon from '@material-ui/icons/Brightness4';
 import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';

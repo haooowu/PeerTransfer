@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Popper, Paper, DialogTitle} from '@material-ui/core';
-import usePopperStyles from 'src/styles/usePopperStyles';
+import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {EnterType} from 'src/types';
 
 const StyledDialogTitle = styled(DialogTitle)`

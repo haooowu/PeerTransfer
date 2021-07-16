@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Popper, Paper, DialogTitle} from '@material-ui/core';
-import usePopperStyles from 'src/styles/usePopperStyles';
+import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField} from 'src/types';
 import {DATA_CHANNEL_TIMEOUT, GOT_REMOTE_DESC} from 'src/constants';
 

@@ -1,7 +1,7 @@
 import React from 'react';
 import styled from 'styled-components';
 import {Button, Popper, Paper, DialogActions, DialogContent, DialogTitle, DialogContentText} from '@material-ui/core';
-import usePopperStyles from 'src/styles/usePopperStyles';
+import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IFileMeta, IPeerField} from 'src/types';
 
 interface INotifyOfferPopperData {
