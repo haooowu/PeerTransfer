@@ -126,7 +126,7 @@ const PeerIdentifier: React.FC<Props> = ({
 
       if (sendChannelRef.current) {
         sendChannelRef.current.close();
-        if (shouldWarn) toast.warn('file transfer is closed');
+        if (shouldWarn) toast.warn('File transfer is closed');
         console.log(`Closed send data channel with label: ${sendChannelRef.current.label}`);
       }
       if (receiveChannelRef.current) {
@@ -180,7 +180,7 @@ const PeerIdentifier: React.FC<Props> = ({
     let totalOffset = 0;
 
     function onTransferSuccess() {
-      toast.success('Success Notification !');
+      toast.success('File has been transferred');
       singularOffset = 0;
       targetFileIndex = 0;
       totalOffset = 0;
@@ -303,7 +303,7 @@ const PeerIdentifier: React.FC<Props> = ({
       closeDataChannels(false);
       destroyExistingPC();
       if (sessionStorage.getItem(GOT_REMOTE_DESC)) {
-        toast.warn('connection dropped');
+        toast.warn('Peer connection dropped');
         sessionStorage.removeItem(GOT_REMOTE_DESC);
       }
     };
@@ -398,7 +398,7 @@ const PeerIdentifier: React.FC<Props> = ({
           dispatchWaitResponsePopperData({type: 'clear'});
         }
         if (readyState === 'closed') {
-          if (!completeFlag) toast.warn('file transfer is cancelled');
+          if (!completeFlag) toast.warn('File transfer is cancelled');
           completeFlag = 0;
           receiveChannelRef.current = null;
         }

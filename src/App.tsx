@@ -41,6 +41,7 @@ const AppContent: React.FC<Props> = ({appTheme}) => {
           pauseOnFocusLoss={false}
           newestOnTop={false}
           closeOnClick
+          hideProgressBar
           rtl={false}
           draggable
         />

@@ -7,29 +7,17 @@ export const WrappedToastContainer = ({className, ...rest}: ToastContainerProps 
   </div>
 );
 
+// https://fkhadra.github.io/react-toastify/how-to-style
 export default styled(WrappedToastContainer).attrs({
   // custom props
 })`
   .Toastify__toast-container {
     width: max-content;
-    max-width: 100vw;
+    max-width: 80vw;
   }
-  /* .Toastify__toast {
-  } */
-  /* .Toastify__toast-body {
-  } */
-  /* .Toastify__toast--info {
-  } */
-  /* .Toastify__toast--success {
+  .Toastify__toast-body {
+    font-family: 'Roboto', sans-serif;
+    white-space: pre-line;
+    min-width: 200px;
   }
-  .Toastify__toast--error {
-  }
-  .Toastify__toast--warning {
-  }
-  .Toastify__progress-bar {
-  } */
-  /* .Toastify__close-button {
-  } */
-  /* .Toastify__toast-container--top-center {
-  } */
 `;

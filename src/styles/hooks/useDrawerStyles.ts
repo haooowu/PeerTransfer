@@ -11,7 +11,7 @@ const useDrawerStyles = makeStyles((theme: Theme) =>
       whiteSpace: 'nowrap',
     },
     drawerOpen: {
-      width: 280,
+      width: 290,
       transition: theme.transitions.create('width', {
         easing: theme.transitions.easing.sharp,
         duration: theme.transitions.duration.enteringScreen,
