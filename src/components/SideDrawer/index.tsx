@@ -9,8 +9,11 @@ import ArrowBackIcon from '@material-ui/icons/ArrowBack';
 import Tooltip from '@material-ui/core/Tooltip';
 import MenuIcon from '@material-ui/icons/Menu';
 import useDrawerStyles from 'src/styles/hooks/useDrawerStyles';
+
 import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 import DrawerOptionList from 'src/components/SideDrawer/DrawerOptionList';
+import JoinRoomModal from 'src/components/SideDrawer/JoinRoomModal';
+import AboutModal from './AboutModal';
 
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};
@@ -37,6 +40,8 @@ interface ISideDrawer extends Props {
 const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => {
   const classes = useDrawerStyles();
   const [drawerOpen, setDrawerOpen] = React.useState(false);
+  const [joinRoomModalOpen, setJoinRoomModalOpen] = React.useState(false);
+  const [aboutModalOpen, setAboutModalOpen] = React.useState(false);
 
   React.useEffect(() => {
     if (gestureDirection === 'left') setDrawerOpen(false);
@@ -45,6 +50,10 @@ const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => 
   }, [gestureDirection]);
 
   const handleToggle = () => setDrawerOpen((prev) => !prev);
+
+  const handleJoinRoomModalOpen = () => setJoinRoomModalOpen(true);
+
+  const handleAboutModalOpen = () => setAboutModalOpen(true);
 
   return (
     <StyledDrawer
@@ -68,8 +77,19 @@ const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => 
           </StyledIconButton>
         </Tooltip>
       </div>
+
       <Divider />
-      <DrawerOptionList drawerOpen={drawerOpen} {...contextProps} />
+
+      <DrawerOptionList
+        drawerOpen={drawerOpen}
+        handleJoinRoomModalOpen={handleJoinRoomModalOpen}
+        handleAboutModalOpen={handleAboutModalOpen}
+        {...contextProps}
+      />
+
+      <JoinRoomModal open={joinRoomModalOpen} handleClose={() => setJoinRoomModalOpen(false)} />
+
+      <AboutModal open={aboutModalOpen} handleClose={() => setAboutModalOpen(false)} />
     </StyledDrawer>
   );
 };

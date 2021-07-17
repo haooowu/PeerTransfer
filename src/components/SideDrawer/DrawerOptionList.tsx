@@ -48,6 +48,8 @@ const StyledList = styled(List)`
 
 interface Props extends IAppSettingContextVariable {
   drawerOpen: boolean;
+  handleJoinRoomModalOpen: () => void;
+  handleAboutModalOpen: () => void;
 }
 
 interface IDrawerOptionList extends Props {
@@ -63,11 +65,16 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
   toggleAutoAccept,
   toggleAutoDownload,
   toggleLightDarkTheme,
+  handleJoinRoomModalOpen,
+  handleAboutModalOpen,
 }) => {
   const handleCopyPublicID = async () => {
     await navigator.clipboard.writeText(publicID);
     toast.info('Room Id copied', {autoClose: 3000});
   };
+
+  const handleSourceRedirect = () => {};
+
   return (
     <>
       <List>
@@ -82,7 +89,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
         <Tooltip title={'Auto Download'} placement="right">
           <ListItem button onClick={toggleAutoDownload}>
             <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
-            <ListItemText primary={'Auto Download Files'} />
+            <ListItemText primary={'Auto Download File'} />
             <Switch checked={shouldAutoDownload} inputProps={{'aria-label': 'secondary checkbox'}} />
           </ListItem>
         </Tooltip>
@@ -96,11 +103,11 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
             <StyledListItemIcon>
               {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
             </StyledListItemIcon>
-            <ListItemText primary={'Light / Dark Themes'} />
+            <ListItemText primary={'Light / Dark Theme'} />
           </ListItem>
         </Tooltip>
         <Tooltip title="Join Another Room" placement="right">
-          <ListItem button>
+          <ListItem button onClick={handleJoinRoomModalOpen}>
             <StyledListItemIcon>
               <AccountTreeIcon />
             </StyledListItemIcon>
@@ -127,7 +134,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 
       <StyledList>
         <Tooltip title="About" placement="right">
-          <ListItem button>
+          <ListItem button onClick={handleAboutModalOpen}>
             <StyledListItemIcon>
               <HelpIcon />
             </StyledListItemIcon>
@@ -135,7 +142,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
           </ListItem>
         </Tooltip>
         <Tooltip title="Source Code" placement="right">
-          <ListItem button>
+          <ListItem button onClick={handleSourceRedirect}>
             <StyledListItemIcon>
               <GitHubIcon />
             </StyledListItemIcon>

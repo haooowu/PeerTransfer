@@ -36,10 +36,6 @@ interface Props {
   localID: string;
 }
 
-// TODO-sprint: UI popup for join BY roomID dialog (that should only add to presenceDB, child(publicID) remove, then add another new publicID)
-
-// TODO-sprint: UI popup for general FAQ - data disclaimer, browser support, file and size limit
-
 const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   const [otherPeers, setOtherPeers] = useState<IPeerField[]>([]);
   const [sendAllFiles, setSendAllFiles] = useState<File[]>([]);

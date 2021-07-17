@@ -5,11 +5,13 @@ import pcConfig from 'src/utils/pcConfig';
 export interface IIdentityContextVariable {
   localID: string;
   publicID: string;
+  setPublicID: React.Dispatch<React.SetStateAction<string>>;
 }
 
 export const IdentityContext = React.createContext<IIdentityContextVariable>({
   localID: '',
   publicID: '',
+  setPublicID: () => undefined,
 });
 
 interface Props {
@@ -50,6 +52,7 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
       value={{
         localID,
         publicID,
+        setPublicID,
       }}
     >
       {children}
