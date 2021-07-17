@@ -1,11 +1,9 @@
 import React from 'react';
 import styled from 'styled-components';
 import {PeerStyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
-import {EnterType, IPeerField} from 'src/types';
-import Dropzone from 'react-dropzone';
+import {IPeerField} from 'src/types';
 import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
-import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER} from 'src/constants/numericValues';
-import handleFileRejectedToast from 'src/utils/handleFileRejectedToast';
+import useCustomDropzone from 'src/components/DropZone/hooks/useCustomDropzone';
 
 const IdentityWrapper = styled.div`
   position: relative;
@@ -29,53 +27,36 @@ const PeerFileDropZone: React.FC<Props> = ({
   targetPeer,
   setAnchorElement,
 }) => {
-  const [enterType, setEnterType] = React.useState<EnterType>(null);
   const anchorRef = React.useRef(null);
 
-  const onDragEnter = () => setEnterType('drag');
-  const onDragLeave = () => setEnterType(null);
-  const onMouseEnter = () => setEnterType('mouse');
-  const onMouseLeave = () => setEnterType(null);
+  const {getRootProps, getInputProps, onMouseEnter, onMouseLeave, enterType} = useCustomDropzone({
+    shouldDisableActionBtn,
+    handleFileInputChange,
+  });
 
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);
   }, [anchorRef, setAnchorElement]);
-
-  React.useEffect(() => {
-    if (shouldDisableActionBtn) setEnterType(null);
-  }, [shouldDisableActionBtn]);
 
   const avatarButtonClick = () =>
     ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '');
 
   return (
     <>
-      <Dropzone
-        maxFiles={MAXIMUM_FILE_NUMBER}
-        maxSize={MAXIMUM_FILE_BYTE}
-        disabled={shouldDisableActionBtn}
-        onDragEnter={onDragEnter}
-        onDragLeave={onDragLeave}
-        onDropAccepted={handleFileInputChange}
-        onDropRejected={handleFileRejectedToast}
-      >
-        {({getRootProps, getInputProps}) => (
-          <div {...getRootProps()}>
-            <PeerStyledCircleButton
-              className="peerBtn"
-              ref={anchorRef}
-              disabled={shouldDisableActionBtn}
-              onMouseOver={onMouseEnter}
-              onMouseLeave={onMouseLeave}
-              onClick={avatarButtonClick}
-              variant="contained"
-            >
-              <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
-              <span>{targetPeer.emoji}</span>
-            </PeerStyledCircleButton>
-          </div>
-        )}
-      </Dropzone>
+      <div {...getRootProps()}>
+        <PeerStyledCircleButton
+          className="peerBtn"
+          ref={anchorRef}
+          disabled={shouldDisableActionBtn}
+          onMouseOver={onMouseEnter}
+          onMouseLeave={onMouseLeave}
+          onClick={avatarButtonClick}
+          variant="contained"
+        >
+          <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
+          <span>{targetPeer.emoji}</span>
+        </PeerStyledCircleButton>
+      </div>
       <IdentityWrapper>
         {targetPeer.platform}-{targetPeer.browser}
       </IdentityWrapper>

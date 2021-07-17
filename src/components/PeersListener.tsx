@@ -71,7 +71,12 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   }, []);
 
   function handleFileInputChange(files: File[]) {
-    setSendAllFiles(files);
+    if (otherPeers.length === 0) {
+      toast.warn('there is no other peers in this room');
+      clearSentAllFiles();
+    } else {
+      setSendAllFiles(files);
+    }
   }
 
   function clearSentAllFiles() {
@@ -81,7 +86,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   return (
     <>
       <StyledP>Hello World</StyledP>
-      <PeersHolder id="peers-holder">
+      <PeersHolder>
         {otherPeers.map((peer) => (
           <PeerConnectionHolder
             clearSentAllFiles={clearSentAllFiles}

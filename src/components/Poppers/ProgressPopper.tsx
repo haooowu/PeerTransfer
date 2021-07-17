@@ -1,5 +1,6 @@
 import React from 'react';
 import {Popper} from '@material-ui/core';
+import LinearProgressWithLabel from 'src/styles/styled-components/LinearProgressWithLabel';
 import {
   PopperContentWrapper,
   ContentTitle,
@@ -9,7 +10,6 @@ import {
   DownloadLinksHolder,
   StyledDownloadLink,
 } from 'src/styles/styled-components/StyledPopperContent';
-import LinearProgress from 'src/components/Poppers/views/LinearProgress';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
 
@@ -101,9 +101,6 @@ const ProgressPopper: React.FC<Props> = ({
     }
   };
 
-  console.log(downloadableFiles);
-  console.log(receivedFiles);
-
   const handleCancel = () => {
     onCancelFileTransfer();
     handleClose();
@@ -148,7 +145,7 @@ const ProgressPopper: React.FC<Props> = ({
                     </StyledDownloadLink>
                   </DownloadLinksHolder>
                 ))}
-              {fileProgress !== 100 && <LinearProgress progress={fileProgress} />}
+              {fileProgress !== 0 && <LinearProgressWithLabel progress={fileProgress} />}
             </ContentBody>
             <ContentFooter>
               {fileProgress === 100 ? (
@@ -165,12 +162,10 @@ const ProgressPopper: React.FC<Props> = ({
         ) : (
           <>
             <ContentTitle>Sending...</ContentTitle>
-
             <ContentBody>
               <div>Waiting for file transfer to complete...</div>
-              <LinearProgress progress={fileProgress} />
+              <LinearProgressWithLabel progress={fileProgress} />
             </ContentBody>
-
             <ContentFooter>
               <StyledPopperButton variant="outlined" onClick={handleCancel} color="secondary">
                 cancel

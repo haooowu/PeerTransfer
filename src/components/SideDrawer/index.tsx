@@ -46,6 +46,8 @@ const StyledDrawer = styled(Drawer)`
   }
 `;
 
+// TODO-sprint: style notifications (toast)
+
 interface Props {
   gestureDirection: 'left' | 'right' | undefined;
 }

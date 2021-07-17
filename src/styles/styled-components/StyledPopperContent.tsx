@@ -19,6 +19,7 @@ export const ContentTitle = styled.div`
 
 export const ContentText = styled.div`
   font-size: calc(10px + 0.6vmin) !important;
+  line-height: 1.5em;
   white-space: pre-wrap;
   word-wrap: break-word;
 `;
