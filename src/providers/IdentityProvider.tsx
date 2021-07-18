@@ -1,6 +1,7 @@
 import React, {useEffect} from 'react';
 import {v4 as uuidv4} from 'uuid';
 import pcConfig from 'src/utils/pcConfig';
+import {PUBLIC_ID} from 'src/constants';
 
 export interface IIdentityContextVariable {
   localID: string;
@@ -29,6 +30,8 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
     channel = pc.createDataChannel('');
     pc.createOffer().then((offer) => pc?.setLocalDescription(offer));
 
+    let sessionPublicID = sessionStorage.getItem(PUBLIC_ID);
+
     pc.onicecandidate = (ice) => {
       if (!ice || !ice.candidate || !ice.candidate.candidate) {
         if (channel) channel.close();
@@ -39,6 +42,10 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
       }
       let split = ice.candidate.candidate.split(' ');
       if (split[7] !== 'host') {
+        if (sessionPublicID) {
+          setPublicID(sessionPublicID);
+          return;
+        }
         if (!publicIP) setPublicID(btoa(split[4]));
         publicIP = split[4];
       }

@@ -43,28 +43,27 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   const dbRef = React.useRef(firebase.firestore());
 
   useEffect(() => {
-    const listenPeers = async () => {
-      const db = firebase.database();
-      const peersRef = db.ref(`${publicID}`);
+    const db = firebase.database();
+    const peersRef = db.ref(`${publicID}`);
+    peersRef.on('value', async (snapshot) => {
+      const allPeers: IPeerField[] = snapshot.val();
+      let peerHolder: IPeerField[] = [];
+      for (let id in allPeers) {
+        if (id !== localID) peerHolder.push(allPeers[id]);
+      }
+      if (peerHolder.length > MAXIMUM_PEER_NUMBER) {
+        toast.dismiss();
+        toast.warn(`The maximum concurrent peers is set to ${MAXIMUM_PEER_NUMBER}`);
+      } else {
+        setOtherPeers(peerHolder);
+      }
+    });
 
-      peersRef.on('value', async (snapshot) => {
-        const allPeers: IPeerField[] = snapshot.val();
-        let peerHolder: IPeerField[] = [];
-        for (let id in allPeers) {
-          if (id !== localID) peerHolder.push(allPeers[id]);
-        }
-        if (peerHolder.length > MAXIMUM_PEER_NUMBER) {
-          toast.dismiss();
-          toast.warn(`The maximum concurrent peers is set to ${MAXIMUM_PEER_NUMBER}`);
-        } else {
-          setOtherPeers(peerHolder);
-        }
-      });
+    return () => {
+      peersRef.off();
     };
-    listenPeers();
-    return () => {};
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [publicID]);
 
   function handleFileInputChange(files: File[]) {
     if (otherPeers.length === 0) {

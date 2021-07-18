@@ -1,6 +1,6 @@
 import React from 'react';
-import styled from 'styled-components';
-import {IdentityContext, IIdentityContextVariable} from 'src/providers/IdentityProvider';
+import {toast} from 'react-toastify';
+import {PUBLIC_ID} from 'src/constants';
 
 import Button from '@material-ui/core/Button';
 import TextField from '@material-ui/core/TextField';
@@ -15,38 +15,51 @@ interface Props {
   handleClose: () => void;
 }
 
-interface IJoinRoomModal extends Props {
-  setPublicID: React.Dispatch<React.SetStateAction<string>>;
-}
+const allowedCharRegex = new RegExp(/^[a-zA-Z0-9+/=]+$/);
 
-// TODO-sprint: join BY roomID dialog (that should only add to presenceDB, child(publicID) remove, then add another new publicID)
+const JoinRoomModal: React.FC<Props> = ({open, handleClose}) => {
+  const [input, setInput] = React.useState('');
 
-const JoinRoomModal: React.FC<IJoinRoomModal> = ({open, setPublicID, handleClose}) => {
+  const handleConfirm = () => {
+    if (!input.trim() || input.length < 1 || input.length > 30) {
+      toast.error('Invalid room id format');
+      return;
+    }
+    sessionStorage.setItem(PUBLIC_ID, input);
+    window.location.reload();
+  };
+
+  const handleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    let targetInput = event.target.value;
+    if (allowedCharRegex.test(targetInput) || targetInput === '') setInput(targetInput);
+  };
+
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogTitle>Subscribe</DialogTitle>
+      <DialogTitle>Join or Create Room</DialogTitle>
       <DialogContent>
-        <DialogContentText>
-          To subscribe to this website, please enter your email address here. We will send updates occasionally.
-        </DialogContentText>
-        <TextField autoFocus color="secondary" margin="dense" label="Room ID" type="text" fullWidth />
+        <DialogContentText>You can find current room ID by expand the side drawer</DialogContentText>
+        <TextField
+          onChange={handleChange}
+          value={input}
+          autoFocus
+          color="secondary"
+          margin="dense"
+          label="Room ID"
+          type="text"
+          fullWidth
+        />
       </DialogContent>
       <DialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
-        <Button onClick={handleClose} color="secondary">
-          Join Room
+        <Button onClick={handleConfirm} color="secondary">
+          Confirm
         </Button>
       </DialogActions>
     </Dialog>
   );
 };
 
-const ConsumedJoinRoomModal = (props: Props) => (
-  <IdentityContext.Consumer>
-    {({setPublicID}: IIdentityContextVariable) => <JoinRoomModal setPublicID={setPublicID} {...props} />}
-  </IdentityContext.Consumer>
-);
-
-export default ConsumedJoinRoomModal;
+export default JoinRoomModal;

@@ -68,28 +68,28 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
   const [gestureDirection, setGestureDirection] = useState<'left' | 'right' | undefined>();
 
   useEffect(() => {
-    const initPeers = async () => {
+    const initPeers = () => {
       const presenceDB = firebase.database();
       const identity = {
         id: localID,
         emoji: `${getRandomFaceEmoji()}`,
         ...detectOS(),
       } as IPeerField;
+
       let presenceRef = presenceDB.ref(`${publicID}/${localID}`);
+
       presenceRef.set(identity);
       presenceRef.onDisconnect().remove();
       setSelfIdentity(identity);
     };
+
     initPeers();
-    return () => {};
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [localID, publicID]);
 
   useLayoutEffect(() => {
     if (sessionStorage.getItem(DATA_CHANNEL_TIMEOUT)) {
       toast.warn('Failed to create a stable data channel, please try again', {
         autoClose: false,
-        position: 'top-center',
       });
       sessionStorage.removeItem(DATA_CHANNEL_TIMEOUT);
     }

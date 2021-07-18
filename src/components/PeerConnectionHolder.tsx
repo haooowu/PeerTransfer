@@ -33,7 +33,7 @@ interface Props {
   firestoreDbRef: firebase.firestore.Firestore;
 }
 
-const PeerIdentifier: React.FC<Props> = ({
+const PeerConnectionHolder: React.FC<Props> = ({
   targetPeer,
   localID,
   publicID,
@@ -617,4 +617,4 @@ const PeerIdentifier: React.FC<Props> = ({
   );
 };
 
-export default PeerIdentifier;
+export default PeerConnectionHolder;

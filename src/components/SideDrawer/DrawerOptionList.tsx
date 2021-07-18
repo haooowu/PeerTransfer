@@ -70,10 +70,15 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 }) => {
   const handleCopyPublicID = async () => {
     await navigator.clipboard.writeText(publicID);
-    toast.info('Room Id copied', {autoClose: 3000});
+    toast.info('Room Id copied', {
+      autoClose: 3000,
+    });
   };
 
-  const handleSourceRedirect = () => {};
+  const handleSourceRedirect = () => {
+    // TODO-sprint: github link
+    window.open('https://www.google.com/');
+  };
 
   return (
     <>
