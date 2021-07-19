@@ -29,8 +29,9 @@ export const ContentBody = styled.div`
   margin-top: 16px;
   margin-bottom: 16px;
   max-height: 320px;
-  min-height: 20px;
+  min-height: 60px;
   overflow-y: auto;
+  overflow-x: hidden;
 `;
 
 export const ContentFooter = styled.div`
