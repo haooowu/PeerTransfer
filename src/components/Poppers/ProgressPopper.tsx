@@ -12,6 +12,7 @@ import {
 } from 'src/styles/styled-components/StyledPopperContent';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField, IDownloadableFile} from 'src/types';
+import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 
 interface IProgressPopperData {
   isOpen: boolean;
@@ -68,12 +69,16 @@ export const progressPopperReducer = (
 
 interface Props extends IProgressPopperData {
   targetPeer: IPeerField;
-  onCancelFileTransfer: () => Promise<void>;
+  onCancelFileTransfer: () => void;
   setClose: () => void;
   anchorElement: any;
 }
 
-const ProgressPopper: React.FC<Props> = ({
+interface IProgressPopper extends Props {
+  shouldAutoDownload: boolean;
+}
+
+const ProgressPopper: React.FC<IProgressPopper> = ({
   targetPeer,
   setClose,
   fileProgress,
@@ -81,6 +86,7 @@ const ProgressPopper: React.FC<Props> = ({
   progressType,
   anchorElement,
   onCancelFileTransfer,
+  shouldAutoDownload,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
   const [receivedFiles, setReceivedFiles] = React.useState<IDownloadableFile[] | null>(null);
@@ -89,6 +95,11 @@ const ProgressPopper: React.FC<Props> = ({
   React.useEffect(() => {
     setReceivedFiles(downloadableFiles);
   }, [downloadableFiles]);
+
+  React.useEffect(() => {
+    if (shouldAutoDownload && fileProgress === 100) setClose();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [shouldAutoDownload, fileProgress]);
 
   const handleDownloadClick = (file: IDownloadableFile) => {
     setTimeout(() => window.URL.revokeObjectURL(file.fileBlobUrl), 0);
@@ -131,7 +142,9 @@ const ProgressPopper: React.FC<Props> = ({
       <PopperContentWrapper>
         {progressType === 'receive' ? (
           <>
-            <ContentTitle>Downloadable file will show below</ContentTitle>
+            <ContentTitle>
+              {shouldAutoDownload ? 'Download Progress:' : 'Downloadable file will show below'}
+            </ContentTitle>
             <ContentBody>
               {receivedFiles &&
                 receivedFiles.map((file, i) => (
@@ -178,4 +191,12 @@ const ProgressPopper: React.FC<Props> = ({
   );
 };
 
-export default ProgressPopper;
+const ConsumedProgressPopper = (props: Props) => (
+  <AppSettingContext.Consumer>
+    {({shouldAutoDownload}: IAppSettingContextVariable) => (
+      <ProgressPopper {...props} shouldAutoDownload={shouldAutoDownload} />
+    )}
+  </AppSettingContext.Consumer>
+);
+
+export default ConsumedProgressPopper;

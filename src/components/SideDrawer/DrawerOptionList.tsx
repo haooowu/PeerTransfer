@@ -75,10 +75,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
     });
   };
 
-  const handleSourceRedirect = () => {
-    // TODO-sprint: github link
-    window.open('https://www.google.com/');
-  };
+  const handleSourceRedirect = () => window.open('https://github.com/haooowu/PeerTransfer');
 
   return (
     <>

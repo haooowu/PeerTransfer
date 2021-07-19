@@ -22,6 +22,8 @@ import {
   MAXIMUM_BUFFER_BYTE,
   MIN_CHUNK_SIZE,
   ROOT_COLLECTION,
+  APP_AUTO_ACCEPT,
+  APP_AUTO_DOWNLOAD,
 } from 'src/constants';
 
 interface Props {
@@ -49,9 +51,6 @@ const PeerConnectionHolder: React.FC<Props> = ({
   const sentFileReaderRef = useRef<FileReader | null>(null);
   const totalFileSizeRef = useRef<number>(0);
   const acceptedFileListRef = useRef<File[]>([]);
-
-  const shouldAutoAccept = true;
-  const shouldAutoDownload = true;
 
   const [anchorElement, setAnchorElement] = useState(null);
   const [waitResponsePopperData, dispatchWaitResponsePopperData] = useReducer(
@@ -147,23 +146,28 @@ const PeerConnectionHolder: React.FC<Props> = ({
     }
   }, [peerConnectionRef]);
 
-  async function promptsIncomingFileTransferPopper(fileMetas: IFileMeta[], connectionId: string) {
-    console.log('incoming file metas:', fileMetas);
-    console.log('got from:', targetPeer);
-
-    // TODO-sprint: if auto accept then immediately start download
-
-    connectionIdRef.current = connectionId;
-    dispatchNotifyPopperOfferData({type: 'set_file_metas', payload: {fileMetas}});
-  }
-
-  async function onAcceptFileTransfer() {
+  const onAcceptFileTransfer = () => {
     joinFileChannel(connectionIdRef.current as string);
-
     if (!waitResponsePopperData.isOpen) {
       dispatchWaitResponsePopperData({type: 'set_open_with_desc'});
     }
-  }
+  };
+
+  const promptsIncomingFileTransferPopper = async (fileMetas: IFileMeta[], connectionId: string) => {
+    console.log('incoming file metas:', fileMetas);
+    console.log('got from:', targetPeer);
+
+    connectionIdRef.current = connectionId;
+
+    const appAutoAccept = window.localStorage.getItem(APP_AUTO_ACCEPT);
+    const shouldAutoAccept = appAutoAccept === 'true';
+
+    if (shouldAutoAccept) {
+      onAcceptFileTransfer();
+    } else {
+      dispatchNotifyPopperOfferData({type: 'set_file_metas', payload: {fileMetas}});
+    }
+  };
 
   const sendFileData = useCallback(async () => {
     if (!acceptedFileListRef.current || acceptedFileListRef.current.length === 0) return;
@@ -250,7 +254,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
     readSlice(0);
   }, [totalFileSizeRef, sentFileReaderRef, sendChannelRef, acceptedFileListRef]);
 
-  async function onCancelFileTransfer() {
+  const onCancelFileTransfer = () => {
     if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
       console.log('Abort read!');
       sentFileReaderRef.current.abort();
@@ -259,7 +263,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       dispatchNotifyPopperOfferData({type: 'clear'});
     }
     closeDataChannels(false);
-  }
+  };
 
   useEffect(() => {
     const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
@@ -370,17 +374,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
         targetFileSize = 0;
         targetFileIndex += 1;
 
-        // TODO-sprint: if set auto download no need to set downloadableFiles but directly download and then revoke the URL
-
-        dispatchProgressPopperData({
-          type: 'set_downloadableFiles',
-          payload: {
-            downloadableFile: {
-              fileName: name,
-              fileBlobUrl: URL.createObjectURL(received),
-            },
-          },
-        });
+        handleDownloadFile(received, name);
       }
       if (receivedSize === totalSize) {
         completeFlag = 1;
@@ -405,6 +399,31 @@ const PeerConnectionHolder: React.FC<Props> = ({
       }
     }
   }, [firestoreDbRef, peerConnectionRef, receiveChannelRef, publicID, closeDataChannels]);
+
+  const handleDownloadFile = (receivedBlob: Blob, name: string) => {
+    const appAutoDownload = window.localStorage.getItem(APP_AUTO_DOWNLOAD);
+    const shouldAutoDownload = appAutoDownload === 'true';
+
+    if (shouldAutoDownload) {
+      let downloadAnchor = document.createElement('a');
+      downloadAnchor.href = URL.createObjectURL(receivedBlob);
+      downloadAnchor.download = name;
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      window.URL.revokeObjectURL(downloadAnchor.href);
+      document.body.removeChild(downloadAnchor);
+    } else {
+      dispatchProgressPopperData({
+        type: 'set_downloadableFiles',
+        payload: {
+          downloadableFile: {
+            fileName: name,
+            fileBlobUrl: URL.createObjectURL(receivedBlob),
+          },
+        },
+      });
+    }
+  };
 
   const createSendDataChannel = useCallback(() => {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
@@ -581,21 +600,13 @@ const PeerConnectionHolder: React.FC<Props> = ({
       />
 
       {waitResponsePopperData.isOpen && (
-        <WaitResponsePopper
-          isOpen={waitResponsePopperData.isOpen}
-          gotRemoteDesc={waitResponsePopperData.gotRemoteDesc}
-          targetPeer={targetPeer}
-          anchorElement={anchorElement}
-        />
+        <WaitResponsePopper {...waitResponsePopperData} targetPeer={targetPeer} anchorElement={anchorElement} />
       )}
 
       {progressPopperData.isOpen && (
         <ProgressPopper
-          isOpen={progressPopperData.isOpen}
-          fileProgress={progressPopperData.fileProgress}
-          downloadableFiles={progressPopperData.downloadableFiles}
+          {...progressPopperData}
           onCancelFileTransfer={onCancelFileTransfer}
-          progressType={progressPopperData.progressType}
           targetPeer={targetPeer}
           setClose={() => dispatchProgressPopperData({type: 'clear'})}
           anchorElement={anchorElement}
@@ -604,8 +615,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
 
       {notifyOfferPopperData.isOpen && (
         <NotifyOfferPopper
-          isOpen={notifyOfferPopperData.isOpen}
-          fileMetas={notifyOfferPopperData.fileMetas}
+          {...notifyOfferPopperData}
           onAcceptFileTransfer={onAcceptFileTransfer}
           onCancelFileTransfer={onCancelFileTransfer}
           targetPeer={targetPeer}

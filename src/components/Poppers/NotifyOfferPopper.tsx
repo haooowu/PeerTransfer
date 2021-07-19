@@ -45,8 +45,8 @@ export const notifyOfferPopperReducer = (
 
 interface Props extends INotifyOfferPopperData {
   targetPeer: IPeerField;
-  onCancelFileTransfer: () => Promise<void>;
-  onAcceptFileTransfer: () => Promise<void>;
+  onCancelFileTransfer: () => void;
+  onAcceptFileTransfer: () => void;
   setClose: () => void;
   anchorElement: any;
 }
