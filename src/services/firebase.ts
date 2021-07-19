@@ -3,12 +3,12 @@ import 'firebase/firestore';
 import 'firebase/database';
 
 const config = {
-  apiKey: 'AIzaSyBeFSn6EPYfSzFt6BhqeM-33Vd96NdT33Q',
-  authDomain: 'peertransfer-44201.firebaseapp.com',
-  projectId: 'peertransfer-44201',
-  storageBucket: 'peertransfer-44201.appspot.com',
-  messagingSenderId: '640914820360',
-  appId: '1:640914820360:web:51564296511922d704f0bd',
+  apiKey: process.env.REACT_APP_FIREBASE_API_KEY,
+  authDomain: process.env.REACT_APP_FIREBASE_AUTH_DOMAIN,
+  projectId: process.env.REACT_APP_FIREBASE_PROJECT_ID,
+  storageBucket: process.env.REACT_APP_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: process.env.REACT_APP_FIREBASE_MESSAGING_SENDER_ID,
+  appId: process.env.REACT_APP_FIREBASE_APP_ID,
 };
 
 firebase.initializeApp(config);

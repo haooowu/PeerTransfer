@@ -78,6 +78,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
     if (sendAllFiles.length > 0) setSendAllFiles([]);
   }
 
+  // TODO-sprint: instruction/welcoming title
   return (
     <>
       <StyledP>Hello World</StyledP>

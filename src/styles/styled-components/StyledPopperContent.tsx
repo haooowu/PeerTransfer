@@ -3,6 +3,7 @@ import {Button} from '@material-ui/core';
 
 export const PopperContentWrapper = styled.div`
   max-width: 400px;
+  min-width: 200px;
   overflow: auto;
   text-align: left;
   padding: 14px;

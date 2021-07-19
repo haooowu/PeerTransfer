@@ -143,7 +143,7 @@ const ProgressPopper: React.FC<IProgressPopper> = ({
         {progressType === 'receive' ? (
           <>
             <ContentTitle>
-              {shouldAutoDownload ? 'Download Progress:' : 'Downloadable file will show below'}
+              {shouldAutoDownload ? 'Download Progress: ' : 'Downloadable file will show below'}
             </ContentTitle>
             <ContentBody>
               {receivedFiles &&

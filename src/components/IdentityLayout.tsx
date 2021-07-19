@@ -124,7 +124,7 @@ const IdentityLayout = () => (
         <ConsumedIdentityLayout localID={localID} publicID={publicID} />
       ) : (
         <LoadingWrapper>
-          <Loader />
+          <Loader color="secondary" />
         </LoadingWrapper>
       )
     }

@@ -51,6 +51,9 @@ const PeerConnectionHolder: React.FC<Props> = ({
   const sentFileReaderRef = useRef<FileReader | null>(null);
   const totalFileSizeRef = useRef<number>(0);
   const acceptedFileListRef = useRef<File[]>([]);
+  const callerUnsubscriberRef = useRef<() => void>();
+  const calleeUnsubscriberRef = useRef<() => void>();
+  const descriptionUnsubscriberRef = useRef<() => void>();
 
   const [anchorElement, setAnchorElement] = useState(null);
   const [waitResponsePopperData, dispatchWaitResponsePopperData] = useReducer(
@@ -68,37 +71,70 @@ const PeerConnectionHolder: React.FC<Props> = ({
     [waitResponsePopperData.isOpen, notifyOfferPopperData.isOpen, progressPopperData.isOpen],
   );
 
-  async function handleFileInputChange(files: File[]) {
-    if (files.length > 0) {
-      acceptedFileListRef.current = files;
+  useEffect(() => {
+    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+    const connectionRef = roomRef.collection(CONNECTIONS);
 
-      await tryCreatePeerConnection(targetPeer);
-      const connectionId = connectionIdRef.current as string;
-
-      const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
-      const connectionsRef = roomRef.collection(CONNECTIONS);
-      const targetConnectionRef = connectionsRef.doc(connectionId);
-
-      let metas: IFileMeta[] = [];
-
-      files.forEach((file) => {
-        metas.push({
-          name: file.name,
-          size: file.size,
-          type: file.type,
-        });
-        totalFileSizeRef.current += file.size;
+    const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
+      snapshot.docChanges().forEach(async (change) => {
+        let data = change.doc.data() as IFirebaseConnectionRoomData;
+        if (change.type === 'modified') {
+          const {isAccepting} = data;
+          if (
+            data.p2p &&
+            data.fileMetas &&
+            !data.answer &&
+            data.p2p.answer === localID &&
+            data.p2p.offer === targetPeer.id
+          ) {
+            if (!isAccepting) {
+              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
+            }
+          }
+        }
+        if (change.type === 'removed') {
+          let connectionId = change.doc.id;
+          console.log('remove connection: ');
+          console.log(connectionId, connectionIdRef.current);
+          if (
+            connectionId === connectionIdRef.current &&
+            data.p2p &&
+            (data.p2p.answer === localID || data.p2p.offer === localID)
+          ) {
+            closeDataChannels(true);
+          }
+        }
       });
+    });
 
-      let fileMetas = {
-        [FILE_METAS]: metas,
-      };
+    return () => {
+      // close connection and delete the document on peer presence drop
+      unsubscribe();
+      closeDataChannels(false);
+      destroyExistingPC();
+      if (sessionStorage.getItem(GOT_REMOTE_DESC)) {
+        toast.warn('Peer connection dropped');
+        sessionStorage.removeItem(GOT_REMOTE_DESC);
+      }
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      await targetConnectionRef.update(fileMetas);
+  useEffect(() => {
+    if (isInit.current) {
+      isInit.current = false;
+    } else {
+      handleFileInputChange([...sendAllFiles]);
+      clearSentAllFiles();
     }
-  }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isInit, sendAllFiles]);
 
   const clearFirebaseConnection = useCallback(async () => {
+    if (callerUnsubscriberRef.current) callerUnsubscriberRef.current();
+    if (calleeUnsubscriberRef.current) calleeUnsubscriberRef.current();
+    if (descriptionUnsubscriberRef.current) descriptionUnsubscriberRef.current();
+
     const connectionId = connectionIdRef.current;
     if (connectionId) {
       const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
@@ -114,7 +150,14 @@ const PeerConnectionHolder: React.FC<Props> = ({
       await connectionRef.delete();
       connectionIdRef.current = null;
     }
-  }, [firestoreDbRef, connectionIdRef, publicID]);
+  }, [
+    firestoreDbRef,
+    connectionIdRef,
+    callerUnsubscriberRef,
+    calleeUnsubscriberRef,
+    descriptionUnsubscriberRef,
+    publicID,
+  ]);
 
   const closeDataChannels = useCallback(
     (shouldWarn: boolean) => {
@@ -146,10 +189,76 @@ const PeerConnectionHolder: React.FC<Props> = ({
     }
   }, [peerConnectionRef]);
 
+  async function handleFileInputChange(files: File[]) {
+    if (files.length > 0) {
+      acceptedFileListRef.current = files;
+
+      await tryCreatePeerConnection(targetPeer);
+      const connectionId = connectionIdRef.current as string;
+
+      const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
+      const connectionsRef = roomRef.collection(CONNECTIONS);
+      const targetConnectionRef = connectionsRef.doc(connectionId);
+
+      let metas: IFileMeta[] = [];
+
+      files.forEach((file) => {
+        metas.push({
+          name: file.name,
+          size: file.size,
+          type: file.type,
+        });
+        totalFileSizeRef.current += file.size;
+      });
+
+      let fileMetas = {
+        [FILE_METAS]: metas,
+      };
+
+      await targetConnectionRef.update(fileMetas);
+    }
+  }
+
   const onAcceptFileTransfer = () => {
-    joinFileChannel(connectionIdRef.current as string);
+    joinTransferChannel(connectionIdRef.current as string);
     if (!waitResponsePopperData.isOpen) {
       dispatchWaitResponsePopperData({type: 'set_open_with_desc'});
+    }
+  };
+
+  const onCancelFileTransfer = () => {
+    if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
+      console.log('Abort read!');
+      sentFileReaderRef.current.abort();
+    }
+    if (notifyOfferPopperData.isOpen) {
+      dispatchNotifyPopperOfferData({type: 'clear'});
+    }
+    closeDataChannels(false);
+  };
+
+  const handleDownloadFile = (receivedBlob: Blob, name: string) => {
+    const appAutoDownload = window.localStorage.getItem(APP_AUTO_DOWNLOAD);
+    const shouldAutoDownload = appAutoDownload === 'true';
+
+    if (shouldAutoDownload) {
+      let downloadAnchor = document.createElement('a');
+      downloadAnchor.href = URL.createObjectURL(receivedBlob);
+      downloadAnchor.download = name;
+      document.body.appendChild(downloadAnchor);
+      downloadAnchor.click();
+      window.URL.revokeObjectURL(downloadAnchor.href);
+      document.body.removeChild(downloadAnchor);
+    } else {
+      dispatchProgressPopperData({
+        type: 'set_downloadableFiles',
+        payload: {
+          downloadableFile: {
+            fileName: name,
+            fileBlobUrl: URL.createObjectURL(receivedBlob),
+          },
+        },
+      });
     }
   };
 
@@ -254,76 +363,6 @@ const PeerConnectionHolder: React.FC<Props> = ({
     readSlice(0);
   }, [totalFileSizeRef, sentFileReaderRef, sendChannelRef, acceptedFileListRef]);
 
-  const onCancelFileTransfer = () => {
-    if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
-      console.log('Abort read!');
-      sentFileReaderRef.current.abort();
-    }
-    if (notifyOfferPopperData.isOpen) {
-      dispatchNotifyPopperOfferData({type: 'clear'});
-    }
-    closeDataChannels(false);
-  };
-
-  useEffect(() => {
-    const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
-    const connectionRef = roomRef.collection(CONNECTIONS);
-
-    const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
-      snapshot.docChanges().forEach(async (change) => {
-        let data = change.doc.data() as IFirebaseConnectionRoomData;
-        if (change.type === 'modified') {
-          const {isAccepting} = data;
-          if (
-            data.p2p &&
-            data.fileMetas &&
-            !data.answer &&
-            data.p2p.answer === localID &&
-            data.p2p.offer === targetPeer.id
-          ) {
-            if (!isAccepting) {
-              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
-            }
-          }
-        }
-        if (change.type === 'removed') {
-          let connectionId = change.doc.id;
-          console.log('remove connection: ');
-          console.log(connectionId, connectionIdRef.current);
-          if (
-            connectionId === connectionIdRef.current &&
-            data.p2p &&
-            (data.p2p.answer === localID || data.p2p.offer === localID)
-          ) {
-            closeDataChannels(true);
-          }
-        }
-      });
-    });
-
-    return () => {
-      // close connection and delete the document on peer presence drop
-      unsubscribe();
-      closeDataChannels(false);
-      destroyExistingPC();
-      if (sessionStorage.getItem(GOT_REMOTE_DESC)) {
-        toast.warn('Peer connection dropped');
-        sessionStorage.removeItem(GOT_REMOTE_DESC);
-      }
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (isInit.current) {
-      isInit.current = false;
-    } else {
-      handleFileInputChange([...sendAllFiles]);
-      clearSentAllFiles();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isInit, sendAllFiles]);
-
   const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
 
@@ -400,31 +439,6 @@ const PeerConnectionHolder: React.FC<Props> = ({
     }
   }, [firestoreDbRef, peerConnectionRef, receiveChannelRef, publicID, closeDataChannels]);
 
-  const handleDownloadFile = (receivedBlob: Blob, name: string) => {
-    const appAutoDownload = window.localStorage.getItem(APP_AUTO_DOWNLOAD);
-    const shouldAutoDownload = appAutoDownload === 'true';
-
-    if (shouldAutoDownload) {
-      let downloadAnchor = document.createElement('a');
-      downloadAnchor.href = URL.createObjectURL(receivedBlob);
-      downloadAnchor.download = name;
-      document.body.appendChild(downloadAnchor);
-      downloadAnchor.click();
-      window.URL.revokeObjectURL(downloadAnchor.href);
-      document.body.removeChild(downloadAnchor);
-    } else {
-      dispatchProgressPopperData({
-        type: 'set_downloadableFiles',
-        payload: {
-          downloadableFile: {
-            fileName: name,
-            fileBlobUrl: URL.createObjectURL(receivedBlob),
-          },
-        },
-      });
-    }
-  };
-
   const createSendDataChannel = useCallback(() => {
     sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
     console.log('Created send data channel: ', sendChannelRef.current);
@@ -458,7 +472,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
     }
   }, [peerConnectionRef, sendChannelRef, sendFileData]);
 
-  const joinFileChannel = async (connectionID: string) => {
+  const joinTransferChannel = async (connectionID: string) => {
     const roomRef = firestoreDbRef.collection(ROOT_COLLECTION).doc(publicID);
     const connectionRef = roomRef.collection(CONNECTIONS).doc(connectionID);
     const connectionSnapshot = await connectionRef.get();
@@ -501,7 +515,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       // Code for creating SDP answer above
 
       // Listening for remote ICE candidates below
-      connectionRef.collection(CALLER).onSnapshot((snapshot) => {
+      const calllerUnsubscriber = connectionRef.collection(CALLER).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
             let data = change.doc.data();
@@ -512,6 +526,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
         });
       });
       // Listening for remote ICE candidates above
+      callerUnsubscriberRef.current = calllerUnsubscriber;
     }
   };
 
@@ -562,7 +577,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
     });
 
     // Listening for remote session description below
-    targetConnectionRef.onSnapshot(async (snapshot) => {
+    const descriptionUnsubscriber = targetConnectionRef.onSnapshot(async (snapshot) => {
       const data = snapshot.data();
       if (!data || !data.answer) return;
       if (peerConnectionRef.current && !peerConnectionRef.current!.currentRemoteDescription) {
@@ -574,9 +589,10 @@ const PeerConnectionHolder: React.FC<Props> = ({
       }
     });
     // Listening for remote session description above
+    descriptionUnsubscriberRef.current = descriptionUnsubscriber;
 
     // Listen for remote ICE candidates below
-    targetConnectionRef.collection(CALLEE).onSnapshot((snapshot) => {
+    const calleeUnsubscriber = targetConnectionRef.collection(CALLEE).onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
         if (change.type === 'added') {
           let data = change.doc.data();
@@ -586,6 +602,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       });
     });
     // Listen for remote ICE candidates above
+    calleeUnsubscriberRef.current = calleeUnsubscriber;
 
     dispatchWaitResponsePopperData({type: 'set_open_without_desc'});
   };
