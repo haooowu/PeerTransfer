@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# PeerTransfer
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). You can check available scripts and from the [official documents here](https://create-react-app.dev/docs/getting-started).
 
