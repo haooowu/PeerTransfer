@@ -92,7 +92,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
         <StyledP $shouldHide={!noPeer}>
           Open the same link to start transfer files
           <br />
-          <span>swipe right to see app settings</span>
+          <span>swipe right or click drawer icons to see or toggle app settings</span>
         </StyledP>
       </Grow>
       <Grow in={!noPeer}>

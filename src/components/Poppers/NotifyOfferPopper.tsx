@@ -22,7 +22,9 @@ export const initialNotifyOfferPopperData: INotifyOfferPopperData = {
   fileMetas: null,
 };
 
-type NotifyOfferPopperReducerAction = {type: 'clear'} | {type: 'set_file_metas'; payload: {fileMetas: IFileMeta[]}};
+export type NotifyOfferPopperReducerAction =
+  | {type: 'clear'}
+  | {type: 'set_file_metas'; payload: {fileMetas: IFileMeta[]}};
 
 export const notifyOfferPopperReducer = (
   state: INotifyOfferPopperData,

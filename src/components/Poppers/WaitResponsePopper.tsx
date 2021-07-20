@@ -15,7 +15,7 @@ export const initialWaitResponsePopperData: IWaitResponsePopperData = {
   gotRemoteDesc: false,
 };
 
-type WaitResponsePopperReducerAction =
+export type WaitResponsePopperReducerAction =
   | {type: 'clear'}
   | {type: 'set_open_with_desc'}
   | {type: 'set_open_without_desc'}

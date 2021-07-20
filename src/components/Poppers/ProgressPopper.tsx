@@ -28,7 +28,7 @@ export const initialProgressPopperData: IProgressPopperData = {
   downloadableFiles: [],
 };
 
-type progressPopperReducerAction =
+export type ProgressPopperReducerAction =
   | {type: 'clear'}
   | {type: 'set_received_progress'; payload: {progress: number}}
   | {type: 'set_sent_progress'; payload: {progress: number}}
@@ -36,7 +36,7 @@ type progressPopperReducerAction =
 
 export const progressPopperReducer = (
   state: IProgressPopperData,
-  action: progressPopperReducerAction,
+  action: ProgressPopperReducerAction,
 ): IProgressPopperData => {
   switch (action.type) {
     case 'clear':
