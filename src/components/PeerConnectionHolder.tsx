@@ -35,6 +35,8 @@ interface Props {
   firestoreDbRef: firebase.firestore.Firestore;
 }
 
+// TODO-sprint: comments
+
 const PeerConnectionHolder: React.FC<Props> = ({
   targetPeer,
   localID,

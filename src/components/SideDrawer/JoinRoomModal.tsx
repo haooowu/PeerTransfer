@@ -1,4 +1,5 @@
 import React from 'react';
+import styled from 'styled-components';
 import {toast} from 'react-toastify';
 import {PUBLIC_ID} from 'src/constants';
 
@@ -9,6 +10,10 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
 import DialogTitle from '@material-ui/core/DialogTitle';
+
+const StyledDialogActions = styled(DialogActions)`
+  padding: 8px 16px !important;
+`;
 
 interface Props {
   open: boolean;
@@ -50,14 +55,14 @@ const JoinRoomModal: React.FC<Props> = ({open, handleClose}) => {
           fullWidth
         />
       </DialogContent>
-      <DialogActions>
+      <StyledDialogActions>
         <Button onClick={handleClose} color="secondary">
           Cancel
         </Button>
         <Button onClick={handleConfirm} color="secondary">
           Confirm
         </Button>
-      </DialogActions>
+      </StyledDialogActions>
     </Dialog>
   );
 };
