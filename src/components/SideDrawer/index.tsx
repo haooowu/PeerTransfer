@@ -12,8 +12,8 @@ import useDrawerStyles from 'src/styles/hooks/useDrawerStyles';
 
 import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 import DrawerOptionList from 'src/components/SideDrawer/DrawerOptionList';
-import JoinRoomModal from 'src/components/SideDrawer/JoinRoomModal';
-import AboutModal from './AboutModal';
+import JoinRoomModal from 'src/components/SideDrawer/Modals/JoinRoomModal';
+import AboutModal from 'src/components/SideDrawer/Modals/AboutModal';
 
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};

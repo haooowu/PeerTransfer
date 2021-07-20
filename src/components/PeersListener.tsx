@@ -8,9 +8,15 @@ import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
 import {IPeerField} from 'src/types';
 import {toast} from 'react-toastify';
 import {MAXIMUM_PEER_NUMBER} from 'src/constants';
+import Grow from '@material-ui/core/Grow';
 
-const StyledP = styled.p`
+const StyledP = styled.p<{$shouldHide: boolean}>`
   color: ${(props) => props.theme.primary.contrastText};
+  margin-top: ${(props) => (props.$shouldHide ? '0px' : '28%')};
+  height: ${(props) => (props.$shouldHide ? '0px' : 'auto')};
+  span {
+    font-size: 12px;
+  }
 `;
 
 const PeersHolder = styled(StyledPeerPosition)`
@@ -78,23 +84,32 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
     if (sendAllFiles.length > 0) setSendAllFiles([]);
   }
 
-  // TODO-sprint: instruction/welcoming title
+  let noPeer = otherPeers.length === 0;
+
   return (
     <>
-      <StyledP>Hello World</StyledP>
-      <PeersHolder>
-        {otherPeers.map((peer) => (
-          <PeerConnectionHolder
-            clearSentAllFiles={clearSentAllFiles}
-            sendAllFiles={sendAllFiles}
-            firestoreDbRef={dbRef.current}
-            key={peer.id}
-            targetPeer={peer}
-            publicID={publicID}
-            localID={localID}
-          />
-        ))}
-      </PeersHolder>
+      <Grow in={noPeer}>
+        <StyledP $shouldHide={!noPeer}>
+          Open the same link to start transfer files
+          <br />
+          <span>swipe right to see app settings</span>
+        </StyledP>
+      </Grow>
+      <Grow in={!noPeer}>
+        <PeersHolder>
+          {otherPeers.map((peer) => (
+            <PeerConnectionHolder
+              clearSentAllFiles={clearSentAllFiles}
+              sendAllFiles={sendAllFiles}
+              firestoreDbRef={dbRef.current}
+              key={peer.id}
+              targetPeer={peer}
+              publicID={publicID}
+              localID={localID}
+            />
+          ))}
+        </PeersHolder>
+      </Grow>
       {selfIdentity && (
         <SelfFileDropZone
           shouldDisableActionBtn={sendAllFiles.length > 0}

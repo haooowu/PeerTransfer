@@ -1,7 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
 
-import Link from '@material-ui/core/Link';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -26,20 +25,15 @@ interface Props {
   handleClose: () => void;
 }
 
-// TODO-sprint: update readme for github
-
 const AboutModal: React.FC<Props> = ({open, handleClose}) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogContent>
         <CustomLabel>About</CustomLabel>
         <DialogContentText>
-          This App uses{' '}
-          <Link target="_blank" rel="noopener" href="https://webrtc.org/">
-            WebRTC
-          </Link>{' '}
-          for secure end-to-end peer connection, together with free STUN server from Google, and Firebase for signalling
-          service and peer presence management. Only the following data is used by Firebase for WebRTC signalling:
+          This App uses <strong>WebRTC</strong> for secure end-to-end peer connection, together with free STUN server
+          from Google, and Firebase for signalling service and peer presence management. Only the following data is used
+          by Firebase for WebRTC signalling:
           <ul>
             <li>File metadata including file name, size and type</li>
             <li>ICE candidate descriptions, offers and answers that contain SDP information.</li>
@@ -51,11 +45,11 @@ const AboutModal: React.FC<Props> = ({open, handleClose}) => {
         <CustomLabel>Get Started</CustomLabel>
         <DialogContentText>
           Peers in the same network or room ID should appear in the app with their device and browser info, start
-          transfer file by drag and drop files or click their emoji for select files for transfer.
+          transfer file by drag and drop files or click their emoji to select files for transfer.
         </DialogContentText>
 
         <DialogContentText>
-          You can swipe the drawer to see the app settings and your current room ID.
+          You can swipe right or click the drawer menu icon to see the app settings and your current room ID.
         </DialogContentText>
 
         <DialogContentText>
