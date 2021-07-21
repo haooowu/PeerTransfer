@@ -14,6 +14,9 @@ const StyledP = styled.p<{$shouldHide: boolean}>`
   color: ${(props) => props.theme.primary.contrastText};
   margin-top: ${(props) => (props.$shouldHide ? '0px' : '25%')};
   height: ${(props) => (props.$shouldHide ? '0px' : 'auto')};
+  white-space: pre-wrap;
+  word-wrap: break-word;
+  max-width: 80%;
   span {
     font-size: 12px;
   }

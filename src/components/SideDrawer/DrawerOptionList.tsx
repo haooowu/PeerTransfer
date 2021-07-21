@@ -10,6 +10,7 @@ import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
 import Switch from '@material-ui/core/Switch';
 import Tooltip from '@material-ui/core/Tooltip';
+import InputBase from '@material-ui/core/InputBase';
 
 import AccountTreeIcon from '@material-ui/icons/AccountTree';
 import GitHubIcon from '@material-ui/icons/GitHub';
@@ -28,7 +29,10 @@ const StyledListItemIcon = styled(ListItemIcon)`
   color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
-const StyledListItem = styled(ListItem)<{$isOpen: boolean}>`
+const StyledListItem = styled.div<{$isOpen: boolean}>`
+  display: flex;
+  margin-top: 8px;
+  align-items: center;
   justify-content: space-between !important;
   line-height: 1.5em;
   cursor: pointer;
@@ -39,6 +43,9 @@ const StyledListItem = styled(ListItem)<{$isOpen: boolean}>`
   visibility: ${(props) => (props.$isOpen ? 'visible' : 'hidden')};
   span {
     font-weight: 300;
+  }
+  input {
+    min-width: 200px;
   }
 `;
 
@@ -69,10 +76,14 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
   handleAboutModalOpen,
 }) => {
   const handleCopyPublicID = async () => {
-    await navigator.clipboard.writeText(publicID);
-    toast.info('Room Id copied', {
-      autoClose: 3000,
-    });
+    try {
+      await navigator.clipboard.writeText(publicID);
+      toast.info('Room Id copied', {
+        autoClose: 3000,
+      });
+    } catch {
+      (document.getElementById('public-id') as HTMLInputElement).select();
+    }
   };
 
   const handleSourceRedirect = () => window.open('https://github.com/haooowu/PeerTransfer');
@@ -120,19 +131,17 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 
       <Divider />
 
-      <List>
-        <Tooltip title="Copy Room ID" placement="right">
-          <StyledListItem button $isOpen={drawerOpen} onClick={handleCopyPublicID}>
-            <div>
-              <span>Room ID:</span>
-              <div>{publicID}</div>
-            </div>
-            <StyledListItemIcon>
-              <FileCopyOutlinedIcon />
-            </StyledListItemIcon>
-          </StyledListItem>
-        </Tooltip>
-      </List>
+      <StyledListItem $isOpen={drawerOpen} onClick={handleCopyPublicID}>
+        <div>
+          <span>Room ID:</span>
+          <div>
+            <InputBase id="public-id" value={publicID} inputProps={{'aria-label': 'naked'}} />
+          </div>
+        </div>
+        <StyledListItemIcon>
+          <FileCopyOutlinedIcon />
+        </StyledListItemIcon>
+      </StyledListItem>
 
       <StyledList>
         <Tooltip title="About" placement="right">
