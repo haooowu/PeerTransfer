@@ -6,5 +6,6 @@ then
 fi
 yarn run build
 git add -A
-yarn commit -m "update build"
+git commit -m "update build"
+git push origin
 git subtree push --prefix $1 origin gh-pages
