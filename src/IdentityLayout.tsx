@@ -97,6 +97,11 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
 
   const bind = useGesture({
     onDragEnd: (state) => {
+      if (
+        state.event.target === document.getElementById('public-id') ||
+        state.event.target === document.getElementById('public-id-wrapper')
+      )
+        return;
       let movementX = Math.sign(state.movement[0]);
       let movementY = Math.sign(state.movement[1]);
       let distanceX = Math.abs(state.movement[0]);

@@ -29,10 +29,8 @@ const StyledListItemIcon = styled(ListItemIcon)`
   color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
-const StyledListItem = styled.div<{$isOpen: boolean}>`
-  display: flex;
-  margin-top: 8px;
-  align-items: center;
+const StyledListItem = styled(ListItem)<{$isOpen: boolean}>`
+  margin-top: 4px;
   justify-content: space-between !important;
   line-height: 1.5em;
   cursor: pointer;
@@ -41,11 +39,16 @@ const StyledListItem = styled.div<{$isOpen: boolean}>`
   text-align: left;
   padding-bottom: 1em;
   visibility: ${(props) => (props.$isOpen ? 'visible' : 'hidden')};
+  * {
+    pointer-events: none;
+  }
   span {
     font-weight: 300;
   }
   input {
     min-width: 200px;
+    pointer-events: auto;
+    color: ${(props) => props.theme.primary.contrastText};
   }
 `;
 
@@ -75,9 +78,11 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
   handleJoinRoomModalOpen,
   handleAboutModalOpen,
 }) => {
-  const handleCopyPublicID = async () => {
+  const handleCopyPublicID = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    e.stopPropagation();
     try {
       await navigator.clipboard.writeText(publicID);
+      toast.dismiss();
       toast.info('Room Id copied', {
         autoClose: 3000,
       });
@@ -131,17 +136,18 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 
       <Divider />
 
-      <StyledListItem $isOpen={drawerOpen} onClick={handleCopyPublicID}>
-        <div>
-          <span>Room ID:</span>
+      <List>
+        <StyledListItem button id="public-id-wrapper" $isOpen={drawerOpen} onClick={(e) => handleCopyPublicID(e)}>
           <div>
+            <span>Room ID:</span>
+            <br />
             <InputBase id="public-id" value={publicID} inputProps={{'aria-label': 'naked'}} />
           </div>
-        </div>
-        <StyledListItemIcon>
-          <FileCopyOutlinedIcon />
-        </StyledListItemIcon>
-      </StyledListItem>
+          <StyledListItemIcon>
+            <FileCopyOutlinedIcon />
+          </StyledListItemIcon>
+        </StyledListItem>
+      </List>
 
       <StyledList>
         <Tooltip title="About" placement="right">
