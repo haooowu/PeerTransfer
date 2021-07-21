@@ -5,6 +5,7 @@ then
   exit 1
 fi
 git checkout deploy
+git pull origin main
 git rm -r --cached .
 git add .
 
