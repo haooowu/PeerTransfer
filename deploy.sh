@@ -6,9 +6,9 @@ then
 fi
 
 git checkout deploy
-git pull origin main
 git rm -r --cached .
 git add .
+git pull origin main
 
 yarn run build
 git add build && git commit -m "update build"
