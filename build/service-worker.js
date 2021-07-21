@@ -1,37 +1,37 @@
 !(function (e) {
   var t = {};
-  function n(r) {
-    if (t[r]) return t[r].exports;
-    var a = (t[r] = {i: r, l: !1, exports: {}});
-    return e[r].call(a.exports, a, a.exports, n), (a.l = !0), a.exports;
+  function r(n) {
+    if (t[n]) return t[n].exports;
+    var a = (t[n] = {i: n, l: !1, exports: {}});
+    return e[n].call(a.exports, a, a.exports, r), (a.l = !0), a.exports;
   }
-  (n.m = e),
-    (n.c = t),
-    (n.d = function (e, t, r) {
-      n.o(e, t) || Object.defineProperty(e, t, {enumerable: !0, get: r});
+  (r.m = e),
+    (r.c = t),
+    (r.d = function (e, t, n) {
+      r.o(e, t) || Object.defineProperty(e, t, {enumerable: !0, get: n});
     }),
-    (n.r = function (e) {
+    (r.r = function (e) {
       'undefined' !== typeof Symbol &&
         Symbol.toStringTag &&
         Object.defineProperty(e, Symbol.toStringTag, {value: 'Module'}),
         Object.defineProperty(e, '__esModule', {value: !0});
     }),
-    (n.t = function (e, t) {
-      if ((1 & t && (e = n(e)), 8 & t)) return e;
+    (r.t = function (e, t) {
+      if ((1 & t && (e = r(e)), 8 & t)) return e;
       if (4 & t && 'object' === typeof e && e && e.__esModule) return e;
-      var r = Object.create(null);
-      if ((n.r(r), Object.defineProperty(r, 'default', {enumerable: !0, value: e}), 2 & t && 'string' != typeof e))
+      var n = Object.create(null);
+      if ((r.r(n), Object.defineProperty(n, 'default', {enumerable: !0, value: e}), 2 & t && 'string' != typeof e))
         for (var a in e)
-          n.d(
-            r,
+          r.d(
+            n,
             a,
             function (t) {
               return e[t];
             }.bind(null, a),
           );
-      return r;
+      return n;
     }),
-    (n.n = function (e) {
+    (r.n = function (e) {
       var t =
         e && e.__esModule
           ? function () {
@@ -40,110 +40,110 @@
           : function () {
               return e;
             };
-      return n.d(t, 'a', t), t;
+      return r.d(t, 'a', t), t;
     }),
-    (n.o = function (e, t) {
+    (r.o = function (e, t) {
       return Object.prototype.hasOwnProperty.call(e, t);
     }),
-    (n.p = '/'),
-    n((n.s = 7));
+    (r.p = '/PeerTransfer/'),
+    r((r.s = 7));
 })([
-  function (e, t, n) {
-    e.exports = n(6);
+  function (e, t, r) {
+    e.exports = r(6);
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
     try {
       self['workbox:core:5.1.4'] && _();
-    } catch (r) {}
+    } catch (n) {}
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
     try {
       self['workbox:precaching:5.1.4'] && _();
-    } catch (r) {}
+    } catch (n) {}
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
     try {
       self['workbox:routing:5.1.4'] && _();
-    } catch (r) {}
+    } catch (n) {}
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
     try {
       self['workbox:strategies:5.1.4'] && _();
-    } catch (r) {}
+    } catch (n) {}
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
     try {
       self['workbox:expiration:5.1.4'] && _();
-    } catch (r) {}
+    } catch (n) {}
   },
-  function (e, t, n) {
-    var r = (function (e) {
+  function (e, t, r) {
+    var n = (function (e) {
       'use strict';
       var t,
-        n = Object.prototype,
-        r = n.hasOwnProperty,
+        r = Object.prototype,
+        n = r.hasOwnProperty,
         a = 'function' === typeof Symbol ? Symbol : {},
         i = a.iterator || '@@iterator',
         c = a.asyncIterator || '@@asyncIterator',
         u = a.toStringTag || '@@toStringTag';
-      function o(e, t, n) {
-        return Object.defineProperty(e, t, {value: n, enumerable: !0, configurable: !0, writable: !0}), e[t];
+      function o(e, t, r) {
+        return Object.defineProperty(e, t, {value: r, enumerable: !0, configurable: !0, writable: !0}), e[t];
       }
       try {
         o({}, '');
       } catch (U) {
-        o = function (e, t, n) {
-          return (e[t] = n);
+        o = function (e, t, r) {
+          return (e[t] = r);
         };
       }
-      function s(e, t, n, r) {
+      function s(e, t, r, n) {
         var a = t && t.prototype instanceof y ? t : y,
           i = Object.create(a.prototype),
-          c = new O(r || []);
+          c = new T(n || []);
         return (
-          (i._invoke = (function (e, t, n) {
-            var r = h;
+          (i._invoke = (function (e, t, r) {
+            var n = h;
             return function (a, i) {
-              if (r === p) throw new Error('Generator is already running');
-              if (r === v) {
+              if (n === p) throw new Error('Generator is already running');
+              if (n === v) {
                 if ('throw' === a) throw i;
                 return S();
               }
-              for (n.method = a, n.arg = i; ; ) {
-                var c = n.delegate;
+              for (r.method = a, r.arg = i; ; ) {
+                var c = r.delegate;
                 if (c) {
-                  var u = E(c, n);
+                  var u = E(c, r);
                   if (u) {
                     if (u === d) continue;
                     return u;
                   }
                 }
-                if ('next' === n.method) n.sent = n._sent = n.arg;
-                else if ('throw' === n.method) {
-                  if (r === h) throw ((r = v), n.arg);
-                  n.dispatchException(n.arg);
-                } else 'return' === n.method && n.abrupt('return', n.arg);
-                r = p;
-                var o = f(e, t, n);
+                if ('next' === r.method) r.sent = r._sent = r.arg;
+                else if ('throw' === r.method) {
+                  if (n === h) throw ((n = v), r.arg);
+                  r.dispatchException(r.arg);
+                } else 'return' === r.method && r.abrupt('return', r.arg);
+                n = p;
+                var o = f(e, t, r);
                 if ('normal' === o.type) {
-                  if (((r = n.done ? v : l), o.arg === d)) continue;
-                  return {value: o.arg, done: n.done};
+                  if (((n = r.done ? v : l), o.arg === d)) continue;
+                  return {value: o.arg, done: r.done};
                 }
-                'throw' === o.type && ((r = v), (n.method = 'throw'), (n.arg = o.arg));
+                'throw' === o.type && ((n = v), (r.method = 'throw'), (r.arg = o.arg));
               }
             };
-          })(e, n, c)),
+          })(e, r, c)),
           i
         );
       }
-      function f(e, t, n) {
+      function f(e, t, r) {
         try {
-          return {type: 'normal', arg: e.call(t, n)};
+          return {type: 'normal', arg: e.call(t, r)};
         } catch (U) {
           return {type: 'throw', arg: U};
         }
@@ -162,8 +162,8 @@
         return this;
       };
       var w = Object.getPrototypeOf,
-        b = w && w(w(T([])));
-      b && b !== n && r.call(b, i) && (x = b);
+        b = w && w(w(O([])));
+      b && b !== r && n.call(b, i) && (x = b);
       var k = (g.prototype = y.prototype = Object.create(x));
       function _(e) {
         ['next', 'throw', 'return'].forEach(function (t) {
@@ -173,18 +173,18 @@
         });
       }
       function R(e, t) {
-        function n(a, i, c, u) {
+        function r(a, i, c, u) {
           var o = f(e[a], e, i);
           if ('throw' !== o.type) {
             var s = o.arg,
               h = s.value;
-            return h && 'object' === typeof h && r.call(h, '__await')
+            return h && 'object' === typeof h && n.call(h, '__await')
               ? t.resolve(h.__await).then(
                   function (e) {
-                    n('next', e, c, u);
+                    r('next', e, c, u);
                   },
                   function (e) {
-                    n('throw', e, c, u);
+                    r('throw', e, c, u);
                   },
                 )
               : t.resolve(h).then(
@@ -192,43 +192,43 @@
                     (s.value = e), c(s);
                   },
                   function (e) {
-                    return n('throw', e, c, u);
+                    return r('throw', e, c, u);
                   },
                 );
           }
           u(o.arg);
         }
         var a;
-        this._invoke = function (e, r) {
+        this._invoke = function (e, n) {
           function i() {
             return new t(function (t, a) {
-              n(e, r, t, a);
+              r(e, n, t, a);
             });
           }
           return (a = a ? a.then(i, i) : i());
         };
       }
-      function E(e, n) {
-        var r = e.iterator[n.method];
-        if (r === t) {
-          if (((n.delegate = null), 'throw' === n.method)) {
-            if (e.iterator.return && ((n.method = 'return'), (n.arg = t), E(e, n), 'throw' === n.method)) return d;
-            (n.method = 'throw'), (n.arg = new TypeError("The iterator does not provide a 'throw' method"));
+      function E(e, r) {
+        var n = e.iterator[r.method];
+        if (n === t) {
+          if (((r.delegate = null), 'throw' === r.method)) {
+            if (e.iterator.return && ((r.method = 'return'), (r.arg = t), E(e, r), 'throw' === r.method)) return d;
+            (r.method = 'throw'), (r.arg = new TypeError("The iterator does not provide a 'throw' method"));
           }
           return d;
         }
-        var a = f(r, e.iterator, n.arg);
-        if ('throw' === a.type) return (n.method = 'throw'), (n.arg = a.arg), (n.delegate = null), d;
+        var a = f(n, e.iterator, r.arg);
+        if ('throw' === a.type) return (r.method = 'throw'), (r.arg = a.arg), (r.delegate = null), d;
         var i = a.arg;
         return i
           ? i.done
-            ? ((n[e.resultName] = i.value),
-              (n.next = e.nextLoc),
-              'return' !== n.method && ((n.method = 'next'), (n.arg = t)),
-              (n.delegate = null),
+            ? ((r[e.resultName] = i.value),
+              (r.next = e.nextLoc),
+              'return' !== r.method && ((r.method = 'next'), (r.arg = t)),
+              (r.delegate = null),
               d)
             : i
-          : ((n.method = 'throw'), (n.arg = new TypeError('iterator result is not an object')), (n.delegate = null), d);
+          : ((r.method = 'throw'), (r.arg = new TypeError('iterator result is not an object')), (r.delegate = null), d);
       }
       function L(e) {
         var t = {tryLoc: e[0]};
@@ -238,19 +238,19 @@
         var t = e.completion || {};
         (t.type = 'normal'), delete t.arg, (e.completion = t);
       }
-      function O(e) {
+      function T(e) {
         (this.tryEntries = [{tryLoc: 'root'}]), e.forEach(L, this), this.reset(!0);
       }
-      function T(e) {
+      function O(e) {
         if (e) {
-          var n = e[i];
-          if (n) return n.call(e);
+          var r = e[i];
+          if (r) return r.call(e);
           if ('function' === typeof e.next) return e;
           if (!isNaN(e.length)) {
             var a = -1,
-              c = function n() {
-                for (; ++a < e.length; ) if (r.call(e, a)) return (n.value = e[a]), (n.done = !1), n;
-                return (n.value = t), (n.done = !0), n;
+              c = function r() {
+                for (; ++a < e.length; ) if (n.call(e, a)) return (r.value = e[a]), (r.done = !1), r;
+                return (r.value = t), (r.done = !0), r;
               };
             return (c.next = c);
           }
@@ -283,10 +283,10 @@
           return this;
         }),
         (e.AsyncIterator = R),
-        (e.async = function (t, n, r, a, i) {
+        (e.async = function (t, r, n, a, i) {
           void 0 === i && (i = Promise);
-          var c = new R(s(t, n, r, a), i);
-          return e.isGeneratorFunction(n)
+          var c = new R(s(t, r, n, a), i);
+          return e.isGeneratorFunction(r)
             ? c
             : c.next().then(function (e) {
                 return e.done ? e.value : c.next();
@@ -302,21 +302,21 @@
         }),
         (e.keys = function (e) {
           var t = [];
-          for (var n in e) t.push(n);
+          for (var r in e) t.push(r);
           return (
             t.reverse(),
-            function n() {
+            function r() {
               for (; t.length; ) {
-                var r = t.pop();
-                if (r in e) return (n.value = r), (n.done = !1), n;
+                var n = t.pop();
+                if (n in e) return (r.value = n), (r.done = !1), r;
               }
-              return (n.done = !0), n;
+              return (r.done = !0), r;
             }
           );
         }),
-        (e.values = T),
-        (O.prototype = {
-          constructor: O,
+        (e.values = O),
+        (T.prototype = {
+          constructor: T,
           reset: function (e) {
             if (
               ((this.prev = 0),
@@ -329,7 +329,7 @@
               this.tryEntries.forEach(q),
               !e)
             )
-              for (var n in this) 't' === n.charAt(0) && r.call(this, n) && !isNaN(+n.slice(1)) && (this[n] = t);
+              for (var r in this) 't' === r.charAt(0) && n.call(this, r) && !isNaN(+r.slice(1)) && (this[r] = t);
           },
           stop: function () {
             this.done = !0;
@@ -339,17 +339,17 @@
           },
           dispatchException: function (e) {
             if (this.done) throw e;
-            var n = this;
-            function a(r, a) {
-              return (u.type = 'throw'), (u.arg = e), (n.next = r), a && ((n.method = 'next'), (n.arg = t)), !!a;
+            var r = this;
+            function a(n, a) {
+              return (u.type = 'throw'), (u.arg = e), (r.next = n), a && ((r.method = 'next'), (r.arg = t)), !!a;
             }
             for (var i = this.tryEntries.length - 1; i >= 0; --i) {
               var c = this.tryEntries[i],
                 u = c.completion;
               if ('root' === c.tryLoc) return a('end');
               if (c.tryLoc <= this.prev) {
-                var o = r.call(c, 'catchLoc'),
-                  s = r.call(c, 'finallyLoc');
+                var o = n.call(c, 'catchLoc'),
+                  s = n.call(c, 'finallyLoc');
                 if (o && s) {
                   if (this.prev < c.catchLoc) return a(c.catchLoc, !0);
                   if (this.prev < c.finallyLoc) return a(c.finallyLoc);
@@ -363,9 +363,9 @@
             }
           },
           abrupt: function (e, t) {
-            for (var n = this.tryEntries.length - 1; n >= 0; --n) {
-              var a = this.tryEntries[n];
-              if (a.tryLoc <= this.prev && r.call(a, 'finallyLoc') && this.prev < a.finallyLoc) {
+            for (var r = this.tryEntries.length - 1; r >= 0; --r) {
+              var a = this.tryEntries[r];
+              if (a.tryLoc <= this.prev && n.call(a, 'finallyLoc') && this.prev < a.finallyLoc) {
                 var i = a;
                 break;
               }
@@ -389,27 +389,27 @@
           },
           finish: function (e) {
             for (var t = this.tryEntries.length - 1; t >= 0; --t) {
-              var n = this.tryEntries[t];
-              if (n.finallyLoc === e) return this.complete(n.completion, n.afterLoc), q(n), d;
+              var r = this.tryEntries[t];
+              if (r.finallyLoc === e) return this.complete(r.completion, r.afterLoc), q(r), d;
             }
           },
           catch: function (e) {
             for (var t = this.tryEntries.length - 1; t >= 0; --t) {
-              var n = this.tryEntries[t];
-              if (n.tryLoc === e) {
-                var r = n.completion;
-                if ('throw' === r.type) {
-                  var a = r.arg;
-                  q(n);
+              var r = this.tryEntries[t];
+              if (r.tryLoc === e) {
+                var n = r.completion;
+                if ('throw' === n.type) {
+                  var a = n.arg;
+                  q(r);
                 }
                 return a;
               }
             }
             throw new Error('illegal catch attempt');
           },
-          delegateYield: function (e, n, r) {
+          delegateYield: function (e, r, n) {
             return (
-              (this.delegate = {iterator: T(e), resultName: n, nextLoc: r}), 'next' === this.method && (this.arg = t), d
+              (this.delegate = {iterator: O(e), resultName: r, nextLoc: n}), 'next' === this.method && (this.arg = t), d
             );
           },
         }),
@@ -417,28 +417,28 @@
       );
     })(e.exports);
     try {
-      regeneratorRuntime = r;
+      regeneratorRuntime = n;
     } catch (a) {
-      Function('r', 'regeneratorRuntime = r')(r);
+      Function('r', 'regeneratorRuntime = r')(n);
     }
   },
-  function (e, t, n) {
+  function (e, t, r) {
     'use strict';
-    function r(e, t) {
+    function n(e, t) {
       (null == t || t > e.length) && (t = e.length);
-      for (var n = 0, r = new Array(t); n < t; n++) r[n] = e[n];
-      return r;
+      for (var r = 0, n = new Array(t); r < t; r++) n[r] = e[r];
+      return n;
     }
     function a(e, t) {
       if (e) {
-        if ('string' === typeof e) return r(e, t);
-        var n = Object.prototype.toString.call(e).slice(8, -1);
+        if ('string' === typeof e) return n(e, t);
+        var r = Object.prototype.toString.call(e).slice(8, -1);
         return (
-          'Object' === n && e.constructor && (n = e.constructor.name),
-          'Map' === n || 'Set' === n
+          'Object' === r && e.constructor && (r = e.constructor.name),
+          'Map' === r || 'Set' === r
             ? Array.from(e)
-            : 'Arguments' === n || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(n)
-            ? r(e, t)
+            : 'Arguments' === r || /^(?:Ui|I)nt(?:8|16|32)(?:Clamped)?Array$/.test(r)
+            ? n(e, t)
             : void 0
         );
       }
@@ -446,7 +446,7 @@
     function i(e) {
       return (
         (function (e) {
-          if (Array.isArray(e)) return r(e);
+          if (Array.isArray(e)) return n(e);
         })(e) ||
         (function (e) {
           if ('undefined' !== typeof Symbol && Symbol.iterator in Object(e)) return Array.from(e);
@@ -459,19 +459,19 @@
         })()
       );
     }
-    n.r(t);
-    n(1);
+    r.r(t);
+    r(1);
     function c(e, t) {
-      var n;
+      var r;
       if ('undefined' === typeof Symbol || null == e[Symbol.iterator]) {
-        if (Array.isArray(e) || (n = a(e)) || (t && e && 'number' === typeof e.length)) {
-          n && (e = n);
-          var r = 0,
+        if (Array.isArray(e) || (r = a(e)) || (t && e && 'number' === typeof e.length)) {
+          r && (e = r);
+          var n = 0,
             i = function () {};
           return {
             s: i,
             n: function () {
-              return r >= e.length ? {done: !0} : {done: !1, value: e[r++]};
+              return n >= e.length ? {done: !0} : {done: !1, value: e[n++]};
             },
             e: function (e) {
               throw e;
@@ -488,10 +488,10 @@
         o = !1;
       return {
         s: function () {
-          n = e[Symbol.iterator]();
+          r = e[Symbol.iterator]();
         },
         n: function () {
-          var e = n.next();
+          var e = r.next();
           return (u = e.done), e;
         },
         e: function (e) {
@@ -499,7 +499,7 @@
         },
         f: function () {
           try {
-            u || null == n.return || n.return();
+            u || null == r.return || r.return();
           } finally {
             if (o) throw c;
           }
@@ -562,61 +562,61 @@
     function v(e) {
       var t = h();
       return function () {
-        var n,
-          r = f(e);
+        var r,
+          n = f(e);
         if (t) {
           var a = f(this).constructor;
-          n = Reflect.construct(r, arguments, a);
-        } else n = r.apply(this, arguments);
-        return p(this, n);
+          r = Reflect.construct(n, arguments, a);
+        } else r = n.apply(this, arguments);
+        return p(this, r);
       };
     }
-    function d(e, t, n) {
+    function d(e, t, r) {
       return (d = h()
         ? Reflect.construct
-        : function (e, t, n) {
-            var r = [null];
-            r.push.apply(r, t);
-            var a = new (Function.bind.apply(e, r))();
-            return n && o(a, n.prototype), a;
+        : function (e, t, r) {
+            var n = [null];
+            n.push.apply(n, t);
+            var a = new (Function.bind.apply(e, n))();
+            return r && o(a, r.prototype), a;
           }).apply(null, arguments);
     }
     function y(e) {
       var t = 'function' === typeof Map ? new Map() : void 0;
       return (y = function (e) {
-        if (null === e || ((n = e), -1 === Function.toString.call(n).indexOf('[native code]'))) return e;
-        var n;
+        if (null === e || ((r = e), -1 === Function.toString.call(r).indexOf('[native code]'))) return e;
+        var r;
         if ('function' !== typeof e) throw new TypeError('Super expression must either be null or a function');
         if ('undefined' !== typeof t) {
           if (t.has(e)) return t.get(e);
-          t.set(e, r);
+          t.set(e, n);
         }
-        function r() {
+        function n() {
           return d(e, arguments, f(this).constructor);
         }
         return (
-          (r.prototype = Object.create(e.prototype, {
-            constructor: {value: r, enumerable: !1, writable: !0, configurable: !0},
+          (n.prototype = Object.create(e.prototype, {
+            constructor: {value: n, enumerable: !1, writable: !0, configurable: !0},
           })),
-          o(r, e)
+          o(n, e)
         );
       })(e);
     }
     var m = function (e) {
-        for (var t = e, n = arguments.length, r = new Array(n > 1 ? n - 1 : 0), a = 1; a < n; a++)
-          r[a - 1] = arguments[a];
-        return r.length > 0 && (t += ' :: '.concat(JSON.stringify(r))), t;
+        for (var t = e, r = arguments.length, n = new Array(r > 1 ? r - 1 : 0), a = 1; a < r; a++)
+          n[a - 1] = arguments[a];
+        return n.length > 0 && (t += ' :: '.concat(JSON.stringify(n))), t;
       },
       g = (function (e) {
-        s(n, e);
-        var t = v(n);
-        function n(e, r) {
+        s(r, e);
+        var t = v(r);
+        function r(e, n) {
           var a;
-          u(this, n);
-          var i = m(e, r);
-          return ((a = t.call(this, i)).name = e), (a.details = r), a;
+          u(this, r);
+          var i = m(e, n);
+          return ((a = t.call(this, i)).name = e), (a.details = n), a;
         }
-        return n;
+        return r;
       })(y(Error)),
       x = new Set();
     function w(e) {
@@ -642,40 +642,40 @@
       R = function (e) {
         return e || k(b.runtime);
       },
-      E = n(0),
-      L = n.n(E);
-    function q(e, t, n, r, a, i, c) {
+      E = r(0),
+      L = r.n(E);
+    function q(e, t, r, n, a, i, c) {
       try {
         var u = e[i](c),
           o = u.value;
       } catch (s) {
-        return void n(s);
+        return void r(s);
       }
-      u.done ? t(o) : Promise.resolve(o).then(r, a);
+      u.done ? t(o) : Promise.resolve(o).then(n, a);
     }
-    function O(e) {
+    function T(e) {
       return function () {
         var t = this,
-          n = arguments;
-        return new Promise(function (r, a) {
-          var i = e.apply(t, n);
+          r = arguments;
+        return new Promise(function (n, a) {
+          var i = e.apply(t, r);
           function c(e) {
-            q(i, r, a, c, u, 'next', e);
+            q(i, n, a, c, u, 'next', e);
           }
           function u(e) {
-            q(i, r, a, c, u, 'throw', e);
+            q(i, n, a, c, u, 'throw', e);
           }
           c(void 0);
         });
       };
     }
-    function T() {
+    function O() {
       return S.apply(this, arguments);
     }
     function S() {
-      return (S = O(
+      return (S = T(
         L.a.mark(function e() {
-          var t, n, r;
+          var t, r, n;
           return L.a.wrap(
             function (e) {
               for (;;)
@@ -683,11 +683,11 @@
                   case 0:
                     0, (t = c(x)), (e.prev = 2), t.s();
                   case 4:
-                    if ((n = t.n()).done) {
+                    if ((r = t.n()).done) {
                       e.next = 11;
                       break;
                     }
-                    return (r = n.value), (e.next = 8), r();
+                    return (n = r.value), (e.next = 8), n();
                   case 8:
                     0;
                   case 9:
@@ -724,19 +724,19 @@
         });
       },
       A = (function () {
-        var e = O(
+        var e = T(
           L.a.mark(function e(t) {
-            var n, r, a, i, u, o, s, f;
+            var r, n, a, i, u, o, s, f;
             return L.a.wrap(
               function (e) {
                 for (;;)
                   switch ((e.prev = e.next)) {
                     case 0:
-                      (n = t.request),
-                        (r = t.mode),
+                      (r = t.request),
+                        (n = t.mode),
                         (a = t.plugins),
                         (i = j(void 0 === a ? [] : a, 'cacheKeyWillBeUsed')),
-                        (u = n),
+                        (u = r),
                         (o = c(i)),
                         (e.prev = 4),
                         o.s();
@@ -745,7 +745,7 @@
                         e.next = 15;
                         break;
                       }
-                      return (f = s.value), (e.next = 10), f.cacheKeyWillBeUsed.call(f, {mode: r, request: u});
+                      return (f = s.value), (e.next = 10), f.cacheKeyWillBeUsed.call(f, {mode: n, request: u});
                     case 10:
                       'string' === typeof (u = e.sent) && (u = new Request(u));
                     case 13:
@@ -776,19 +776,19 @@
         };
       })(),
       M = (function () {
-        var e = O(
+        var e = T(
           L.a.mark(function e(t) {
-            var n, r, a, i, u, o, s, f, h, l;
+            var r, n, a, i, u, o, s, f, h, l;
             return L.a.wrap(
               function (e) {
                 for (;;)
                   switch ((e.prev = e.next)) {
                     case 0:
-                      (n = t.request),
-                        (r = t.response),
+                      (r = t.request),
+                        (n = t.response),
                         (a = t.event),
                         (i = t.plugins),
-                        (u = r),
+                        (u = n),
                         (o = !1),
                         (s = c(void 0 === i ? [] : i)),
                         (e.prev = 4),
@@ -803,7 +803,7 @@
                         break;
                       }
                       return (
-                        (o = !0), (l = h.cacheWillUpdate), (e.next = 13), l.call(h, {request: n, response: u, event: a})
+                        (o = !0), (l = h.cacheWillUpdate), (e.next = 13), l.call(h, {request: r, response: u, event: a})
                       );
                     case 13:
                       if ((u = e.sent)) {
@@ -838,27 +838,27 @@
           return e.apply(this, arguments);
         };
       })(),
-      C = (function () {
-        var e = O(
+      P = (function () {
+        var e = T(
           L.a.mark(function e(t) {
-            var n, r, a, i, u, o, s, f, h, l, p, v, d;
+            var r, n, a, i, u, o, s, f, h, l, p, v, d;
             return L.a.wrap(
               function (e) {
                 for (;;)
                   switch ((e.prev = e.next)) {
                     case 0:
                       return (
-                        (n = t.cacheName),
-                        (r = t.request),
+                        (r = t.cacheName),
+                        (n = t.request),
                         (a = t.event),
                         (i = t.matchOptions),
                         (u = t.plugins),
                         (o = void 0 === u ? [] : u),
                         (e.next = 3),
-                        self.caches.open(n)
+                        self.caches.open(r)
                       );
                     case 3:
-                      return (s = e.sent), (e.next = 6), A({plugins: o, request: r, mode: 'read'});
+                      return (s = e.sent), (e.next = 6), A({plugins: o, request: n, mode: 'read'});
                     case 6:
                       return (f = e.sent), (e.next = 9), s.match(f, i);
                     case 9:
@@ -875,7 +875,7 @@
                       return (
                         (d = v.cachedResponseWillBeUsed),
                         (e.next = 20),
-                        d.call(v, {cacheName: n, event: a, matchOptions: i, cachedResponse: h, request: f})
+                        d.call(v, {cacheName: r, event: a, matchOptions: i, cachedResponse: h, request: f})
                       );
                     case 20:
                       h = e.sent;
@@ -906,18 +906,18 @@
           return e.apply(this, arguments);
         };
       })(),
-      K = {
+      C = {
         put: (function () {
-          var e = O(
+          var e = T(
             L.a.mark(function e(t) {
-              var n, r, a, i, u, o, s, f, h, l, p, v, d, y, m;
+              var r, n, a, i, u, o, s, f, h, l, p, v, d, y, m;
               return L.a.wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
-                        (n = t.cacheName),
-                          (r = t.request),
+                        (r = t.cacheName),
+                          (n = t.request),
                           (a = t.response),
                           (i = t.event),
                           (u = t.plugins),
@@ -926,7 +926,7 @@
                           (e.next = 4);
                         break;
                       case 4:
-                        return (e.next = 6), A({plugins: o, request: r, mode: 'write'});
+                        return (e.next = 6), A({plugins: o, request: n, mode: 'write'});
                       case 6:
                         if (((f = e.sent), a)) {
                           e.next = 10;
@@ -942,13 +942,13 @@
                         }
                         return e.abrupt('return');
                       case 16:
-                        return (e.next = 18), self.caches.open(n);
+                        return (e.next = 18), self.caches.open(r);
                       case 18:
                         if (((l = e.sent), !((p = j(o, 'cacheDidUpdate')).length > 0))) {
                           e.next = 26;
                           break;
                         }
-                        return (e.next = 23), C({cacheName: n, matchOptions: s, request: f});
+                        return (e.next = 23), P({cacheName: r, matchOptions: s, request: f});
                       case 23:
                         (e.t0 = e.sent), (e.next = 27);
                         break;
@@ -964,7 +964,7 @@
                           e.next = 39;
                           break;
                         }
-                        return (e.next = 39), T();
+                        return (e.next = 39), O();
                       case 39:
                         throw e.t1;
                       case 40:
@@ -977,7 +977,7 @@
                         return (
                           (m = y.value),
                           (e.next = 47),
-                          m.cacheDidUpdate.call(m, {cacheName: n, event: i, oldResponse: v, newResponse: h, request: f})
+                          m.cacheDidUpdate.call(m, {cacheName: r, event: i, oldResponse: v, newResponse: h, request: f})
                         );
                       case 47:
                         e.next = 43;
@@ -1007,9 +1007,9 @@
             return e.apply(this, arguments);
           };
         })(),
-        match: C,
+        match: P,
       };
-    function P() {
+    function K() {
       if (void 0 === U) {
         var e = new Response('');
         if ('body' in e)
@@ -1032,26 +1032,26 @@
         })(e) ||
         (function (e, t) {
           if ('undefined' !== typeof Symbol && Symbol.iterator in Object(e)) {
-            var n = [],
-              r = !0,
+            var r = [],
+              n = !0,
               a = !1,
               i = void 0;
             try {
               for (
                 var c, u = e[Symbol.iterator]();
-                !(r = (c = u.next()).done) && (n.push(c.value), !t || n.length !== t);
-                r = !0
+                !(n = (c = u.next()).done) && (r.push(c.value), !t || r.length !== t);
+                n = !0
               );
             } catch (o) {
               (a = !0), (i = o);
             } finally {
               try {
-                r || null == u.return || u.return();
+                n || null == u.return || u.return();
               } finally {
                 if (a) throw i;
               }
             }
-            return n;
+            return r;
           }
         })(e, t) ||
         a(e, t) ||
@@ -1063,32 +1063,32 @@
       );
     }
     function W(e, t) {
-      for (var n = 0; n < t.length; n++) {
-        var r = t[n];
-        (r.enumerable = r.enumerable || !1),
-          (r.configurable = !0),
-          'value' in r && (r.writable = !0),
-          Object.defineProperty(e, r.key, r);
+      for (var r = 0; r < t.length; r++) {
+        var n = t[r];
+        (n.enumerable = n.enumerable || !1),
+          (n.configurable = !0),
+          'value' in n && (n.writable = !0),
+          Object.defineProperty(e, n.key, n);
       }
     }
-    function F(e, t, n) {
-      return t && W(e.prototype, t), n && W(e, n), e;
+    function F(e, t, r) {
+      return t && W(e.prototype, t), r && W(e, r), e;
     }
     var H = (function () {
-      function e(t, n) {
-        var r = this,
+      function e(t, r) {
+        var n = this,
           a = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : {},
           i = a.onupgradeneeded,
           c = a.onversionchange;
         u(this, e),
           (this._db = null),
           (this._name = t),
-          (this._version = n),
+          (this._version = r),
           (this._onupgradeneeded = i),
           (this._onversionchange =
             c ||
             function () {
-              return r.close();
+              return n.close();
             });
       }
       return (
@@ -1102,7 +1102,7 @@
           {
             key: 'open',
             value: (function () {
-              var e = O(
+              var e = T(
                 L.a.mark(function e() {
                   var t = this;
                   return L.a.wrap(
@@ -1118,23 +1118,23 @@
                           case 2:
                             return (
                               (e.next = 4),
-                              new Promise(function (e, n) {
-                                var r = !1;
+                              new Promise(function (e, r) {
+                                var n = !1;
                                 setTimeout(function () {
-                                  (r = !0), n(new Error('The open request was blocked and timed out'));
+                                  (n = !0), r(new Error('The open request was blocked and timed out'));
                                 }, t.OPEN_TIMEOUT);
                                 var a = indexedDB.open(t._name, t._version);
                                 (a.onerror = function () {
-                                  return n(a.error);
+                                  return r(a.error);
                                 }),
                                   (a.onupgradeneeded = function (e) {
-                                    r
+                                    n
                                       ? (a.transaction.abort(), a.result.close())
                                       : 'function' === typeof t._onupgradeneeded && t._onupgradeneeded(e);
                                   }),
                                   (a.onsuccess = function () {
-                                    var n = a.result;
-                                    r ? n.close() : ((n.onversionchange = t._onversionchange.bind(t)), e(n));
+                                    var r = a.result;
+                                    n ? r.close() : ((r.onversionchange = t._onversionchange.bind(t)), e(r));
                                   });
                               })
                             );
@@ -1158,14 +1158,14 @@
           {
             key: 'getKey',
             value: (function () {
-              var e = O(
-                L.a.mark(function e(t, n) {
+              var e = T(
+                L.a.mark(function e(t, r) {
                   return L.a.wrap(
                     function (e) {
                       for (;;)
                         switch ((e.prev = e.next)) {
                           case 0:
-                            return (e.next = 2), this.getAllKeys(t, n, 1);
+                            return (e.next = 2), this.getAllKeys(t, r, 1);
                           case 2:
                             return e.abrupt('return', e.sent[0]);
                           case 3:
@@ -1178,7 +1178,7 @@
                   );
                 }),
               );
-              return function (t, n) {
+              return function (t, r) {
                 return e.apply(this, arguments);
               };
             })(),
@@ -1186,14 +1186,14 @@
           {
             key: 'getAll',
             value: (function () {
-              var e = O(
-                L.a.mark(function e(t, n, r) {
+              var e = T(
+                L.a.mark(function e(t, r, n) {
                   return L.a.wrap(
                     function (e) {
                       for (;;)
                         switch ((e.prev = e.next)) {
                           case 0:
-                            return (e.next = 2), this.getAllMatching(t, {query: n, count: r});
+                            return (e.next = 2), this.getAllMatching(t, {query: r, count: n});
                           case 2:
                             return e.abrupt('return', e.sent);
                           case 3:
@@ -1206,7 +1206,7 @@
                   );
                 }),
               );
-              return function (t, n, r) {
+              return function (t, r, n) {
                 return e.apply(this, arguments);
               };
             })(),
@@ -1214,15 +1214,15 @@
           {
             key: 'getAllKeys',
             value: (function () {
-              var e = O(
-                L.a.mark(function e(t, n, r) {
+              var e = T(
+                L.a.mark(function e(t, r, n) {
                   var a;
                   return L.a.wrap(
                     function (e) {
                       for (;;)
                         switch ((e.prev = e.next)) {
                           case 0:
-                            return (e.next = 2), this.getAllMatching(t, {query: n, count: r, includeKeys: !0});
+                            return (e.next = 2), this.getAllMatching(t, {query: r, count: n, includeKeys: !0});
                           case 2:
                             return (
                               (a = e.sent),
@@ -1243,7 +1243,7 @@
                   );
                 }),
               );
-              return function (t, n, r) {
+              return function (t, r, n) {
                 return e.apply(this, arguments);
               };
             })(),
@@ -1251,10 +1251,10 @@
           {
             key: 'getAllMatching',
             value: (function () {
-              var e = O(
+              var e = T(
                 L.a.mark(function e(t) {
-                  var n,
-                    r,
+                  var r,
+                    n,
                     a,
                     i,
                     c,
@@ -1269,24 +1269,24 @@
                         switch ((e.prev = e.next)) {
                           case 0:
                             return (
-                              (n = h.length > 1 && void 0 !== h[1] ? h[1] : {}),
-                              (r = n.index),
-                              (a = n.query),
+                              (r = h.length > 1 && void 0 !== h[1] ? h[1] : {}),
+                              (n = r.index),
+                              (a = r.query),
                               (i = void 0 === a ? null : a),
-                              (c = n.direction),
+                              (c = r.direction),
                               (u = void 0 === c ? 'next' : c),
-                              (o = n.count),
-                              (s = n.includeKeys),
+                              (o = r.count),
+                              (s = r.includeKeys),
                               (f = void 0 !== s && s),
                               (e.next = 3),
-                              this.transaction([t], 'readonly', function (e, n) {
+                              this.transaction([t], 'readonly', function (e, r) {
                                 var a = e.objectStore(t),
-                                  c = r ? a.index(r) : a,
+                                  c = n ? a.index(n) : a,
                                   s = [],
                                   h = c.openCursor(i, u);
                                 h.onsuccess = function () {
                                   var e = h.result;
-                                  e ? (s.push(f ? e : e.value), o && s.length >= o ? n(s) : e.continue()) : n(s);
+                                  e ? (s.push(f ? e : e.value), o && s.length >= o ? r(s) : e.continue()) : r(s);
                                 };
                               })
                             );
@@ -1310,8 +1310,8 @@
           {
             key: 'transaction',
             value: (function () {
-              var e = O(
-                L.a.mark(function e(t, n, r) {
+              var e = T(
+                L.a.mark(function e(t, r, n) {
                   var a = this;
                   return L.a.wrap(
                     function (e) {
@@ -1323,14 +1323,14 @@
                             return (
                               (e.next = 4),
                               new Promise(function (e, i) {
-                                var c = a._db.transaction(t, n);
+                                var c = a._db.transaction(t, r);
                                 (c.onabort = function () {
                                   return i(c.error);
                                 }),
                                   (c.oncomplete = function () {
                                     return e();
                                   }),
-                                  r(c, function (t) {
+                                  n(c, function (t) {
                                     return e(t);
                                   });
                               })
@@ -1347,7 +1347,7 @@
                   );
                 }),
               );
-              return function (t, n, r) {
+              return function (t, r, n) {
                 return e.apply(this, arguments);
               };
             })(),
@@ -1355,8 +1355,8 @@
           {
             key: '_call',
             value: (function () {
-              var e = O(
-                L.a.mark(function e(t, n, r) {
+              var e = T(
+                L.a.mark(function e(t, r, n) {
                   var a,
                     i,
                     c,
@@ -1369,15 +1369,15 @@
                           case 0:
                             for (a = o.length, i = new Array(a > 3 ? a - 3 : 0), c = 3; c < a; c++) i[c - 3] = o[c];
                             return (
-                              (u = function (e, r) {
-                                var a = e.objectStore(n),
+                              (u = function (e, n) {
+                                var a = e.objectStore(r),
                                   c = a[t].apply(a, i);
                                 c.onsuccess = function () {
-                                  return r(c.result);
+                                  return n(c.result);
                                 };
                               }),
                               (e.next = 4),
-                              this.transaction([n], r, u)
+                              this.transaction([r], n, u)
                             );
                           case 4:
                             return e.abrupt('return', e.sent);
@@ -1391,7 +1391,7 @@
                   );
                 }),
               );
-              return function (t, n, r) {
+              return function (t, r, n) {
                 return e.apply(this, arguments);
               };
             })(),
@@ -1411,15 +1411,15 @@
       var B = function () {
           var e,
             t = D(Q[G], 2),
-            n = t[0],
-            r = c(t[1]);
+            r = t[0],
+            n = c(t[1]);
           try {
             var a = function () {
               var t = e.value;
               (t in IDBObjectStore.prototype) &&
                 (H.prototype[t] = (function () {
-                  var e = O(
-                    L.a.mark(function e(r) {
+                  var e = T(
+                    L.a.mark(function e(n) {
                       var a,
                         i,
                         c,
@@ -1430,7 +1430,7 @@
                             switch ((e.prev = e.next)) {
                               case 0:
                                 for (a = u.length, i = new Array(a > 1 ? a - 1 : 0), c = 1; c < a; c++) i[c - 1] = u[c];
-                                return (e.next = 3), this._call.apply(this, [t, r, n].concat(i));
+                                return (e.next = 3), this._call.apply(this, [t, n, r].concat(i));
                               case 3:
                                 return e.abrupt('return', e.sent);
                               case 4:
@@ -1448,11 +1448,11 @@
                   };
                 })());
             };
-            for (r.s(); !(e = r.n()).done; ) a();
+            for (n.s(); !(e = n.n()).done; ) a();
           } catch (i) {
-            r.e(i);
+            n.e(i);
           } finally {
-            r.f();
+            n.f();
           }
         },
         G = 0,
@@ -1465,7 +1465,7 @@
     )
       B();
     var Y = (function () {
-        var e = O(
+        var e = T(
           L.a.mark(function e(t) {
             return L.a.wrap(function (e) {
               for (;;)
@@ -1473,15 +1473,15 @@
                   case 0:
                     return (
                       (e.next = 2),
-                      new Promise(function (e, n) {
-                        var r = indexedDB.deleteDatabase(t);
-                        (r.onerror = function () {
-                          n(r.error);
+                      new Promise(function (e, r) {
+                        var n = indexedDB.deleteDatabase(t);
+                        (n.onerror = function () {
+                          r(n.error);
                         }),
-                          (r.onblocked = function () {
-                            n(new Error('Delete blocked'));
+                          (n.onblocked = function () {
+                            r(new Error('Delete blocked'));
                           }),
-                          (r.onsuccess = function () {
+                          (n.onsuccess = function () {
                             e();
                           });
                       })
@@ -1499,21 +1499,21 @@
       })(),
       $ = {
         fetch: (function () {
-          var e = O(
+          var e = T(
             L.a.mark(function e(t) {
-              var n, r, a, i, u, o, s, f, h, l, p, v, d, y, m, x, w, b, k, _, R;
+              var r, n, a, i, u, o, s, f, h, l, p, v, d, y, m, x, w, b, k, _, R;
               return L.a.wrap(
                 function (e) {
                   for (;;)
                     switch ((e.prev = e.next)) {
                       case 0:
                         if (
-                          ((n = t.request),
-                          (r = t.fetchOptions),
+                          ((r = t.request),
+                          (n = t.fetchOptions),
                           (a = t.event),
                           (i = t.plugins),
                           (u = void 0 === i ? [] : i),
-                          'string' === typeof n && (n = new Request(n)),
+                          'string' === typeof r && (r = new Request(r)),
                           !(a instanceof FetchEvent && a.preloadResponse))
                         ) {
                           e.next = 9;
@@ -1529,7 +1529,7 @@
                       case 9:
                         0,
                           (s = j(u, 'fetchDidFail')),
-                          (f = s.length > 0 ? n.clone() : null),
+                          (f = s.length > 0 ? r.clone() : null),
                           (e.prev = 12),
                           (h = c(u)),
                           (e.prev = 14),
@@ -1544,10 +1544,10 @@
                           break;
                         }
                         return (
-                          (v = p.requestWillFetch), (d = n.clone()), (e.next = 23), v.call(p, {request: d, event: a})
+                          (v = p.requestWillFetch), (d = r.clone()), (e.next = 23), v.call(p, {request: d, event: a})
                         );
                       case 23:
-                        n = e.sent;
+                        r = e.sent;
                       case 25:
                         e.next = 16;
                         break;
@@ -1568,16 +1568,16 @@
                           new g('plugin-error-request-will-fetch', {thrownError: e.t1}))
                         );
                       case 40:
-                        if (((y = n.clone()), (e.prev = 41), 'navigate' !== n.mode)) {
+                        if (((y = r.clone()), (e.prev = 41), 'navigate' !== r.mode)) {
                           e.next = 48;
                           break;
                         }
-                        return (e.next = 45), fetch(n);
+                        return (e.next = 45), fetch(r);
                       case 45:
                         (m = e.sent), (e.next = 51);
                         break;
                       case 48:
-                        return (e.next = 50), fetch(n, r);
+                        return (e.next = 50), fetch(r, n);
                       case 50:
                         m = e.sent;
                       case 51:
@@ -1661,26 +1661,26 @@
       return V.apply(this, arguments);
     }
     function V() {
-      return (V = O(
-        L.a.mark(function e(t, n) {
-          var r, a, i, c;
+      return (V = T(
+        L.a.mark(function e(t, r) {
+          var n, a, i, c;
           return L.a.wrap(function (e) {
             for (;;)
               switch ((e.prev = e.next)) {
                 case 0:
                   if (
-                    ((r = t.clone()),
-                    (a = {headers: new Headers(r.headers), status: r.status, statusText: r.statusText}),
-                    (i = n ? n(a) : a),
-                    !P())
+                    ((n = t.clone()),
+                    (a = {headers: new Headers(n.headers), status: n.status, statusText: n.statusText}),
+                    (i = r ? r(a) : a),
+                    !K())
                   ) {
                     e.next = 7;
                     break;
                   }
-                  (e.t0 = r.body), (e.next = 10);
+                  (e.t0 = n.body), (e.next = 10);
                   break;
                 case 7:
-                  return (e.next = 9), r.blob();
+                  return (e.next = 9), n.blob();
                 case 9:
                   e.t0 = e.sent;
                 case 10:
@@ -1693,7 +1693,7 @@
         }),
       )).apply(this, arguments);
     }
-    n(5);
+    r(5);
     var z = 'cache-entries',
       X = function (e) {
         var t = new URL(e, location.href);
@@ -1701,12 +1701,12 @@
       },
       Z = (function () {
         function e(t) {
-          var n = this;
+          var r = this;
           u(this, e),
             (this._cacheName = t),
             (this._db = new H('workbox-expiration', 1, {
               onupgradeneeded: function (e) {
-                return n._handleUpgrade(e);
+                return r._handleUpgrade(e);
               },
             }));
         }
@@ -1724,9 +1724,9 @@
             {
               key: 'setTimestamp',
               value: (function () {
-                var e = O(
-                  L.a.mark(function e(t, n) {
-                    var r;
+                var e = T(
+                  L.a.mark(function e(t, r) {
+                    var n;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -1734,9 +1734,9 @@
                             case 0:
                               return (
                                 (t = X(t)),
-                                (r = {url: t, timestamp: n, cacheName: this._cacheName, id: this._getId(t)}),
+                                (n = {url: t, timestamp: r, cacheName: this._cacheName, id: this._getId(t)}),
                                 (e.next = 4),
-                                this._db.put(z, r)
+                                this._db.put(z, n)
                               );
                             case 4:
                             case 'end':
@@ -1748,7 +1748,7 @@
                     );
                   }),
                 );
-                return function (t, n) {
+                return function (t, r) {
                   return e.apply(this, arguments);
                 };
               })(),
@@ -1756,9 +1756,9 @@
             {
               key: 'getTimestamp',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n;
+                    var r;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -1766,7 +1766,7 @@
                             case 0:
                               return (e.next = 2), this._db.get(z, this._getId(t));
                             case 2:
-                              return (n = e.sent), e.abrupt('return', n.timestamp);
+                              return (r = e.sent), e.abrupt('return', r.timestamp);
                             case 4:
                             case 'end':
                               return e.stop();
@@ -1785,9 +1785,9 @@
             {
               key: 'expireEntries',
               value: (function () {
-                var e = O(
-                  L.a.mark(function e(t, n) {
-                    var r,
+                var e = T(
+                  L.a.mark(function e(t, r) {
+                    var n,
                       a,
                       i,
                       u,
@@ -1800,7 +1800,7 @@
                             case 0:
                               return (
                                 (e.next = 2),
-                                this._db.transaction(z, 'readwrite', function (e, r) {
+                                this._db.transaction(z, 'readwrite', function (e, n) {
                                   var a = e.objectStore(z).index('timestamp').openCursor(null, 'prev'),
                                     i = [],
                                     c = 0;
@@ -1809,14 +1809,14 @@
                                     if (e) {
                                       var u = e.value;
                                       u.cacheName === s._cacheName &&
-                                        ((t && u.timestamp < t) || (n && c >= n) ? i.push(e.value) : c++),
+                                        ((t && u.timestamp < t) || (r && c >= r) ? i.push(e.value) : c++),
                                         e.continue();
-                                    } else r(i);
+                                    } else n(i);
                                   };
                                 })
                               );
                             case 2:
-                              (r = e.sent), (a = []), (i = c(r)), (e.prev = 5), i.s();
+                              (n = e.sent), (a = []), (i = c(n)), (e.prev = 5), i.s();
                             case 7:
                               if ((u = i.n()).done) {
                                 e.next = 14;
@@ -1848,7 +1848,7 @@
                     );
                   }),
                 );
-                return function (t, n) {
+                return function (t, r) {
                   return e.apply(this, arguments);
                 };
               })(),
@@ -1865,12 +1865,12 @@
       })(),
       ee = (function () {
         function e(t) {
-          var n = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
+          var r = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : {};
           u(this, e),
             (this._isRunning = !1),
             (this._rerunRequested = !1),
-            (this._maxEntries = n.maxEntries),
-            (this._maxAgeSeconds = n.maxAgeSeconds),
+            (this._maxEntries = r.maxEntries),
+            (this._maxAgeSeconds = r.maxAgeSeconds),
             (this._cacheName = t),
             (this._timestampModel = new Z(t));
         }
@@ -1879,9 +1879,9 @@
             {
               key: 'expireEntries',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e() {
-                    var t, n, r, a, i, u;
+                    var t, r, n, a, i, u;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -1900,15 +1900,15 @@
                                 this._timestampModel.expireEntries(t, this._maxEntries)
                               );
                             case 7:
-                              return (n = e.sent), (e.next = 10), self.caches.open(this._cacheName);
+                              return (r = e.sent), (e.next = 10), self.caches.open(this._cacheName);
                             case 10:
-                              (r = e.sent), (a = c(n)), (e.prev = 12), a.s();
+                              (n = e.sent), (a = c(r)), (e.prev = 12), a.s();
                             case 14:
                               if ((i = a.n()).done) {
                                 e.next = 20;
                                 break;
                               }
-                              return (u = i.value), (e.next = 18), r.delete(u);
+                              return (u = i.value), (e.next = 18), n.delete(u);
                             case 18:
                               e.next = 14;
                               break;
@@ -1942,7 +1942,7 @@
             {
               key: 'updateTimestamp',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
                     return L.a.wrap(
                       function (e) {
@@ -1968,9 +1968,9 @@
             {
               key: 'isURLExpired',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n, r;
+                    var r, n;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -1988,7 +1988,7 @@
                               return (e.next = 8), this._timestampModel.getTimestamp(t);
                             case 8:
                               return (
-                                (n = e.sent), (r = Date.now() - 1e3 * this._maxAgeSeconds), e.abrupt('return', n < r)
+                                (r = e.sent), (n = Date.now() - 1e3 * this._maxAgeSeconds), e.abrupt('return', r < n)
                               );
                             case 11:
                             case 'end':
@@ -2008,7 +2008,7 @@
             {
               key: 'delete',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e() {
                     return L.a.wrap(
                       function (e) {
@@ -2040,17 +2040,17 @@
       te = (function () {
         function e() {
           var t = this,
-            n = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
+            r = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
           u(this, e),
             (this.cachedResponseWillBeUsed = (function () {
-              var e = O(
-                L.a.mark(function e(n) {
-                  var r, a, i, c, u, o, s;
+              var e = T(
+                L.a.mark(function e(r) {
+                  var n, a, i, c, u, o, s;
                   return L.a.wrap(function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
-                          if (((r = n.event), (a = n.request), (i = n.cacheName), (c = n.cachedResponse))) {
+                          if (((n = r.event), (a = r.request), (i = r.cacheName), (c = r.cachedResponse))) {
                             e.next = 3;
                             break;
                           }
@@ -2060,10 +2060,10 @@
                             ((u = t._isResponseDateFresh(c)),
                             I((o = t._getCacheExpiration(i)).expireEntries()),
                             (s = o.updateTimestamp(a.url)),
-                            r)
+                            n)
                           )
                             try {
-                              r.waitUntil(s);
+                              n.waitUntil(s);
                             } catch (f) {
                               0;
                             }
@@ -2080,17 +2080,17 @@
               };
             })()),
             (this.cacheDidUpdate = (function () {
-              var e = O(
-                L.a.mark(function e(n) {
-                  var r, a, i;
+              var e = T(
+                L.a.mark(function e(r) {
+                  var n, a, i;
                   return L.a.wrap(function (e) {
                     for (;;)
                       switch ((e.prev = e.next)) {
                         case 0:
                           return (
-                            (r = n.cacheName),
-                            (a = n.request),
-                            (i = t._getCacheExpiration(r)),
+                            (n = r.cacheName),
+                            (a = r.request),
+                            (i = t._getCacheExpiration(n)),
                             (e.next = 5),
                             i.updateTimestamp(a.url)
                           );
@@ -2107,10 +2107,10 @@
                 return e.apply(this, arguments);
               };
             })()),
-            (this._config = n),
-            (this._maxAgeSeconds = n.maxAgeSeconds),
+            (this._config = r),
+            (this._maxAgeSeconds = r.maxAgeSeconds),
             (this._cacheExpirations = new Map()),
-            n.purgeOnQuotaError &&
+            r.purgeOnQuotaError &&
               w(function () {
                 return t.deleteCacheAndMetadata();
               });
@@ -2138,16 +2138,16 @@
               value: function (e) {
                 if (!e.headers.has('date')) return null;
                 var t = e.headers.get('date'),
-                  n = new Date(t).getTime();
-                return isNaN(n) ? null : n;
+                  r = new Date(t).getTime();
+                return isNaN(r) ? null : r;
               },
             },
             {
               key: 'deleteCacheAndMetadata',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e() {
-                    var t, n, r, a, i;
+                    var t, r, n, a, i;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -2155,11 +2155,11 @@
                             case 0:
                               (t = c(this._cacheExpirations)), (e.prev = 1), t.s();
                             case 3:
-                              if ((n = t.n()).done) {
+                              if ((r = t.n()).done) {
                                 e.next = 11;
                                 break;
                               }
-                              return (r = D(n.value, 2)), (a = r[0]), (i = r[1]), (e.next = 7), self.caches.delete(a);
+                              return (n = D(r.value, 2)), (a = n[0]), (i = n[1]), (e.next = 7), self.caches.delete(a);
                             case 7:
                               return (e.next = 9), i.delete();
                             case 9:
@@ -2194,9 +2194,9 @@
           e
         );
       })(),
-      ne = (n(2), []),
-      re = function () {
-        return ne;
+      re = (r(2), []),
+      ne = function () {
+        return re;
       };
     function ae(e) {
       if (!e) throw new g('add-to-cache-list-unexpected-type', {entry: e});
@@ -2204,16 +2204,16 @@
         var t = new URL(e, location.href);
         return {cacheKey: t.href, url: t.href};
       }
-      var n = e.revision,
-        r = e.url;
-      if (!r) throw new g('add-to-cache-list-unexpected-type', {entry: e});
-      if (!n) {
-        var a = new URL(r, location.href);
+      var r = e.revision,
+        n = e.url;
+      if (!n) throw new g('add-to-cache-list-unexpected-type', {entry: e});
+      if (!r) {
+        var a = new URL(n, location.href);
         return {cacheKey: a.href, url: a.href};
       }
-      var i = new URL(r, location.href),
-        c = new URL(r, location.href);
-      return i.searchParams.set('__WB_REVISION__', n), {cacheKey: i.href, url: c.href};
+      var i = new URL(n, location.href),
+        c = new URL(n, location.href);
+      return i.searchParams.set('__WB_REVISION__', r), {cacheKey: i.href, url: c.href};
     }
     var ie,
       ce = (function () {
@@ -2230,12 +2230,12 @@
               key: 'addToCacheList',
               value: function (e) {
                 var t,
-                  n = [],
-                  r = c(e);
+                  r = [],
+                  n = c(e);
                 try {
-                  for (r.s(); !(t = r.n()).done; ) {
+                  for (n.s(); !(t = n.n()).done; ) {
                     var a = t.value;
-                    'string' === typeof a ? n.push(a) : a && void 0 === a.revision && n.push(a.url);
+                    'string' === typeof a ? r.push(a) : a && void 0 === a.revision && r.push(a.url);
                     var i = ae(a),
                       u = i.cacheKey,
                       o = i.url,
@@ -2250,29 +2250,29 @@
                         throw new g('add-to-cache-list-conflicting-integrities', {url: o});
                       this._cacheKeysToIntegrities.set(u, a.integrity);
                     }
-                    if ((this._urlsToCacheKeys.set(o, u), this._urlsToCacheModes.set(o, s), n.length > 0)) {
+                    if ((this._urlsToCacheKeys.set(o, u), this._urlsToCacheModes.set(o, s), r.length > 0)) {
                       var f =
                         'Workbox is precaching URLs without revision ' +
-                        'info: '.concat(n.join(', '), '\nThis is generally NOT safe. ') +
+                        'info: '.concat(r.join(', '), '\nThis is generally NOT safe. ') +
                         'Learn more at https://bit.ly/wb-precache';
                       console.warn(f);
                     }
                   }
                 } catch (h) {
-                  r.e(h);
+                  n.e(h);
                 } finally {
-                  r.f();
+                  n.f();
                 }
               },
             },
             {
               key: 'install',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e() {
                     var t,
-                      n,
                       r,
+                      n,
                       a,
                       i,
                       u,
@@ -2294,8 +2294,8 @@
                             case 0:
                               return (
                                 (t = g.length > 0 && void 0 !== g[0] ? g[0] : {}),
-                                (n = t.event),
-                                (r = t.plugins),
+                                (r = t.event),
+                                (n = t.plugins),
                                 (a = []),
                                 (i = []),
                                 (e.next = 6),
@@ -2331,9 +2331,9 @@
                                   return m._addURLToCache({
                                     cacheKey: t,
                                     cacheMode: c,
-                                    event: n,
+                                    event: r,
                                     integrity: i,
-                                    plugins: r,
+                                    plugins: n,
                                     url: a,
                                   });
                                 })),
@@ -2365,9 +2365,9 @@
             {
               key: 'activate',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e() {
-                    var t, n, r, a, i, u, o;
+                    var t, r, n, a, i, u, o;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
@@ -2377,10 +2377,10 @@
                             case 2:
                               return (t = e.sent), (e.next = 5), t.keys();
                             case 5:
-                              (n = e.sent),
-                                (r = new Set(this._urlsToCacheKeys.values())),
+                              (r = e.sent),
+                                (n = new Set(this._urlsToCacheKeys.values())),
                                 (a = []),
-                                (i = c(n)),
+                                (i = c(r)),
                                 (e.prev = 9),
                                 i.s();
                             case 11:
@@ -2388,7 +2388,7 @@
                                 e.next = 19;
                                 break;
                               }
-                              if (((o = u.value), r.has(o.url))) {
+                              if (((o = u.value), n.has(o.url))) {
                                 e.next = 17;
                                 break;
                               }
@@ -2426,22 +2426,22 @@
             {
               key: '_addURLToCache',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n, r, a, i, u, o, s, f, h, l, p, v;
+                    var r, n, a, i, u, o, s, f, h, l, p, v;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
                           switch ((e.prev = e.next)) {
                             case 0:
                               return (
-                                (n = t.cacheKey),
-                                (r = t.url),
+                                (r = t.cacheKey),
+                                (n = t.url),
                                 (a = t.cacheMode),
                                 (i = t.event),
                                 (u = t.plugins),
                                 (o = t.integrity),
-                                (s = new Request(r, {integrity: o, cache: a, credentials: 'same-origin'})),
+                                (s = new Request(n, {integrity: o, cache: a, credentials: 'same-origin'})),
                                 (e.next = 4),
                                 $.fetch({event: i, plugins: u, request: s})
                               );
@@ -2469,7 +2469,7 @@
                                 e.next = 17;
                                 break;
                               }
-                              throw new g('bad-precaching-response', {url: r, status: f.status});
+                              throw new g('bad-precaching-response', {url: n, status: f.status});
                             case 17:
                               if (!f.redirected) {
                                 e.next = 21;
@@ -2481,11 +2481,11 @@
                             case 21:
                               return (
                                 (e.next = 23),
-                                K.put({
+                                C.put({
                                   event: i,
                                   plugins: u,
                                   response: f,
-                                  request: n === r ? s : new Request(n),
+                                  request: r === n ? s : new Request(r),
                                   cacheName: this._cacheName,
                                   matchOptions: {ignoreSearch: !0},
                                 })
@@ -2527,21 +2527,21 @@
             {
               key: 'matchPrecache',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n, r, a;
+                    var r, n, a;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
                           switch ((e.prev = e.next)) {
                             case 0:
-                              if (((n = t instanceof Request ? t.url : t), !(r = this.getCacheKeyForURL(n)))) {
+                              if (((r = t instanceof Request ? t.url : t), !(n = this.getCacheKeyForURL(r)))) {
                                 e.next = 7;
                                 break;
                               }
                               return (e.next = 5), self.caches.open(this._cacheName);
                             case 5:
-                              return (a = e.sent), e.abrupt('return', a.match(r));
+                              return (a = e.sent), e.abrupt('return', a.match(n));
                             case 7:
                               return e.abrupt('return', void 0);
                             case 8:
@@ -2565,47 +2565,47 @@
                 var e = this,
                   t = !(arguments.length > 0 && void 0 !== arguments[0]) || arguments[0];
                 return (function () {
-                  var n = O(
-                    L.a.mark(function n(r) {
+                  var r = T(
+                    L.a.mark(function r(n) {
                       var a, i;
                       return L.a.wrap(
-                        function (n) {
+                        function (r) {
                           for (;;)
-                            switch ((n.prev = n.next)) {
+                            switch ((r.prev = r.next)) {
                               case 0:
-                                return (a = r.request), (n.prev = 1), (n.next = 4), e.matchPrecache(a);
+                                return (a = n.request), (r.prev = 1), (r.next = 4), e.matchPrecache(a);
                               case 4:
-                                if (!(i = n.sent)) {
-                                  n.next = 7;
+                                if (!(i = r.sent)) {
+                                  r.next = 7;
                                   break;
                                 }
-                                return n.abrupt('return', i);
+                                return r.abrupt('return', i);
                               case 7:
                                 throw new g('missing-precache-entry', {
                                   cacheName: e._cacheName,
                                   url: a instanceof Request ? a.url : a,
                                 });
                               case 10:
-                                if (((n.prev = 10), (n.t0 = n.catch(1)), !t)) {
-                                  n.next = 15;
+                                if (((r.prev = 10), (r.t0 = r.catch(1)), !t)) {
+                                  r.next = 15;
                                   break;
                                 }
-                                return n.abrupt('return', fetch(a));
+                                return r.abrupt('return', fetch(a));
                               case 15:
-                                throw n.t0;
+                                throw r.t0;
                               case 16:
                               case 'end':
-                                return n.stop();
+                                return r.stop();
                             }
                         },
-                        n,
+                        r,
                         null,
                         [[1, 10]],
                       );
                     }),
                   );
                   return function (e) {
-                    return n.apply(this, arguments);
+                    return r.apply(this, arguments);
                   };
                 })();
               },
@@ -2614,12 +2614,12 @@
               key: 'createHandlerBoundToURL',
               value: function (e) {
                 var t = !(arguments.length > 1 && void 0 !== arguments[1]) || arguments[1],
-                  n = this.getCacheKeyForURL(e);
-                if (!n) throw new g('non-precached-url', {url: e});
-                var r = this.createHandler(t),
+                  r = this.getCacheKeyForURL(e);
+                if (!r) throw new g('non-precached-url', {url: e});
+                var n = this.createHandler(t),
                   a = new Request(e);
                 return function () {
-                  return r({request: a});
+                  return n({request: a});
                 };
               },
             },
@@ -2633,25 +2633,25 @@
     function oe(e) {
       for (
         var t = arguments.length > 1 && void 0 !== arguments[1] ? arguments[1] : [],
-          n = function () {
-            var n = a[r];
+          r = function () {
+            var r = a[n];
             t.some(function (e) {
-              return e.test(n);
-            }) && e.searchParams.delete(n);
+              return e.test(r);
+            }) && e.searchParams.delete(r);
           },
-          r = 0,
+          n = 0,
           a = i(e.searchParams.keys());
-        r < a.length;
-        r++
+        n < a.length;
+        n++
       )
-        n();
+        r();
       return e;
     }
     var se = L.a.mark(fe);
     function fe(e) {
       var t,
-        n,
         r,
+        n,
         a,
         i,
         u,
@@ -2670,8 +2670,8 @@
               case 0:
                 return (
                   (t = d.length > 1 && void 0 !== d[1] ? d[1] : {}),
-                  (n = t.ignoreURLParametersMatching),
-                  (r = t.directoryIndex),
+                  (r = t.ignoreURLParametersMatching),
+                  (n = t.directoryIndex),
                   (a = t.cleanURLs),
                   (i = t.urlManipulation),
                   ((u = new URL(e, location.href)).hash = ''),
@@ -2679,13 +2679,13 @@
                   u.href
                 );
               case 5:
-                return (o = oe(u, n)), (y.next = 8), o.href;
+                return (o = oe(u, r)), (y.next = 8), o.href;
               case 8:
-                if (!r || !o.pathname.endsWith('/')) {
+                if (!n || !o.pathname.endsWith('/')) {
                   y.next = 13;
                   break;
                 }
-                return ((s = new URL(o.href)).pathname += r), (y.next = 13), s.href;
+                return ((s = new URL(o.href)).pathname += n), (y.next = 13), s.href;
               case 13:
                 if (!a) {
                   y.next = 18;
@@ -2725,13 +2725,13 @@
       );
     }
     var he = function (e, t) {
-        var n,
-          r = ue().getURLsToCacheKeys(),
+        var r,
+          n = ue().getURLsToCacheKeys(),
           a = c(fe(e, t));
         try {
-          for (a.s(); !(n = a.n()).done; ) {
-            var i = n.value,
-              u = r.get(i);
+          for (a.s(); !(r = a.n()).done; ) {
+            var i = r.value,
+              u = n.get(i);
             if (u) return u;
           }
         } catch (o) {
@@ -2746,9 +2746,9 @@
         (!(function () {
           var e = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {},
             t = e.ignoreURLParametersMatching,
-            n = void 0 === t ? [/^utm_/] : t,
-            r = e.directoryIndex,
-            a = void 0 === r ? 'index.html' : r,
+            r = void 0 === t ? [/^utm_/] : t,
+            n = e.directoryIndex,
+            a = void 0 === n ? 'index.html' : n,
             i = e.cleanURLs,
             c = void 0 === i || i,
             u = e.urlManipulation,
@@ -2757,11 +2757,11 @@
             var t = he(e.request.url, {
               cleanURLs: c,
               directoryIndex: a,
-              ignoreURLParametersMatching: n,
+              ignoreURLParametersMatching: r,
               urlManipulation: u,
             });
             if (t) {
-              var r = self.caches
+              var n = self.caches
                 .open(o)
                 .then(function (e) {
                   return e.match(t);
@@ -2769,7 +2769,7 @@
                 .then(function (e) {
                   return e || fetch(t);
                 });
-              e.respondWith(r);
+              e.respondWith(n);
             }
           });
         })(e),
@@ -2777,9 +2777,9 @@
     }
     var ve = function (e) {
         var t = ue(),
-          n = re();
+          r = ne();
         e.waitUntil(
-          t.install({event: e, plugins: n}).catch(function (e) {
+          t.install({event: e, plugins: r}).catch(function (e) {
             throw e;
           }),
         );
@@ -2788,32 +2788,32 @@
         var t = ue();
         e.waitUntil(t.activate());
       };
-    n(3);
+    r(3);
     var ye,
       me = function (e) {
         return e && 'object' === typeof e ? e : {handle: e};
       },
-      ge = function e(t, n) {
-        var r = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : 'GET';
-        u(this, e), (this.handler = me(n)), (this.match = t), (this.method = r);
+      ge = function e(t, r) {
+        var n = arguments.length > 2 && void 0 !== arguments[2] ? arguments[2] : 'GET';
+        u(this, e), (this.handler = me(r)), (this.match = t), (this.method = n);
       },
       xe = (function (e) {
-        s(n, e);
-        var t = v(n);
-        function n(e, r, a) {
-          u(this, n);
+        s(r, e);
+        var t = v(r);
+        function r(e, n, a) {
+          u(this, r);
           return t.call(
             this,
             function (t) {
-              var n = t.url,
-                r = e.exec(n.href);
-              if (r && (n.origin === location.origin || 0 === r.index)) return r.slice(1);
+              var r = t.url,
+                n = e.exec(r.href);
+              if (n && (r.origin === location.origin || 0 === n.index)) return n.slice(1);
             },
-            r,
+            n,
             a,
           );
         }
-        return n;
+        return r;
       })(ge),
       we = (function () {
         function e() {
@@ -2832,9 +2832,9 @@
               value: function () {
                 var e = this;
                 self.addEventListener('fetch', function (t) {
-                  var n = t.request,
-                    r = e.handleRequest({request: n, event: t});
-                  r && t.respondWith(r);
+                  var r = t.request,
+                    n = e.handleRequest({request: r, event: t});
+                  n && t.respondWith(n);
                 });
               },
             },
@@ -2844,19 +2844,19 @@
                 var e = this;
                 self.addEventListener('message', function (t) {
                   if (t.data && 'CACHE_URLS' === t.data.type) {
-                    var n = t.data.payload;
+                    var r = t.data.payload;
                     0;
-                    var r = Promise.all(
-                      n.urlsToCache.map(function (t) {
+                    var n = Promise.all(
+                      r.urlsToCache.map(function (t) {
                         'string' === typeof t && (t = [t]);
-                        var n = d(Request, i(t));
-                        return e.handleRequest({request: n});
+                        var r = d(Request, i(t));
+                        return e.handleRequest({request: r});
                       }),
                     );
-                    t.waitUntil(r),
+                    t.waitUntil(n),
                       t.ports &&
                         t.ports[0] &&
-                        r.then(function () {
+                        n.then(function () {
                           return t.ports[0].postMessage(!0);
                         });
                   }
@@ -2867,11 +2867,11 @@
               key: 'handleRequest',
               value: function (e) {
                 var t = this,
-                  n = e.request,
-                  r = e.event;
-                var a = new URL(n.url, location.href);
+                  r = e.request,
+                  n = e.event;
+                var a = new URL(r.url, location.href);
                 if (a.protocol.startsWith('http')) {
-                  var i = this.findMatchingRoute({url: a, request: n, event: r}),
+                  var i = this.findMatchingRoute({url: a, request: r, event: n}),
                     c = i.params,
                     u = i.route,
                     o = u && u.handler;
@@ -2879,7 +2879,7 @@
                     var s;
                     0;
                     try {
-                      s = o.handle({url: a, request: n, event: r, params: c});
+                      s = o.handle({url: a, request: r, event: n, params: c});
                     } catch (f) {
                       s = Promise.reject(f);
                     }
@@ -2887,7 +2887,7 @@
                       s instanceof Promise &&
                         this._catchHandler &&
                         (s = s.catch(function (e) {
-                          return t._catchHandler.handle({url: a, request: n, event: r});
+                          return t._catchHandler.handle({url: a, request: r, event: n});
                         })),
                       s
                     );
@@ -2899,15 +2899,15 @@
               key: 'findMatchingRoute',
               value: function (e) {
                 var t = e.url,
-                  n = e.request,
-                  r = e.event;
+                  r = e.request,
+                  n = e.event;
                 var a,
-                  i = c(this._routes.get(n.method) || []);
+                  i = c(this._routes.get(r.method) || []);
                 try {
                   for (i.s(); !(a = i.n()).done; ) {
                     var u = a.value,
                       o = void 0,
-                      s = u.match({url: t, request: n, event: r});
+                      s = u.match({url: t, request: r, event: n});
                     if (s)
                       return (
                         (o = s),
@@ -2961,19 +2961,19 @@
       be = function () {
         return ye || ((ye = new we()).addFetchListener(), ye.addCacheListener()), ye;
       };
-    function ke(e, t, n) {
-      var r;
+    function ke(e, t, r) {
+      var n;
       if ('string' === typeof e) {
         var a = new URL(e, location.href);
-        r = new ge(
+        n = new ge(
           function (e) {
             return e.url.href === a.href;
           },
           t,
-          n,
+          r,
         );
-      } else if (e instanceof RegExp) r = new xe(e, t, n);
-      else if ('function' === typeof e) r = new ge(e, t, n);
+      } else if (e instanceof RegExp) n = new xe(e, t, r);
+      else if ('function' === typeof e) n = new ge(e, t, r);
       else {
         if (!(e instanceof ge))
           throw new g('unsupported-route-type', {
@@ -2981,26 +2981,26 @@
             funcName: 'registerRoute',
             paramName: 'capture',
           });
-        r = e;
+        n = e;
       }
-      return be().registerRoute(r), r;
+      return be().registerRoute(n), n;
     }
-    n(4);
+    r(4);
     var _e,
       Re = {
         cacheWillUpdate: (function () {
-          var e = O(
+          var e = T(
             L.a.mark(function e(t) {
-              var n;
+              var r;
               return L.a.wrap(function (e) {
                 for (;;)
                   switch ((e.prev = e.next)) {
                     case 0:
-                      if (200 !== (n = t.response).status && 0 !== n.status) {
+                      if (200 !== (r = t.response).status && 0 !== r.status) {
                         e.next = 3;
                         break;
                       }
-                      return e.abrupt('return', n);
+                      return e.abrupt('return', r);
                     case 3:
                       return e.abrupt('return', null);
                     case 4:
@@ -3019,10 +3019,10 @@
         function e() {
           var t = arguments.length > 0 && void 0 !== arguments[0] ? arguments[0] : {};
           if ((u(this, e), (this._cacheName = R(t.cacheName)), (this._plugins = t.plugins || []), t.plugins)) {
-            var n = t.plugins.some(function (e) {
+            var r = t.plugins.some(function (e) {
               return !!e.cacheWillUpdate;
             });
-            this._plugins = n ? t.plugins : [Re].concat(i(t.plugins));
+            this._plugins = r ? t.plugins : [Re].concat(i(t.plugins));
           } else this._plugins = [Re];
           (this._fetchOptions = t.fetchOptions), (this._matchOptions = t.matchOptions);
         }
@@ -3031,25 +3031,25 @@
             {
               key: 'handle',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n, r, a, i, c;
+                    var r, n, a, i, c;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
                           switch ((e.prev = e.next)) {
                             case 0:
                               return (
-                                (n = t.event),
-                                (r = t.request),
+                                (r = t.event),
+                                (n = t.request),
                                 [],
-                                'string' === typeof r && (r = new Request(r)),
-                                (a = this._getFromNetwork({request: r, event: n})),
+                                'string' === typeof n && (n = new Request(n)),
+                                (a = this._getFromNetwork({request: n, event: r})),
                                 (e.next = 7),
-                                K.match({
+                                C.match({
                                   cacheName: this._cacheName,
-                                  request: r,
-                                  event: n,
+                                  request: n,
+                                  event: r,
                                   matchOptions: this._matchOptions,
                                   plugins: this._plugins,
                                 })
@@ -3059,9 +3059,9 @@
                                 e.next = 13;
                                 break;
                               }
-                              if (n)
+                              if (r)
                                 try {
-                                  n.waitUntil(a);
+                                  r.waitUntil(a);
                                 } catch (c) {
                                   0;
                                 }
@@ -3079,7 +3079,7 @@
                                 e.next = 26;
                                 break;
                               }
-                              throw new g('no-response', {url: r.url, error: c});
+                              throw new g('no-response', {url: n.url, error: c});
                             case 26:
                               return e.abrupt('return', i);
                             case 27:
@@ -3101,21 +3101,21 @@
             {
               key: '_getFromNetwork',
               value: (function () {
-                var e = O(
+                var e = T(
                   L.a.mark(function e(t) {
-                    var n, r, a, i;
+                    var r, n, a, i;
                     return L.a.wrap(
                       function (e) {
                         for (;;)
                           switch ((e.prev = e.next)) {
                             case 0:
                               return (
-                                (n = t.request),
-                                (r = t.event),
+                                (r = t.request),
+                                (n = t.event),
                                 (e.next = 3),
                                 $.fetch({
-                                  request: n,
-                                  event: r,
+                                  request: r,
+                                  event: n,
                                   fetchOptions: this._fetchOptions,
                                   plugins: this._plugins,
                                 })
@@ -3123,17 +3123,17 @@
                             case 3:
                               if (
                                 ((a = e.sent),
-                                (i = K.put({
+                                (i = C.put({
                                   cacheName: this._cacheName,
-                                  request: n,
+                                  request: r,
                                   response: a.clone(),
-                                  event: r,
+                                  event: n,
                                   plugins: this._plugins,
                                 })),
-                                r)
+                                n)
                               )
                                 try {
-                                  r.waitUntil(i);
+                                  n.waitUntil(i);
                                 } catch (c) {
                                   0;
                                 }
@@ -3164,23 +3164,23 @@
         ue().addToCacheList(e),
           e.length > 0 && (self.addEventListener('install', ve), self.addEventListener('activate', de));
       })([
-        {revision: 'a509742eb1c36ff34d8b47550dc68aa3', url: '/index.html'},
-        {revision: null, url: '/static/css/2.97503911.chunk.css'},
-        {revision: null, url: '/static/css/main.7234b26f.chunk.css'},
-        {revision: null, url: '/static/js/2.d3fcef0f.chunk.js'},
-        {revision: null, url: '/static/js/3.1d3675b3.chunk.js'},
-        {revision: null, url: '/static/js/main.f3700c76.chunk.js'},
-        {revision: null, url: '/static/js/runtime-main.38dee0d1.js'},
-        {revision: null, url: '/static/media/backgroundRipple.48d86bdf.svg'},
+        {revision: 'e4ff1f2c817d2eb353fb9b9c15aa844c', url: '/PeerTransfer/index.html'},
+        {revision: null, url: '/PeerTransfer/static/css/2.97503911.chunk.css'},
+        {revision: null, url: '/PeerTransfer/static/css/main.7234b26f.chunk.css'},
+        {revision: null, url: '/PeerTransfer/static/js/2.6b3e4c1b.chunk.js'},
+        {revision: null, url: '/PeerTransfer/static/js/3.1d3675b3.chunk.js'},
+        {revision: null, url: '/PeerTransfer/static/js/main.565225f9.chunk.js'},
+        {revision: null, url: '/PeerTransfer/static/js/runtime-main.258947e8.js'},
+        {revision: null, url: '/PeerTransfer/static/media/backgroundRipple.48d86bdf.svg'},
       ]),
       pe(_e);
     var Le,
       qe = new RegExp('/[^/?]+\\.[^/]+$');
     ke(function (e) {
       var t = e.request,
-        n = e.url;
-      return 'navigate' === t.mode && !n.pathname.startsWith('/_') && !n.pathname.match(qe);
-    }, ((Le = '/index.html'), ue().createHandlerBoundToURL(Le))),
+        r = e.url;
+      return 'navigate' === t.mode && !r.pathname.startsWith('/_') && !r.pathname.match(qe);
+    }, ((Le = '/PeerTransfer/index.html'), ue().createHandlerBoundToURL(Le))),
       ke(function (e) {
         var t = e.url;
         return t.origin === self.location.origin && t.pathname.endsWith('.png');

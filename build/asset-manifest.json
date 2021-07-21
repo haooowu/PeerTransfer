@@ -1,28 +1,28 @@
 {
   "files": {
-    "main.css": "/static/css/main.7234b26f.chunk.css",
-    "main.js": "/static/js/main.f3700c76.chunk.js",
-    "main.js.map": "/static/js/main.f3700c76.chunk.js.map",
-    "runtime-main.js": "/static/js/runtime-main.38dee0d1.js",
-    "runtime-main.js.map": "/static/js/runtime-main.38dee0d1.js.map",
-    "static/css/2.97503911.chunk.css": "/static/css/2.97503911.chunk.css",
-    "static/js/2.d3fcef0f.chunk.js": "/static/js/2.d3fcef0f.chunk.js",
-    "static/js/2.d3fcef0f.chunk.js.map": "/static/js/2.d3fcef0f.chunk.js.map",
-    "static/js/3.1d3675b3.chunk.js": "/static/js/3.1d3675b3.chunk.js",
-    "static/js/3.1d3675b3.chunk.js.map": "/static/js/3.1d3675b3.chunk.js.map",
-    "index.html": "/index.html",
-    "service-worker.js": "/service-worker.js",
-    "service-worker.js.map": "/service-worker.js.map",
-    "static/css/2.97503911.chunk.css.map": "/static/css/2.97503911.chunk.css.map",
-    "static/css/main.7234b26f.chunk.css.map": "/static/css/main.7234b26f.chunk.css.map",
-    "static/js/2.d3fcef0f.chunk.js.LICENSE.txt": "/static/js/2.d3fcef0f.chunk.js.LICENSE.txt",
-    "static/media/backgroundRipple.48d86bdf.svg": "/static/media/backgroundRipple.48d86bdf.svg"
+    "main.css": "/PeerTransfer/static/css/main.7234b26f.chunk.css",
+    "main.js": "/PeerTransfer/static/js/main.565225f9.chunk.js",
+    "main.js.map": "/PeerTransfer/static/js/main.565225f9.chunk.js.map",
+    "runtime-main.js": "/PeerTransfer/static/js/runtime-main.258947e8.js",
+    "runtime-main.js.map": "/PeerTransfer/static/js/runtime-main.258947e8.js.map",
+    "static/css/2.97503911.chunk.css": "/PeerTransfer/static/css/2.97503911.chunk.css",
+    "static/js/2.6b3e4c1b.chunk.js": "/PeerTransfer/static/js/2.6b3e4c1b.chunk.js",
+    "static/js/2.6b3e4c1b.chunk.js.map": "/PeerTransfer/static/js/2.6b3e4c1b.chunk.js.map",
+    "static/js/3.1d3675b3.chunk.js": "/PeerTransfer/static/js/3.1d3675b3.chunk.js",
+    "static/js/3.1d3675b3.chunk.js.map": "/PeerTransfer/static/js/3.1d3675b3.chunk.js.map",
+    "index.html": "/PeerTransfer/index.html",
+    "service-worker.js": "/PeerTransfer/service-worker.js",
+    "service-worker.js.map": "/PeerTransfer/service-worker.js.map",
+    "static/css/2.97503911.chunk.css.map": "/PeerTransfer/static/css/2.97503911.chunk.css.map",
+    "static/css/main.7234b26f.chunk.css.map": "/PeerTransfer/static/css/main.7234b26f.chunk.css.map",
+    "static/js/2.6b3e4c1b.chunk.js.LICENSE.txt": "/PeerTransfer/static/js/2.6b3e4c1b.chunk.js.LICENSE.txt",
+    "static/media/backgroundRipple.48d86bdf.svg": "/PeerTransfer/static/media/backgroundRipple.48d86bdf.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.38dee0d1.js",
+    "static/js/runtime-main.258947e8.js",
     "static/css/2.97503911.chunk.css",
-    "static/js/2.d3fcef0f.chunk.js",
+    "static/js/2.6b3e4c1b.chunk.js",
     "static/css/main.7234b26f.chunk.css",
-    "static/js/main.f3700c76.chunk.js"
+    "static/js/main.565225f9.chunk.js"
   ]
 }
