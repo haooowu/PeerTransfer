@@ -100,7 +100,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
       let movementX = Math.sign(state.movement[0]);
       let movementY = Math.sign(state.movement[1]);
       let distanceX = Math.abs(state.movement[0]);
-      if (distanceX > 4) {
+      if (distanceX > 6) {
         if (movementX === -1) setGestureDirection('left');
         if (movementX === 1) setGestureDirection('right');
       }
