@@ -1,4 +1,6 @@
 import React, {useEffect} from 'react';
+import firebase from 'src/services/firebase';
+import {toast} from 'react-toastify';
 import {v4 as uuidv4} from 'uuid';
 import pcConfig from 'src/utils/pcConfig';
 import {PUBLIC_ID} from 'src/constants';
@@ -50,8 +52,11 @@ const IdentityProvider = ({children}: React.PropsWithChildren<Props>) => {
         publicIP = split[4];
       }
     };
-
-    setLocalID(uuidv4());
+    firebase
+      .auth()
+      .signInAnonymously()
+      .then(() => setLocalID(uuidv4()))
+      .catch(() => toast.error('Failed to connect to firebase, please check your internet connection and try again'));
   }, []);
 
   return (
