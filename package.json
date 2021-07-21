@@ -1,7 +1,7 @@
 {
   "name": "peer-transfer",
   "description": "peer file transfer via WebRTC",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "author": "Hao Wu",
   "private": true,
   "dependencies": {
