@@ -8,17 +8,15 @@ import {ProgressPopperReducerAction} from './Poppers/ProgressPopper';
 import {WaitResponsePopperReducerAction} from './Poppers/WaitResponsePopper';
 
 interface Props {
-  localID: string;
   publicID: string;
   firestoreDbRef: firebase.firestore.Firestore;
   connectionIdRef: React.MutableRefObject<string | null>;
   peerConnectionRef: React.MutableRefObject<RTCPeerConnection | null>;
   callerUnsubscriberRef: React.MutableRefObject<(() => void) | undefined>;
-  descriptionUnsubscriberRef: React.MutableRefObject<(() => void) | undefined>;
   dispatchProgressPopperData: (value: ProgressPopperReducerAction) => void;
   dispatchWaitResponsePopperData: (value: WaitResponsePopperReducerAction) => void;
   handleDownloadFile: (receivedBlob: Blob, name: string) => void;
-  closeDataChannels: (shouldWarn: boolean) => void;
+  clearSignalService: () => Promise<void>;
 }
 
 const useJoinTransferChannel = ({
@@ -30,9 +28,18 @@ const useJoinTransferChannel = ({
   dispatchProgressPopperData,
   dispatchWaitResponsePopperData,
   handleDownloadFile,
-  closeDataChannels,
+  clearSignalService,
 }: Props) => {
   const receiveChannelRef = useRef<RTCDataChannel | null>(null);
+
+  const closeReceiveDataChannel = useCallback(() => {
+    dispatchWaitResponsePopperData({type: 'clear'});
+    if (receiveChannelRef.current) {
+      receiveChannelRef.current.close();
+      console.log(`Closed receive data channel with label: ${receiveChannelRef.current.label}`);
+    }
+    clearSignalService();
+  }, [receiveChannelRef, dispatchWaitResponsePopperData, clearSignalService]);
 
   const createReceiveDataChannel = useCallback(() => {
     peerConnectionRef.current!.ondatachannel = receiveChannelCallback;
@@ -88,13 +95,13 @@ const useJoinTransferChannel = ({
       }
       if (receivedSize === totalSize) {
         completeFlag = 1;
-        closeDataChannels(false);
+        closeReceiveDataChannel();
       }
     }
 
     async function onReceiveChannelStateChange() {
-      console.log(receiveChannelRef.current);
-      console.log(receiveChannelRef.current);
+      // console.log(receiveChannelRef.current);
+      // console.log(receiveChannelRef.current);
       if (receiveChannelRef.current) {
         const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
@@ -114,10 +121,10 @@ const useJoinTransferChannel = ({
     peerConnectionRef,
     receiveChannelRef,
     publicID,
-    closeDataChannels,
     dispatchProgressPopperData,
     dispatchWaitResponsePopperData,
     handleDownloadFile,
+    closeReceiveDataChannel,
   ]);
 
   const joinTransferChannel = async (connectionID: string) => {
@@ -129,25 +136,25 @@ const useJoinTransferChannel = ({
       connectionIdRef.current = connectionID;
       peerConnectionRef.current = new RTCPeerConnection(pcConfig);
 
+      // set up receive data channel and listeners
       createReceiveDataChannel();
 
-      // Code for collecting ICE candidates below
+      // Code for collecting ICE candidates
       const calleeCandidatesCollection = connectionRef.collection(CALLEE);
-
       peerConnectionRef.current.addEventListener('icecandidate', (event) => {
         if (!event.candidate) {
           console.log('Got final candidate!');
           return;
         }
-        console.log('Got candidate: ', event.candidate);
+        // console.log('Got candidate: ', event.candidate);
         calleeCandidatesCollection.add(event.candidate.toJSON());
       });
-      // Code for collecting ICE candidates above
 
-      // Code for creating SDP answer below
+      // Creating SDP answer and update remote
       const offer = connectionSnapshot!.data()!.offer;
       console.log('Got offer:', offer);
       await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
+
       const answer = await peerConnectionRef.current.createAnswer();
       console.log('Created answer:', answer);
       await peerConnectionRef.current.setLocalDescription(answer);
@@ -160,9 +167,8 @@ const useJoinTransferChannel = ({
         isAccepting: true,
       };
       await connectionRef.update(roomWithAnswer);
-      // Code for creating SDP answer above
 
-      // Listening for remote ICE candidates below
+      // Listening for remote ICE candidates
       const calllerUnsubscriber = connectionRef.collection(CALLER).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
           if (change.type === 'added') {
@@ -173,7 +179,6 @@ const useJoinTransferChannel = ({
           }
         });
       });
-      // Listening for remote ICE candidates above
       callerUnsubscriberRef.current = calllerUnsubscriber;
     }
   };

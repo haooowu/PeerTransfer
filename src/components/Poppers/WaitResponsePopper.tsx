@@ -3,7 +3,7 @@ import {Popper} from '@material-ui/core';
 import {PopperContentWrapper, ContentTitle} from 'src/styles/styled-components/StyledPopperContent';
 import usePopperStyles from 'src/styles/hooks/usePopperStyles';
 import {IPeerField} from 'src/types';
-import {DATA_CHANNEL_TIMEOUT, GOT_REMOTE_DESC} from 'src/constants';
+import {DATA_CHANNEL_TIMEOUT, WAIT_REMOTE_DESC} from 'src/constants';
 
 interface IWaitResponsePopperData {
   isOpen: boolean;
@@ -61,7 +61,7 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
   const classes = usePopperStyles();
 
   React.useEffect(() => {
-    sessionStorage.setItem(GOT_REMOTE_DESC, '1');
+    sessionStorage.setItem(WAIT_REMOTE_DESC, '1');
     let timeoutReload: NodeJS.Timeout;
     if (gotRemoteDesc) {
       timeoutReload = setTimeout(() => {
@@ -71,7 +71,7 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
     }
     return () => {
       clearTimeout(timeoutReload);
-      sessionStorage.removeItem(GOT_REMOTE_DESC);
+      sessionStorage.removeItem(WAIT_REMOTE_DESC);
     };
   }, [gotRemoteDesc]);
 
