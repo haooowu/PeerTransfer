@@ -1,5 +1,5 @@
 import React from 'react';
-import IdentityLayout from 'src/components/IdentityLayout';
+import IdentityLayout from 'src/IdentityLayout';
 import IdentityProvider from 'src/providers/IdentityProvider';
 import AppSettingProvider, {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 import StyledToastContainer from 'src/styles/styled-components/StyledToastContainer';
