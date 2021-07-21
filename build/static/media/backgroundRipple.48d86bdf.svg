@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1600 800">
+  <circle cx="800" cy="800" r="40" fill="transparent" stroke="#00695C" />
+  <circle cx="800" cy="800" r="100" fill="transparent" stroke="#00796B" />
+  <circle cx="800" cy="800" r="200" fill="transparent" stroke="#00897B" />
+  <circle cx="800" cy="800" r="300" fill="transparent" stroke="#009688" />
+  <circle cx="800" cy="800" r="400" fill="transparent" stroke="#26A69A" />
+  <circle cx="800" cy="800" r="500" fill="transparent" stroke="#4DB6AC" />
+  <circle cx="800" cy="800" r="600" fill="transparent" stroke="#80CBC4" />
+  <circle cx="800" cy="800" r="700" fill="transparent" stroke="#B2DFDB" />
+  <circle cx="800" cy="800" r="800" fill="transparent" stroke="#E0F2F1" />
+</svg>

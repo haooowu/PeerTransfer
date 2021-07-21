@@ -4,4 +4,6 @@ then
   echo "Select sub folder for deploy"
   exit 1
 fi
+yarn run build
+yarn commit -m "update build"
 git subtree push --prefix $1 origin gh-pages
