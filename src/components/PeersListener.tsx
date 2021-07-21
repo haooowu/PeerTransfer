@@ -12,7 +12,7 @@ import Grow from '@material-ui/core/Grow';
 
 const StyledP = styled.p<{$shouldHide: boolean}>`
   color: ${(props) => props.theme.primary.contrastText};
-  margin-top: ${(props) => (props.$shouldHide ? '0px' : '28%')};
+  margin-top: ${(props) => (props.$shouldHide ? '0px' : '25%')};
   height: ${(props) => (props.$shouldHide ? '0px' : 'auto')};
   span {
     font-size: 12px;
