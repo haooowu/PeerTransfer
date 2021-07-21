@@ -5,10 +5,10 @@ then
   exit 1
 fi
 
-git checkout deploy
+git checkout deployment
+git pull origin main
 git rm -r --cached .
 git add .
-git pull origin main
 
 yarn run build
 git add build && git commit -m "update build"
