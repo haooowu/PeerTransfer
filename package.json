@@ -3,7 +3,7 @@
   "description": "peer file transfer via WebRTC",
   "version": "1.0.0",
   "author": "Hao Wu",
-  "private": true,
+  "homepage": "https://haooowu.github.io/PeerTransfer/",
   "dependencies": {
     "@material-ui/core": "^4.12.1",
     "@material-ui/icons": "^4.11.2",
