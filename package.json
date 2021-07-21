@@ -36,10 +36,10 @@
   },
   "scripts": {
     "pre-commit": "lint-staged",
+    "prepare": "husky install",
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test": "react-scripts test",
-    "prepare": "husky install"
+    "test": "react-scripts test"
   },
   "eslintConfig": {
     "extends": [
