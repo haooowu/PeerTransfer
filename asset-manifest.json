@@ -1,28 +1,28 @@
 {
   "files": {
     "main.css": "/PeerTransfer/static/css/main.7234b26f.chunk.css",
-    "main.js": "/PeerTransfer/static/js/main.4b3b21ea.chunk.js",
-    "main.js.map": "/PeerTransfer/static/js/main.4b3b21ea.chunk.js.map",
-    "runtime-main.js": "/PeerTransfer/static/js/runtime-main.2c1097f4.js",
-    "runtime-main.js.map": "/PeerTransfer/static/js/runtime-main.2c1097f4.js.map",
+    "main.js": "/PeerTransfer/static/js/main.6e9a9ee2.chunk.js",
+    "main.js.map": "/PeerTransfer/static/js/main.6e9a9ee2.chunk.js.map",
+    "runtime-main.js": "/PeerTransfer/static/js/runtime-main.3767898d.js",
+    "runtime-main.js.map": "/PeerTransfer/static/js/runtime-main.3767898d.js.map",
     "static/css/2.97503911.chunk.css": "/PeerTransfer/static/css/2.97503911.chunk.css",
-    "static/js/2.c1ba0ade.chunk.js": "/PeerTransfer/static/js/2.c1ba0ade.chunk.js",
-    "static/js/2.c1ba0ade.chunk.js.map": "/PeerTransfer/static/js/2.c1ba0ade.chunk.js.map",
-    "static/js/3.f07a2dce.chunk.js": "/PeerTransfer/static/js/3.f07a2dce.chunk.js",
-    "static/js/3.f07a2dce.chunk.js.map": "/PeerTransfer/static/js/3.f07a2dce.chunk.js.map",
+    "static/js/2.7ceeccc6.chunk.js": "/PeerTransfer/static/js/2.7ceeccc6.chunk.js",
+    "static/js/2.7ceeccc6.chunk.js.map": "/PeerTransfer/static/js/2.7ceeccc6.chunk.js.map",
+    "static/js/3.da3f9be0.chunk.js": "/PeerTransfer/static/js/3.da3f9be0.chunk.js",
+    "static/js/3.da3f9be0.chunk.js.map": "/PeerTransfer/static/js/3.da3f9be0.chunk.js.map",
     "index.html": "/PeerTransfer/index.html",
     "service-worker.js": "/PeerTransfer/service-worker.js",
     "service-worker.js.map": "/PeerTransfer/service-worker.js.map",
     "static/css/2.97503911.chunk.css.map": "/PeerTransfer/static/css/2.97503911.chunk.css.map",
     "static/css/main.7234b26f.chunk.css.map": "/PeerTransfer/static/css/main.7234b26f.chunk.css.map",
-    "static/js/2.c1ba0ade.chunk.js.LICENSE.txt": "/PeerTransfer/static/js/2.c1ba0ade.chunk.js.LICENSE.txt",
+    "static/js/2.7ceeccc6.chunk.js.LICENSE.txt": "/PeerTransfer/static/js/2.7ceeccc6.chunk.js.LICENSE.txt",
     "static/media/backgroundRipple.48d86bdf.svg": "/PeerTransfer/static/media/backgroundRipple.48d86bdf.svg"
   },
   "entrypoints": [
-    "static/js/runtime-main.2c1097f4.js",
+    "static/js/runtime-main.3767898d.js",
     "static/css/2.97503911.chunk.css",
-    "static/js/2.c1ba0ade.chunk.js",
+    "static/js/2.7ceeccc6.chunk.js",
     "static/css/main.7234b26f.chunk.css",
-    "static/js/main.4b3b21ea.chunk.js"
+    "static/js/main.6e9a9ee2.chunk.js"
   ]
 }
