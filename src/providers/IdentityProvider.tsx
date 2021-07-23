@@ -2,7 +2,7 @@ import React, {useEffect} from 'react';
 import firebase from 'src/services/firebase';
 import {toast} from 'react-toastify';
 import {v4 as uuidv4} from 'uuid';
-import pcConfig from 'src/utils/pcConfig';
+import pcConfig from 'src/services/rtcPeerConnectionConfig';
 import {PUBLIC_ID} from 'src/constants';
 
 export interface IIdentityContextVariable {

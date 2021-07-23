@@ -2,7 +2,7 @@ import {useRef, useCallback} from 'react';
 import firebase from 'src/services/firebase';
 import {IPeerField} from 'src/types';
 import {CALLEE, CALLER, CONNECTIONS, MAXIMUM_BUFFER_BYTE, MIN_CHUNK_SIZE, ROOT_COLLECTION} from 'src/constants';
-import pcConfig from 'src/utils/pcConfig';
+import pcConfig from 'src/services/rtcPeerConnectionConfig';
 import {toast} from 'react-toastify';
 import {WaitResponsePopperReducerAction} from 'src/components/Poppers/WaitResponsePopper';
 import {ProgressPopperReducerAction} from './Poppers/ProgressPopper';
