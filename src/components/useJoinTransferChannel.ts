@@ -3,7 +3,7 @@ import firebase from 'src/services/firebase';
 import {CALLEE, CALLER, CONNECTIONS, ROOT_COLLECTION} from 'src/constants';
 import {IFileMeta} from 'src/types';
 import {toast} from 'react-toastify';
-import pcConfig from 'src/utils/pcConfig';
+import pcConfig from 'src/services/rtcPeerConnectionConfig';
 import {ProgressPopperReducerAction} from './Poppers/ProgressPopper';
 import {WaitResponsePopperReducerAction} from './Poppers/WaitResponsePopper';
 
