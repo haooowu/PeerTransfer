@@ -41,6 +41,10 @@ const StyledCircleButton = styled(Button)`
   border-radius: 50% !important;
   height: 64px;
   width: 64px;
+  span.MuiButton-label {
+    font-size: 18px;
+    width: 18px;
+  }
 `;
 
 export const PeerStyledCircleButton = styled(StyledCircleButton)`
