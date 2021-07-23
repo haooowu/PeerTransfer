@@ -4,7 +4,7 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## About
 
-The motivation behind this project is for me to easily transfer media and share between my devices without login into any other third service.
+The motivation behind this project is for me to effortlessly transfer files and share between my devices without login into any other third-party service.
 
 PeerTransfer is inspired by [Firebase + WebRTC Codelab](https://webrtc.org/getting-started/overview) video chat application guide. This app uses [WebRTC](https://webrtc.org/) for secure end-to-end peer connection, together with free STUN server from Google, and Firebase for signalling service and peer presence management.
 
