@@ -18,6 +18,10 @@ PeerTransfer is built with the following front-end technologies:
 
 Modern browser is recommended for best WebRTC support (https://caniuse.com/rtcpeerconnection), and PeerTransfer App settings are stored in the browser's localStorage. I limited the file size and numbers for my daily uses. You can replace the Firebase config in the .env file and check the firestore data structure on your own firebase console.
 
+## Cloud Firestore Structure Example
+
+![](https://github.com/haooowu/PeerTransfer/blob/main/firebase_example.png)
+
 For Firebase, only the following data is used for signalling:
 
 - File metadata including file name, size and type,
