@@ -15,7 +15,7 @@ import SideDrawer from 'src/components/SideDrawer';
 import {IPeerField} from 'src/types';
 
 import {toast} from 'react-toastify';
-import {DATA_CHANNEL_TIMEOUT} from 'src/constants';
+import {DATA_CHANNEL_TIMEOUT, ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER} from 'src/constants';
 
 const Loader = styled(CircularProgress)``;
 
@@ -88,9 +88,16 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
 
   useLayoutEffect(() => {
     if (sessionStorage.getItem(DATA_CHANNEL_TIMEOUT)) {
-      toast.warn('Failed to create a stable data channel, please try again', {
-        autoClose: false,
-      });
+      toast(
+        <div>
+          Failed to create a stable data channel, please try again
+          <sub>Note: data transfer between Apple and Windows devices currently not working</sub>
+        </div>,
+        {
+          autoClose: false,
+          type: 'warning',
+        },
+      );
       sessionStorage.removeItem(DATA_CHANNEL_TIMEOUT);
     }
   }, []);
@@ -98,8 +105,8 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
   const bind = useGesture({
     onDragEnd: (state) => {
       if (
-        state.event.target === document.getElementById('public-id') ||
-        state.event.target === document.getElementById('public-id-wrapper')
+        state.event.target === document.getElementById(ELE_PUBLIC_ID) ||
+        state.event.target === document.getElementById(ELE_PUBLIC_ID_WRAPPER)
       )
         return;
       let movementX = Math.sign(state.movement[0]);

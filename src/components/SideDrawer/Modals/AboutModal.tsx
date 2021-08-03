@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components';
-
+import Link from '@material-ui/core/Link';
 import Dialog from '@material-ui/core/Dialog';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogContentText from '@material-ui/core/DialogContentText';
@@ -31,9 +31,12 @@ const AboutModal: React.FC<Props> = ({open, handleClose}) => {
       <DialogContent>
         <CustomLabel>About</CustomLabel>
         <DialogContentText>
-          This App uses <strong>WebRTC</strong> for secure end-to-end peer connection, together with free STUN server
-          from Google, and Firebase for signalling service and peer presence management. Only the following data is used
-          by Firebase for WebRTC signalling:
+          This App uses <strong>WebRTC</strong> for secure end-to-end peer connection (you can{' '}
+          <Link href="https://test.webrtc.org/" rel="noreferrer" target="_blank">
+            test here
+          </Link>
+          ), together with free STUN server from Google, and Firebase for signalling service and peer presence
+          management. Only the following data is used by Firebase for WebRTC signalling:
           <ul>
             <li>File metadata including file name, size and type</li>
             <li>ICE candidate descriptions, offers and answers that contain SDP information.</li>

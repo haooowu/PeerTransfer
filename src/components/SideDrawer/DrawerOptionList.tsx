@@ -23,6 +23,7 @@ import LightBrightnessIcon from '@material-ui/icons/Brightness7';
 import DarkBrightnessIcon from '@material-ui/icons/Brightness4';
 import {IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
 import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
+import {ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER} from 'src/constants';
 
 const StyledListItemIcon = styled(ListItemIcon)`
   margin-right: -16px;
@@ -87,7 +88,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
         autoClose: 3000,
       });
     } catch {
-      (document.getElementById('public-id') as HTMLInputElement).select();
+      (document.getElementById(ELE_PUBLIC_ID) as HTMLInputElement).select();
     }
   };
 
@@ -137,11 +138,11 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
       <Divider />
 
       <List>
-        <StyledListItem button id="public-id-wrapper" $isOpen={drawerOpen} onClick={(e) => handleCopyPublicID(e)}>
+        <StyledListItem button id={ELE_PUBLIC_ID_WRAPPER} $isOpen={drawerOpen} onClick={(e) => handleCopyPublicID(e)}>
           <div>
             <span>Room ID:</span>
             <br />
-            <InputBase id="public-id" value={publicID} inputProps={{'aria-label': 'naked'}} />
+            <InputBase id={ELE_PUBLIC_ID} value={publicID} inputProps={{'aria-label': 'naked'}} />
           </div>
           <StyledListItemIcon>
             <FileCopyOutlinedIcon />
