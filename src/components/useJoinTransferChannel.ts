@@ -66,8 +66,8 @@ const useJoinTransferChannel = ({
       const connectionSnapShot = await connectionRef.get();
       if (!connectionSnapShot.data()) return;
 
-      console.log(`Received Message ${event.data.byteLength}`);
-      console.log(event.data);
+      // console.log(`Received Message ${event.data.byteLength}`);
+      // console.log(event.data);
 
       receiveBuffer.push(event.data);
       receivedSize += event.data.byteLength;
