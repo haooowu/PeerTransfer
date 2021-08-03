@@ -90,7 +90,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
     if (sessionStorage.getItem(DATA_CHANNEL_TIMEOUT)) {
       toast(
         <div>
-          Failed to create a stable data channel, please try again
+          Failed to establish data transfer channel, please try again
           <br />
           <sub>Note: data transfer between Apple and Windows devices currently not working</sub>
         </div>,
