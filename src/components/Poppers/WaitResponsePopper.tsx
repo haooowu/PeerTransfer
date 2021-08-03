@@ -67,7 +67,7 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
       timeoutReload = setTimeout(() => {
         sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, '1');
         window.location.reload();
-      }, 3000);
+      }, 6000);
     }
     return () => {
       clearTimeout(timeoutReload);
