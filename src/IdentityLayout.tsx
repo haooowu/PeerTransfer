@@ -91,6 +91,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
       toast(
         <div>
           Failed to create a stable data channel, please try again
+          <br />
           <sub>Note: data transfer between Apple and Windows devices currently not working</sub>
         </div>,
         {
