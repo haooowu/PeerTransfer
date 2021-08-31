@@ -203,24 +203,6 @@ const useCreateTransferChannel = ({
       callerCandidatesCollection.add(event.candidate.toJSON());
     });
 
-    // Creating a room with offer sdp and update remote
-    const offer = await peerConnectionRef.current.createOffer();
-    await peerConnectionRef.current.setLocalDescription(offer);
-    console.log('Created offer:', offer);
-
-    const roomWithOffer = {
-      offer: {
-        type: offer.type,
-        sdp: offer.sdp,
-      },
-      isAccepting: false,
-    };
-
-    await targetConnectionRef.set({
-      ...roomWithOffer,
-      ...p2pData,
-    });
-
     // Listening for remote session description
     const descriptionUnsubscriber = targetConnectionRef.onSnapshot(async (snapshot) => {
       const data = snapshot.data();
@@ -246,6 +228,24 @@ const useCreateTransferChannel = ({
       });
     });
     calleeUnsubscriberRef.current = calleeUnsubscriber;
+
+    // Creating a room with offer sdp and update remote
+    const offer = await peerConnectionRef.current.createOffer();
+    await peerConnectionRef.current.setLocalDescription(offer);
+    console.log('Created offer:', offer);
+
+    const roomWithOffer = {
+      offer: {
+        type: offer.type,
+        sdp: offer.sdp,
+      },
+      isAccepting: false,
+    };
+
+    await targetConnectionRef.set({
+      ...roomWithOffer,
+      ...p2pData,
+    });
 
     dispatchWaitResponsePopperData({type: 'set_open_without_desc'});
   };

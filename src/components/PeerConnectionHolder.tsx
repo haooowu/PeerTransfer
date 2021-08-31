@@ -79,15 +79,14 @@ const PeerConnectionHolder: React.FC<Props> = ({
         if (change.type === 'modified') {
           const {isAccepting} = data;
           if (
-            data.p2p &&
-            data.fileMetas &&
+            !isAccepting &&
             !data.answer &&
+            data.fileMetas &&
+            data.p2p &&
             data.p2p.answer === localID &&
             data.p2p.offer === targetPeer.id
           ) {
-            if (!isAccepting) {
-              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
-            }
+            promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
           }
         }
         if (change.type === 'removed') {

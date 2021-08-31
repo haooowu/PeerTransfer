@@ -150,6 +150,19 @@ const useJoinTransferChannel = ({
         calleeCandidatesCollection.add(event.candidate.toJSON());
       });
 
+      // Listening for remote ICE candidates
+      const calllerUnsubscriber = connectionRef.collection(CALLER).onSnapshot((snapshot) => {
+        snapshot.docChanges().forEach(async (change) => {
+          if (change.type === 'added') {
+            let data = change.doc.data();
+            console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
+            console.log(peerConnectionRef.current);
+            await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
+          }
+        });
+      });
+      callerUnsubscriberRef.current = calllerUnsubscriber;
+
       // Creating SDP answer and update remote
       const offer = connectionSnapshot!.data()!.offer;
       console.log('Got offer:', offer);
@@ -166,20 +179,7 @@ const useJoinTransferChannel = ({
         },
         isAccepting: true,
       };
-      await connectionRef.update(roomWithAnswer);
-
-      // Listening for remote ICE candidates
-      const calllerUnsubscriber = connectionRef.collection(CALLER).onSnapshot((snapshot) => {
-        snapshot.docChanges().forEach(async (change) => {
-          if (change.type === 'added') {
-            let data = change.doc.data();
-            console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
-            console.log(peerConnectionRef.current);
-            await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
-          }
-        });
-      });
-      callerUnsubscriberRef.current = calllerUnsubscriber;
+      connectionRef.update(roomWithAnswer);
     }
   };
 
