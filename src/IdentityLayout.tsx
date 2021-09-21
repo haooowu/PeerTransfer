@@ -88,17 +88,10 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
 
   useLayoutEffect(() => {
     if (sessionStorage.getItem(DATA_CHANNEL_TIMEOUT)) {
-      toast(
-        <div>
-          Failed to establish data transfer channel, please try again
-          <br />
-          <sub>Note: data transfer between Apple and Windows devices currently not working</sub>
-        </div>,
-        {
-          autoClose: false,
-          type: 'warning',
-        },
-      );
+      toast(<div>Failed to establish data transfer channel, please try again</div>, {
+        autoClose: false,
+        type: 'warning',
+      });
       sessionStorage.removeItem(DATA_CHANNEL_TIMEOUT);
     }
   }, []);
