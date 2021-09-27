@@ -18,6 +18,7 @@ interface Props {
   shouldDisableActionBtn: boolean;
   handleFileInputChange: (files: File[]) => Promise<void>;
   targetPeer: IPeerField;
+  onPeerDrop: () => Promise<void>;
   setAnchorElement: React.Dispatch<React.SetStateAction<any>>;
 }
 
@@ -25,6 +26,7 @@ const PeerFileDropZone: React.FC<Props> = ({
   shouldDisableActionBtn,
   handleFileInputChange,
   targetPeer,
+  onPeerDrop,
   setAnchorElement,
 }) => {
   const anchorRef = React.useRef(null);
@@ -33,6 +35,13 @@ const PeerFileDropZone: React.FC<Props> = ({
     shouldDisableActionBtn,
     handleFileInputChange,
   });
+
+  React.useEffect(() => {
+    return () => {
+      onPeerDrop();
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   React.useEffect(() => {
     if (anchorRef.current) setAnchorElement(anchorRef.current);

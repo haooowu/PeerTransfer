@@ -306,6 +306,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
         shouldDisableActionBtn={shouldDisableActionBtn}
         handleFileInputChange={handleFileInputChange}
         targetPeer={targetPeer}
+        onPeerDrop={clearFirebaseConnection}
         setAnchorElement={setAnchorElement}
       />
 
