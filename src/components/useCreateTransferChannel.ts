@@ -164,7 +164,7 @@ const useCreateTransferChannel = ({
         }
       }
     }
-    function onError(errorEvent: RTCErrorEvent) {
+    function onError(errorEvent: Event) {
       if (sendChannelRef.current) {
         console.error('Error in sendChannel:', errorEvent);
         return;
