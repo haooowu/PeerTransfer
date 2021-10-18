@@ -32,7 +32,7 @@ const AboutModal: React.FC<Props> = ({open, handleClose}) => {
         <CustomLabel>About</CustomLabel>
         <DialogContentText>
           This App uses <strong>WebRTC</strong> for secure end-to-end peer connection (you can{' '}
-          <Link href="https://test.webrtc.org/" rel="noreferrer" target="_blank">
+          <Link color="secondary" href="https://test.webrtc.org/" rel="noreferrer" target="_blank">
             test here
           </Link>
           ), together with free STUN server from Google, and Firebase for signalling service and peer presence
