@@ -76,30 +76,35 @@ const PeerConnectionHolder: React.FC<Props> = ({
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
         let data = change.doc.data() as IFirebaseConnectionRoomData;
-        if (change.type === 'modified') {
-          const {isAccepting} = data;
-          if (
-            !isAccepting &&
-            !data.answer &&
-            data.fileMetas &&
-            data.p2p &&
-            data.p2p.answer === localID &&
-            data.p2p.offer === targetPeer.id
-          ) {
-            promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
-          }
-        }
-        if (change.type === 'removed') {
-          let connectionId = change.doc.id;
-          console.log('remove connection: ');
-          console.log(connectionId, connectionIdRef.current);
-          if (
-            connectionId === connectionIdRef.current &&
-            data.p2p &&
-            (data.p2p.answer === localID || data.p2p.offer === localID)
-          ) {
-            closeDataChannels(true);
-          }
+        const {isAccepting} = data;
+        const isRightHandShake =
+          data.p2p && data.p2p.answer === localID && data.p2p.offer === targetPeer.id && data.fileMetas;
+
+        switch (change.type) {
+          case 'added':
+            if (isRightHandShake) {
+              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
+            }
+            break;
+          case 'modified':
+            if (!isAccepting && !data.answer && isRightHandShake) {
+              promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
+            }
+            break;
+          case 'removed':
+            let connectionId = change.doc.id;
+            console.log('remove connection: ');
+            console.log(connectionId, connectionIdRef.current);
+            if (
+              connectionId === connectionIdRef.current &&
+              data.p2p &&
+              (data.p2p.answer === localID || data.p2p.offer === localID)
+            ) {
+              closeDataChannels(true);
+            }
+            break;
+          default:
+            break;
         }
       });
     });
