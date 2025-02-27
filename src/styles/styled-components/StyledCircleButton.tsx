@@ -43,7 +43,6 @@ const StyledCircleButton = styled(Button)`
   width: 64px;
   span.emoji {
     font-size: 25px;
-    width: 25px;
   }
 `;
 
