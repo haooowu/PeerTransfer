@@ -21,7 +21,7 @@ const Loader = styled(CircularProgress)``;
 const RippleHolder = styled.div`
   position: absolute;
   bottom: 0;
-  background-image: url("/backgroundRipple.svg");
+  background-image: url("${import.meta.env.BASE_URL}backgroundRipple.svg");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: cover;

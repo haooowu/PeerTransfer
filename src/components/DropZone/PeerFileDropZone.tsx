@@ -63,7 +63,7 @@ const PeerFileDropZone: React.FC<Props> = ({
           variant="contained"
         >
           <input id={`fileInput-${targetPeer.id}`} {...getInputProps()} />
-          <span>{targetPeer.emoji}</span>
+          <span className="emoji">{targetPeer.emoji}</span>
         </PeerStyledCircleButton>
       </div>
       <IdentityWrapper>

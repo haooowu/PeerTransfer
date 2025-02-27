@@ -49,7 +49,7 @@ const SelfFileDropZone: React.FC<Props> = ({ selfIdentity, shouldDisableActionBt
           onClick={avatarButtonClick}
           variant="contained"
         >
-          <span>{selfIdentity.emoji}</span>
+          <span className="emoji">{selfIdentity.emoji}</span>
           <input id={`fileInput-self`} {...getInputProps()} />
         </OwnStyledCircleButton>
         <IdentityWrapper>

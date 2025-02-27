@@ -41,7 +41,7 @@ const StyledCircleButton = styled(Button)`
   border-radius: 50% !important;
   height: 64px;
   width: 64px;
-  span.MuiButton-label {
+  span.emoji {
     font-size: 25px;
     width: 25px;
   }
