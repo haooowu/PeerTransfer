@@ -1,7 +1,3 @@
-# PeerTransfer
-
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app). You can check available scripts and from the [official documents here](https://create-react-app.dev/docs/getting-started).
-
 ## About
 
 The motivation behind this project is for me to effortlessly transfer files and share between my devices without login into any other third-party service.
