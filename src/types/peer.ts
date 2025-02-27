@@ -1,5 +1,4 @@
-import {IFileMeta} from './file';
-
+import { IFileMeta } from "./file";
 export interface IPeerField {
   emoji: string;
   id: string;
@@ -24,4 +23,4 @@ export interface IFirebaseConnectionRoomData {
   };
 }
 
-export type EnterType = 'drag' | 'mouse' | null;
+export type EnterType = "drag" | "mouse" | null;

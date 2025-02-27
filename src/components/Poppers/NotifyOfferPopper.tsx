@@ -1,5 +1,4 @@
-import React from 'react';
-import {Popper} from '@material-ui/core';
+import React from "react";
 import {
   PopperContentWrapper,
   ContentTitle,
@@ -7,10 +6,10 @@ import {
   ContentText,
   ContentFooter,
   StyledPopperButton,
-} from 'src/styles/styled-components/StyledPopperContent';
-import usePopperStyles from 'src/styles/hooks/usePopperStyles';
-import {IFileMeta, IPeerField} from 'src/types';
-import readableBytes from 'src/utils/readableBytes';
+} from "src/styles/styled-components/StyledPopperContent";
+import Popper, { Arrow, commonPopperModifiers } from "src/styles/styled-mui/StyledPopper";
+import { IFileMeta, IPeerField } from "src/types";
+import readableBytes from "src/utils/readableBytes";
 
 interface INotifyOfferPopperData {
   isOpen: boolean;
@@ -23,19 +22,19 @@ export const initialNotifyOfferPopperData: INotifyOfferPopperData = {
 };
 
 export type NotifyOfferPopperReducerAction =
-  | {type: 'clear'}
-  | {type: 'set_file_metas'; payload: {fileMetas: IFileMeta[]}};
+  | { type: "clear" }
+  | { type: "set_file_metas"; payload: { fileMetas: IFileMeta[] } };
 
 export const notifyOfferPopperReducer = (
   state: INotifyOfferPopperData,
   action: NotifyOfferPopperReducerAction,
 ): INotifyOfferPopperData => {
   switch (action.type) {
-    case 'clear':
+    case "clear":
       return {
         ...initialNotifyOfferPopperData,
       };
-    case 'set_file_metas':
+    case "set_file_metas":
       return {
         isOpen: true,
         fileMetas: action.payload.fileMetas,
@@ -50,7 +49,7 @@ interface Props extends INotifyOfferPopperData {
   onCancelFileTransfer: () => void;
   onAcceptFileTransfer: () => void;
   setClose: () => void;
-  anchorElement: any;
+  anchorElement: HTMLElement | null;
 }
 
 const NotifyOfferPopper: React.FC<Props> = ({
@@ -62,7 +61,6 @@ const NotifyOfferPopper: React.FC<Props> = ({
   onAcceptFileTransfer,
 }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
-  const classes = usePopperStyles();
 
   const handleDecline = () => {
     onCancelFileTransfer();
@@ -79,21 +77,18 @@ const NotifyOfferPopper: React.FC<Props> = ({
       open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
-      className={classes.popper}
-      modifiers={{
-        flip: {
+      modifiers={[
+        ...commonPopperModifiers,
+        {
+          name: "arrow",
           enabled: true,
+          options: {
+            element: arrowRef,
+          },
         },
-        preventOverflow: {
-          enabled: true,
-          boundariesElement: 'scrollParent',
-        },
-        arrow: {
-          element: arrowRef,
-        },
-      }}
+      ]}
     >
-      <div className={classes.arrow} ref={setArrowRef} />
+      <Arrow className="MuiPopper-arrow" ref={setArrowRef} />
       <PopperContentWrapper>
         <ContentTitle>
           {targetPeer.emoji} from {targetPeer.platform} {targetPeer.browser} wants to send:

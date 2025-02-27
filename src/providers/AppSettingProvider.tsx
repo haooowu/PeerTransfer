@@ -1,10 +1,10 @@
-import React from 'react';
-import {useAppTheme, useTransferSetting} from 'src/providers/hooks';
+import React from "react";
+import { useAppTheme, useTransferSetting } from "src/providers/hooks";
 
 export interface IAppSettingContextVariable {
   shouldAutoAccept: boolean;
   shouldAutoDownload: boolean;
-  appTheme: 'light' | 'dark';
+  appTheme: "light" | "dark";
   toggleAutoAccept: () => void;
   toggleAutoDownload: () => void;
   toggleLightDarkTheme: () => void;
@@ -13,7 +13,7 @@ export interface IAppSettingContextVariable {
 export const AppSettingContext = React.createContext<IAppSettingContextVariable>({
   shouldAutoAccept: false,
   shouldAutoDownload: false,
-  appTheme: 'dark',
+  appTheme: "dark",
   toggleAutoAccept: () => undefined,
   toggleAutoDownload: () => undefined,
   toggleLightDarkTheme: () => undefined,
@@ -23,10 +23,10 @@ interface Props {
   children?: React.ReactNode;
 }
 
-const AppSettingProvider = ({children}: React.PropsWithChildren<Props>) => {
-  const {shouldAutoAccept, shouldAutoDownload, toggleAutoAccept, toggleAutoDownload} = useTransferSetting();
+const AppSettingProvider = ({ children }: React.PropsWithChildren<Props>) => {
+  const { shouldAutoAccept, shouldAutoDownload, toggleAutoAccept, toggleAutoDownload } = useTransferSetting();
 
-  const {appTheme, toggleLightDarkTheme} = useAppTheme();
+  const { appTheme, toggleLightDarkTheme } = useAppTheme();
 
   return (
     <AppSettingContext.Provider

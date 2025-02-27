@@ -1,7 +1,7 @@
-import styled from 'styled-components';
-import {ToastContainer, ToastContainerProps} from 'react-toastify';
+import styled from "styled-components";
+import { ToastContainer, ToastContainerProps } from "react-toastify";
 
-export const WrappedToastContainer = ({className, ...rest}: ToastContainerProps & {className?: string}) => (
+export const WrappedToastContainer = ({ className, ...rest }: ToastContainerProps & { className?: string }) => (
   <div className={className}>
     <ToastContainer {...rest} />
   </div>
@@ -16,7 +16,7 @@ export default styled(WrappedToastContainer).attrs({
     max-width: 80vw;
   }
   .Toastify__toast-body {
-    font-family: 'Roboto', sans-serif;
+    font-family: "Roboto", sans-serif;
     white-space: pre-line;
     min-width: 200px;
   }

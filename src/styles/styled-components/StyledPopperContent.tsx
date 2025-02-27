@@ -1,5 +1,5 @@
-import styled from 'styled-components';
-import {Button} from '@material-ui/core';
+import styled from "styled-components";
+import { Button } from "@mui/material";
 
 export const PopperContentWrapper = styled.div`
   max-width: 400px;

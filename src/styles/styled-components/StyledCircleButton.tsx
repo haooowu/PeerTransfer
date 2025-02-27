@@ -1,8 +1,8 @@
-import {rgba} from 'polished';
-import styled, {keyframes} from 'styled-components';
-import {Button} from '@material-ui/core';
+import { rgba } from "polished";
+import styled, { keyframes } from "styled-components";
+import { Button } from "@mui/material";
 
-const rippleColor = rgba('#468266', 0.3);
+const rippleColor = rgba("#468266", 0.3);
 
 const normalCircleRipple = keyframes`
   0% {

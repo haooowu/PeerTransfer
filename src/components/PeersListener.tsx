@@ -1,19 +1,19 @@
-import React, {memo, useState, useEffect} from 'react';
-import firebase from 'src/services/firebase';
-import styled from 'styled-components';
-import breakpoints from 'src/styles/breakpoints';
-import StyledPeerPosition from 'src/styles/styled-components/StyledPeerPosition';
-import SelfFileDropZone from 'src/components/DropZone/SelfFileDropZone';
-import PeerConnectionHolder from 'src/components/PeerConnectionHolder';
-import {IPeerField} from 'src/types';
-import {toast} from 'react-toastify';
-import {MAXIMUM_PEER_NUMBER} from 'src/constants';
-import Grow from '@material-ui/core/Grow';
+import React, { memo, useState, useEffect } from "react";
+import firebase from "src/services/firebase";
+import styled from "styled-components";
+import breakpoints from "src/styles/breakpoints";
+import StyledPeerPosition from "src/styles/styled-components/StyledPeerPosition";
+import SelfFileDropZone from "src/components/DropZone/SelfFileDropZone";
+import PeerConnectionHolder from "src/components/PeerConnectionHolder";
+import { IPeerField } from "src/types";
+import { toast } from "react-toastify";
+import { MAXIMUM_PEER_NUMBER } from "src/constants";
+import Grow from "@mui/material/Grow";
 
-const StyledP = styled.p<{$shouldHide: boolean}>`
+const StyledP = styled.p<{ $shouldHide: boolean }>`
   color: ${(props) => props.theme.primary.contrastText};
-  margin-top: ${(props) => (props.$shouldHide ? '0px' : '25%')};
-  height: ${(props) => (props.$shouldHide ? '0px' : 'auto')};
+  margin-top: ${(props) => (props.$shouldHide ? "0px" : "25%")};
+  height: ${(props) => (props.$shouldHide ? "0px" : "auto")};
   white-space: pre-wrap;
   word-wrap: break-word;
   max-width: 80%;
@@ -45,7 +45,7 @@ interface Props {
   localID: string;
 }
 
-const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
+const PeersListener: React.FC<Props> = ({ selfIdentity, publicID, localID }) => {
   const [otherPeers, setOtherPeers] = useState<IPeerField[]>([]);
   const [sendAllFiles, setSendAllFiles] = useState<File[]>([]);
 
@@ -54,10 +54,10 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
   useEffect(() => {
     const db = firebase.database();
     const peersRef = db.ref(`${publicID}`);
-    peersRef.on('value', async (snapshot) => {
+    peersRef.on("value", async (snapshot) => {
       const allPeers: IPeerField[] = snapshot.val();
-      let peerHolder: IPeerField[] = [];
-      for (let id in allPeers) {
+      const peerHolder: IPeerField[] = [];
+      for (const id in allPeers) {
         if (id !== localID) peerHolder.push(allPeers[id]);
       }
       if (peerHolder.length > MAXIMUM_PEER_NUMBER) {
@@ -76,7 +76,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
 
   function handleFileInputChange(files: File[]) {
     if (otherPeers.length === 0) {
-      toast.warn('There is no other peers in this room');
+      toast.warn("There is no other peers in this room");
       clearSentAllFiles();
     } else {
       setSendAllFiles(files);
@@ -87,7 +87,7 @@ const PeersListener: React.FC<Props> = ({selfIdentity, publicID, localID}) => {
     if (sendAllFiles.length > 0) setSendAllFiles([]);
   }
 
-  let noPeer = otherPeers.length === 0;
+  const noPeer = otherPeers.length === 0;
 
   return (
     <>

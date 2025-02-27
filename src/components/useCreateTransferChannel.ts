@@ -1,11 +1,11 @@
-import {useRef, useCallback} from 'react';
-import firebase from 'src/services/firebase';
-import {IPeerField} from 'src/types';
-import {CALLEE, CALLER, CONNECTIONS, MAXIMUM_BUFFER_BYTE, MIN_CHUNK_SIZE, ROOT_COLLECTION} from 'src/constants';
-import pcConfig from 'src/services/rtcPeerConnectionConfig';
-import {toast} from 'react-toastify';
-import {WaitResponsePopperReducerAction} from 'src/components/Poppers/WaitResponsePopper';
-import {ProgressPopperReducerAction} from './Poppers/ProgressPopper';
+import { useRef, useCallback } from "react";
+import firebase from "src/services/firebase";
+import { IPeerField } from "src/types";
+import { CALLEE, CALLER, CONNECTIONS, MAXIMUM_BUFFER_BYTE, MIN_CHUNK_SIZE, ROOT_COLLECTION } from "src/constants";
+import pcConfig from "src/services/rtcPeerConnectionConfig";
+import { toast } from "react-toastify";
+import { WaitResponsePopperReducerAction } from "src/components/Poppers/WaitResponsePopper";
+import { ProgressPopperReducerAction } from "./Poppers/ProgressPopper";
 
 interface Props {
   localID: string;
@@ -45,7 +45,7 @@ const useCreateTransferChannel = ({
     const files = [...acceptedFileListRef.current];
 
     const maxMessageSize = peerConnectionRef.current?.sctp?.maxMessageSize;
-    console.log('maximum message size is: ', maxMessageSize);
+    console.log("maximum message size is: ", maxMessageSize);
 
     const chunkSize = maxMessageSize || MIN_CHUNK_SIZE;
     let singularOffset = 0; // total byte sent for single file
@@ -53,36 +53,36 @@ const useCreateTransferChannel = ({
     let totalOffset = 0; // sum byte sent for all files
 
     function onTransferSuccess() {
-      toast.success('File has been transferred');
+      toast.success("File has been transferred");
       singularOffset = 0;
       targetFileIndex = 0;
       totalOffset = 0;
-      dispatchProgressPopperData({type: 'clear'});
+      dispatchProgressPopperData({ type: "clear" });
       acceptedFileListRef.current = [];
     }
 
     sentFileReaderRef.current = new FileReader();
-    sentFileReaderRef.current.addEventListener('error', (error) => {
-      console.error('Error reading file:', error);
+    sentFileReaderRef.current.addEventListener("error", (error) => {
+      console.error("Error reading file:", error);
       toast.error(`Failed to read file: ${files[targetFileIndex].name}`);
     });
-    sentFileReaderRef.current.addEventListener('abort', (event) => {
-      console.log('File reading aborted:', event);
+    sentFileReaderRef.current.addEventListener("abort", (event) => {
+      console.log("File reading aborted:", event);
       toast.warn(`Abort file read: ${files[targetFileIndex].name}`);
     });
-    sentFileReaderRef.current.addEventListener('load', (event) => {
-      let result = event!.target!.result as ArrayBuffer;
+    sentFileReaderRef.current.addEventListener("load", (event) => {
+      const result = event!.target!.result as ArrayBuffer;
 
       (sendChannelRef.current as RTCDataChannel).send(result);
 
       totalOffset += result.byteLength;
       singularOffset += result.byteLength;
 
-      let sentProgress = Math.round((totalOffset / totalFileSizeRef.current) * 100);
+      const sentProgress = Math.round((totalOffset / totalFileSizeRef.current) * 100);
 
       dispatchProgressPopperData({
-        type: 'set_sent_progress',
-        payload: {progress: sentProgress},
+        type: "set_sent_progress",
+        payload: { progress: sentProgress },
       });
 
       if (totalOffset < totalFileSizeRef.current) {
@@ -96,7 +96,7 @@ const useCreateTransferChannel = ({
           }
         })();
       } else {
-        console.log('transfer done');
+        console.log("transfer done");
         onTransferSuccess();
       }
     });
@@ -142,10 +142,10 @@ const useCreateTransferChannel = ({
   ]);
 
   const createSendDataChannel = useCallback(() => {
-    sendChannelRef.current = peerConnectionRef.current!.createDataChannel('sendDataChannel');
-    console.log('Created send data channel: ', sendChannelRef.current);
+    sendChannelRef.current = peerConnectionRef.current!.createDataChannel("sendDataChannel");
+    console.log("Created send data channel: ", sendChannelRef.current);
 
-    sendChannelRef.current.binaryType = 'arraybuffer';
+    sendChannelRef.current.binaryType = "arraybuffer";
     sendChannelRef.current.onopen = onSendChannelStateChange;
     sendChannelRef.current.onclose = onSendChannelStateChange;
     sendChannelRef.current.onerror = onError;
@@ -153,23 +153,23 @@ const useCreateTransferChannel = ({
     function onSendChannelStateChange() {
       // console.log('send channel: ',sendChannelRef.current);
       if (sendChannelRef.current) {
-        const {readyState} = sendChannelRef.current;
+        const { readyState } = sendChannelRef.current;
         console.log(`Send channel state is: ${readyState}`);
-        if (readyState === 'open') {
+        if (readyState === "open") {
           sendFileData();
-          dispatchWaitResponsePopperData({type: 'clear'});
+          dispatchWaitResponsePopperData({ type: "clear" });
         }
-        if (readyState === 'closed') {
+        if (readyState === "closed") {
           sendChannelRef.current = null;
         }
       }
     }
     function onError(errorEvent: Event) {
       if (sendChannelRef.current) {
-        console.error('Error in sendChannel:', errorEvent);
+        console.error("Error in sendChannel:", errorEvent);
         return;
       }
-      console.log('Error in sendChannel which is already closed:', errorEvent);
+      console.log("Error in sendChannel which is already closed:", errorEvent);
     }
   }, [peerConnectionRef, sendChannelRef, sendFileData, dispatchWaitResponsePopperData]);
 
@@ -194,9 +194,9 @@ const useCreateTransferChannel = ({
     // set up send data channel and listeners
     createSendDataChannel();
 
-    peerConnectionRef.current.addEventListener('icecandidate', (event) => {
+    peerConnectionRef.current.addEventListener("icecandidate", (event) => {
       if (!event.candidate) {
-        console.log('Got final candidate!');
+        console.log("Got final candidate!");
         return;
       }
       // console.log('Got candidate: ', event.candidate);
@@ -212,7 +212,7 @@ const useCreateTransferChannel = ({
         const rtcSessionDescription = new RTCSessionDescription(data.answer);
         await peerConnectionRef.current!.setRemoteDescription(rtcSessionDescription);
 
-        dispatchWaitResponsePopperData({type: 'set_desc'});
+        dispatchWaitResponsePopperData({ type: "set_desc" });
       }
     });
     descriptionUnsubscriberRef.current = descriptionUnsubscriber;
@@ -220,8 +220,8 @@ const useCreateTransferChannel = ({
     // Listen for remote ICE candidates
     const calleeUnsubscriber = targetConnectionRef.collection(CALLEE).onSnapshot((snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
-        if (change.type === 'added') {
-          let data = change.doc.data();
+        if (change.type === "added") {
+          const data = change.doc.data();
           // console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
           await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
         }
@@ -232,7 +232,7 @@ const useCreateTransferChannel = ({
     // Creating a room with offer sdp and update remote
     const offer = await peerConnectionRef.current.createOffer();
     await peerConnectionRef.current.setLocalDescription(offer);
-    console.log('Created offer:', offer);
+    console.log("Created offer:", offer);
 
     const roomWithOffer = {
       offer: {
@@ -247,7 +247,7 @@ const useCreateTransferChannel = ({
       ...p2pData,
     });
 
-    dispatchWaitResponsePopperData({type: 'set_open_without_desc'});
+    dispatchWaitResponsePopperData({ type: "set_open_without_desc" });
   };
 
   return {

@@ -1,4 +1,4 @@
-import styled from 'styled-components';
+import styled from "styled-components";
 
 const Wrapper = styled.div`
   display: flex;
@@ -41,7 +41,7 @@ const LabelWrapper = styled.div`
   color: ${(props) => props.theme.secondary.light};
 `;
 
-const LinearProgressWithLabel = (props: {progress: number}) => {
+const LinearProgressWithLabel = (props: { progress: number }) => {
   return (
     <Wrapper>
       <ProgressWrapper>

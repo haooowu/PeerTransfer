@@ -1,17 +1,20 @@
-import React, {useState, useEffect, useMemo, useRef, useCallback, useReducer} from 'react';
-import firebase from 'src/services/firebase';
-import {IFileMeta, IFirebaseConnectionRoomData, IPeerField} from 'src/types';
-import {toast} from 'react-toastify';
-import PeerFileDropZone from 'src/components/DropZone/PeerFileDropZone';
-import ProgressPopper, {initialProgressPopperData, progressPopperReducer} from 'src/components/Poppers/ProgressPopper';
+import React, { useState, useEffect, useMemo, useRef, useCallback, useReducer } from "react";
+import firebase from "src/services/firebase";
+import { IFileMeta, IFirebaseConnectionRoomData, IPeerField } from "src/types";
+import { toast } from "react-toastify";
+import PeerFileDropZone from "src/components/DropZone/PeerFileDropZone";
+import ProgressPopper, {
+  initialProgressPopperData,
+  progressPopperReducer,
+} from "src/components/Poppers/ProgressPopper";
 import NotifyOfferPopper, {
   notifyOfferPopperReducer,
   initialNotifyOfferPopperData,
-} from 'src/components/Poppers/NotifyOfferPopper';
+} from "src/components/Poppers/NotifyOfferPopper";
 import WaitResponsePopper, {
   initialWaitResponsePopperData,
   waitResponsePopperReducer,
-} from 'src/components/Poppers/WaitResponsePopper';
+} from "src/components/Poppers/WaitResponsePopper";
 import {
   CALLEE,
   CALLER,
@@ -21,9 +24,9 @@ import {
   ROOT_COLLECTION,
   APP_AUTO_ACCEPT,
   APP_AUTO_DOWNLOAD,
-} from 'src/constants';
-import useJoinTransferChannel from 'src/components/useJoinTransferChannel';
-import useCreateTransferChannel from 'src/components/useCreateTransferChannel';
+} from "src/constants";
+import useJoinTransferChannel from "src/components/useJoinTransferChannel";
+import useCreateTransferChannel from "src/components/useCreateTransferChannel";
 
 interface Props {
   targetPeer: IPeerField;
@@ -52,7 +55,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
   const calleeUnsubscriberRef = useRef<() => void>();
   const descriptionUnsubscriberRef = useRef<() => void>();
 
-  const [anchorElement, setAnchorElement] = useState(null);
+  const [anchorElement, setAnchorElement] = useState<HTMLElement | null>(null);
 
   const [waitResponsePopperData, dispatchWaitResponsePopperData] = useReducer(
     waitResponsePopperReducer,
@@ -75,25 +78,25 @@ const PeerConnectionHolder: React.FC<Props> = ({
 
     const unsubscribe = connectionRef.onSnapshot(async (snapshot) => {
       snapshot.docChanges().forEach(async (change) => {
-        let data = change.doc.data() as IFirebaseConnectionRoomData;
-        const {isAccepting} = data;
+        const data = change.doc.data() as IFirebaseConnectionRoomData;
+        const { isAccepting } = data;
         const isRightHandShake =
           data.p2p && data.p2p.answer === localID && data.p2p.offer === targetPeer.id && data.fileMetas;
 
         switch (change.type) {
-          case 'added':
+          case "added":
             if (isRightHandShake) {
               promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
             }
             break;
-          case 'modified':
+          case "modified":
             if (!isAccepting && !data.answer && isRightHandShake) {
               promptsIncomingFileTransferPopper(data.fileMetas, change.doc.id);
             }
             break;
-          case 'removed':
-            let connectionId = change.doc.id;
-            console.log('remove connection: ');
+          case "removed": {
+            const connectionId = change.doc.id;
+            console.log("remove connection: ");
             console.log(connectionId, connectionIdRef.current);
             if (
               connectionId === connectionIdRef.current &&
@@ -103,6 +106,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
               closeDataChannels(true);
             }
             break;
+          }
           default:
             break;
         }
@@ -115,7 +119,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       closeDataChannels(false);
       destroyExistingPC();
       if (sessionStorage.getItem(WAIT_REMOTE_DESC)) {
-        toast.warn('Peer connection dropped');
+        toast.warn("Peer connection dropped");
         sessionStorage.removeItem(WAIT_REMOTE_DESC);
       }
     };
@@ -163,10 +167,10 @@ const PeerConnectionHolder: React.FC<Props> = ({
 
   const handleDownloadFile = (receivedBlob: Blob, name: string) => {
     const appAutoDownload = window.localStorage.getItem(APP_AUTO_DOWNLOAD);
-    const shouldAutoDownload = appAutoDownload === 'true';
+    const shouldAutoDownload = appAutoDownload === "true";
 
     if (shouldAutoDownload) {
-      let downloadAnchor = document.createElement('a');
+      const downloadAnchor = document.createElement("a");
       downloadAnchor.href = URL.createObjectURL(receivedBlob);
       downloadAnchor.download = name;
       document.body.appendChild(downloadAnchor);
@@ -175,7 +179,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       document.body.removeChild(downloadAnchor);
     } else {
       dispatchProgressPopperData({
-        type: 'set_downloadableFiles',
+        type: "set_downloadableFiles",
         payload: {
           downloadableFile: {
             fileName: name,
@@ -186,7 +190,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
     }
   };
 
-  const {receiveChannelRef, joinTransferChannel} = useJoinTransferChannel({
+  const { receiveChannelRef, joinTransferChannel } = useJoinTransferChannel({
     publicID,
     firestoreDbRef,
     connectionIdRef,
@@ -198,7 +202,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
     clearSignalService: clearFirebaseConnection,
   });
 
-  const {sendChannelRef, tryCreatePeerConnection} = useCreateTransferChannel({
+  const { sendChannelRef, tryCreatePeerConnection } = useCreateTransferChannel({
     localID,
     publicID,
     firestoreDbRef,
@@ -216,11 +220,11 @@ const PeerConnectionHolder: React.FC<Props> = ({
   const closeDataChannels = useCallback(
     (shouldWarn: boolean) => {
       // console.log('Closing data channels: ');
-      dispatchWaitResponsePopperData({type: 'clear'});
+      dispatchWaitResponsePopperData({ type: "clear" });
 
       if (sendChannelRef.current) {
         sendChannelRef.current.close();
-        if (shouldWarn) toast.warn('File transfer is closed');
+        if (shouldWarn) toast.warn("File transfer is closed");
         console.log(`Closed send data channel with label: ${sendChannelRef.current.label}`);
       }
       if (receiveChannelRef.current) {
@@ -234,7 +238,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
 
   const destroyExistingPC = useCallback(() => {
     if (peerConnectionRef.current) {
-      console.log('closing peers connection');
+      console.log("closing peers connection");
       peerConnectionRef.current.close();
       peerConnectionRef.current = null;
       // window.location.reload();
@@ -252,7 +256,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
       const connectionsRef = roomRef.collection(CONNECTIONS);
       const targetConnectionRef = connectionsRef.doc(connectionId);
 
-      let metas: IFileMeta[] = [];
+      const metas: IFileMeta[] = [];
 
       files.forEach((file) => {
         metas.push({
@@ -263,7 +267,7 @@ const PeerConnectionHolder: React.FC<Props> = ({
         totalFileSizeRef.current += file.size;
       });
 
-      let fileMetas = {
+      const fileMetas = {
         [FILE_METAS]: metas,
       };
 
@@ -274,34 +278,34 @@ const PeerConnectionHolder: React.FC<Props> = ({
   const onAcceptFileTransfer = () => {
     joinTransferChannel(connectionIdRef.current as string);
     if (!waitResponsePopperData.isOpen) {
-      dispatchWaitResponsePopperData({type: 'set_open_with_desc'});
+      dispatchWaitResponsePopperData({ type: "set_open_with_desc" });
     }
   };
 
   const onCancelFileTransfer = () => {
     if (sentFileReaderRef.current && sentFileReaderRef.current.readyState === 1) {
-      console.log('Abort file read...');
+      console.log("Abort file read...");
       sentFileReaderRef.current.abort();
     }
     if (notifyOfferPopperData.isOpen) {
-      dispatchNotifyPopperOfferData({type: 'clear'});
+      dispatchNotifyPopperOfferData({ type: "clear" });
     }
     closeDataChannels(false);
   };
 
   const promptsIncomingFileTransferPopper = async (fileMetas: IFileMeta[], connectionId: string) => {
-    console.log('incoming file metas:', fileMetas);
-    console.log('got from:', targetPeer);
+    console.log("incoming file metas:", fileMetas);
+    console.log("got from:", targetPeer);
 
     connectionIdRef.current = connectionId;
 
     const appAutoAccept = window.localStorage.getItem(APP_AUTO_ACCEPT);
-    const shouldAutoAccept = appAutoAccept === 'true';
+    const shouldAutoAccept = appAutoAccept === "true";
 
     if (shouldAutoAccept) {
       onAcceptFileTransfer();
     } else {
-      dispatchNotifyPopperOfferData({type: 'set_file_metas', payload: {fileMetas}});
+      dispatchNotifyPopperOfferData({ type: "set_file_metas", payload: { fileMetas } });
     }
   };
 
@@ -315,27 +319,27 @@ const PeerConnectionHolder: React.FC<Props> = ({
         setAnchorElement={setAnchorElement}
       />
 
-      {waitResponsePopperData.isOpen && (
+      {waitResponsePopperData.isOpen && anchorElement && (
         <WaitResponsePopper {...waitResponsePopperData} targetPeer={targetPeer} anchorElement={anchorElement} />
       )}
 
-      {progressPopperData.isOpen && (
+      {progressPopperData.isOpen && anchorElement && (
         <ProgressPopper
           {...progressPopperData}
           onCancelFileTransfer={onCancelFileTransfer}
           targetPeer={targetPeer}
-          setClose={() => dispatchProgressPopperData({type: 'clear'})}
+          setClose={() => dispatchProgressPopperData({ type: "clear" })}
           anchorElement={anchorElement}
         />
       )}
 
-      {notifyOfferPopperData.isOpen && (
+      {notifyOfferPopperData.isOpen && anchorElement && (
         <NotifyOfferPopper
           {...notifyOfferPopperData}
           onAcceptFileTransfer={onAcceptFileTransfer}
           onCancelFileTransfer={onCancelFileTransfer}
           targetPeer={targetPeer}
-          setClose={() => dispatchNotifyPopperOfferData({type: 'clear'})}
+          setClose={() => dispatchNotifyPopperOfferData({ type: "clear" })}
           anchorElement={anchorElement}
         />
       )}

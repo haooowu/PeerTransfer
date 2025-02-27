@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import {IPeerField} from 'src/types';
-import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
-import {OwnStyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
-import useCustomDropzone from 'src/components/DropZone/hooks/useCustomDropzone';
+import React from "react";
+import styled from "styled-components";
+import { IPeerField } from "src/types";
+import DropzoneTooltipPopper from "src/components/Poppers/DropzoneTooltipPopper";
+import { OwnStyledCircleButton } from "src/styles/styled-components/StyledCircleButton";
+import useCustomDropzone from "src/components/DropZone/hooks/useCustomDropzone";
 
 const Wrapper = styled.div`
   z-index: 1;
@@ -28,15 +28,15 @@ interface Props {
   handleFileInputChange: (files: File[]) => void;
 }
 
-const SelfFileDropZone: React.FC<Props> = ({selfIdentity, shouldDisableActionBtn, handleFileInputChange}) => {
+const SelfFileDropZone: React.FC<Props> = ({ selfIdentity, shouldDisableActionBtn, handleFileInputChange }) => {
   const anchorRef = React.useRef(null);
 
-  const {getRootProps, getInputProps, onMouseEnter, onMouseLeave, enterType} = useCustomDropzone({
+  const { getRootProps, getInputProps, onMouseEnter, onMouseLeave, enterType } = useCustomDropzone({
     shouldDisableActionBtn,
     handleFileInputChange,
   });
 
-  const avatarButtonClick = () => ((document.getElementById(`fileInput-self`) as HTMLInputElement).value = '');
+  const avatarButtonClick = () => ((document.getElementById(`fileInput-self`) as HTMLInputElement).value = "");
 
   return (
     <Wrapper>
@@ -56,7 +56,9 @@ const SelfFileDropZone: React.FC<Props> = ({selfIdentity, shouldDisableActionBtn
           You: {selfIdentity.platform}-{selfIdentity.browser}
         </IdentityWrapper>
       </div>
-      {'mouse' && <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />}
+      {anchorRef.current && (
+        <DropzoneTooltipPopper isSelf={true} enterType={enterType} anchorElement={anchorRef.current} />
+      )}
     </Wrapper>
   );
 };

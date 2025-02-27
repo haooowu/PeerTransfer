@@ -1,13 +1,13 @@
-import {useEffect, useState} from 'react';
-import {APP_THEME} from 'src/constants';
+import { useEffect, useState } from "react";
+import { APP_THEME } from "src/constants";
 
-type AppTheme = 'light' | 'dark';
+type AppTheme = "light" | "dark";
 
 export const useAppTheme = () => {
-  const [appTheme, setAppTheme] = useState<'light' | 'dark'>('dark');
+  const [appTheme, setAppTheme] = useState<"light" | "dark">("dark");
 
   const toggleLightDarkTheme = () => {
-    let target: AppTheme = appTheme === 'dark' ? 'light' : 'dark';
+    const target: AppTheme = appTheme === "dark" ? "light" : "dark";
     window.localStorage.setItem(APP_THEME, target);
     setAppTheme(target);
   };
@@ -17,7 +17,7 @@ export const useAppTheme = () => {
     if (currentTheme) {
       setAppTheme(currentTheme as AppTheme);
     } else {
-      window.localStorage.setItem(APP_THEME, 'dark');
+      window.localStorage.setItem(APP_THEME, "dark");
     }
   }, []);
 

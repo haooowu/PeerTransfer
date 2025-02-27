@@ -1,11 +1,11 @@
-import {useRef, useCallback} from 'react';
-import firebase from 'src/services/firebase';
-import {CALLEE, CALLER, CONNECTIONS, ROOT_COLLECTION} from 'src/constants';
-import {IFileMeta} from 'src/types';
-import {toast} from 'react-toastify';
-import pcConfig from 'src/services/rtcPeerConnectionConfig';
-import {ProgressPopperReducerAction} from './Poppers/ProgressPopper';
-import {WaitResponsePopperReducerAction} from './Poppers/WaitResponsePopper';
+import { useRef, useCallback } from "react";
+import firebase from "src/services/firebase";
+import { CALLEE, CALLER, CONNECTIONS, ROOT_COLLECTION } from "src/constants";
+import { IFileMeta } from "src/types";
+import { toast } from "react-toastify";
+import pcConfig from "src/services/rtcPeerConnectionConfig";
+import { WaitResponsePopperReducerAction } from "./Poppers/WaitResponsePopper";
+import { ProgressPopperReducerAction } from "./Poppers/ProgressPopper";
 
 interface Props {
   publicID: string;
@@ -33,7 +33,7 @@ const useJoinTransferChannel = ({
   const receiveChannelRef = useRef<RTCDataChannel | null>(null);
 
   const closeReceiveDataChannel = useCallback(() => {
-    dispatchWaitResponsePopperData({type: 'clear'});
+    dispatchWaitResponsePopperData({ type: "clear" });
     if (receiveChannelRef.current) {
       receiveChannelRef.current.close();
       console.log(`Closed receive data channel with label: ${receiveChannelRef.current.label}`);
@@ -54,9 +54,9 @@ const useJoinTransferChannel = ({
     let receiveBuffer: ArrayBuffer[] = [];
 
     function receiveChannelCallback(event: RTCDataChannelEvent) {
-      console.log('Receive Channel Callback');
+      console.log("Receive Channel Callback");
       receiveChannelRef.current = event.channel;
-      receiveChannelRef.current.binaryType = 'arraybuffer';
+      receiveChannelRef.current.binaryType = "arraybuffer";
       receiveChannelRef.current.onmessage = onReceiveMessageCallback;
       receiveChannelRef.current.onopen = onReceiveChannelStateChange;
       receiveChannelRef.current.onclose = onReceiveChannelStateChange;
@@ -76,12 +76,12 @@ const useJoinTransferChannel = ({
       const fileMetas = connectionSnapShot.data()!.fileMetas as IFileMeta[];
       const totalSize = fileMetas.reduce((acc, file) => acc + file.size, 0);
 
-      let {name, size} = fileMetas[targetFileIndex];
-      let receivedValue = Math.round((receivedSize / totalSize) * 100);
+      const { name, size } = fileMetas[targetFileIndex];
+      const receivedValue = Math.round((receivedSize / totalSize) * 100);
 
       dispatchProgressPopperData({
-        type: 'set_received_progress',
-        payload: {progress: receivedValue},
+        type: "set_received_progress",
+        payload: { progress: receivedValue },
       });
 
       // chunk size sent up to a exact file size in order, set to next
@@ -105,11 +105,11 @@ const useJoinTransferChannel = ({
       if (receiveChannelRef.current) {
         const readyState = receiveChannelRef.current.readyState;
         console.log(`Receive channel state is: ${readyState}`);
-        if (readyState === 'open') {
-          dispatchWaitResponsePopperData({type: 'clear'});
+        if (readyState === "open") {
+          dispatchWaitResponsePopperData({ type: "clear" });
         }
-        if (readyState === 'closed') {
-          if (!completeFlag) toast.warn('File transfer is cancelled');
+        if (readyState === "closed") {
+          if (!completeFlag) toast.warn("File transfer is cancelled");
           completeFlag = 0;
           receiveChannelRef.current = null;
         }
@@ -141,9 +141,9 @@ const useJoinTransferChannel = ({
 
       // Code for collecting ICE candidates
       const calleeCandidatesCollection = connectionRef.collection(CALLEE);
-      peerConnectionRef.current.addEventListener('icecandidate', (event) => {
+      peerConnectionRef.current.addEventListener("icecandidate", (event) => {
         if (!event.candidate) {
-          console.log('Got final candidate!');
+          console.log("Got final candidate!");
           return;
         }
         // console.log('Got candidate: ', event.candidate);
@@ -153,8 +153,8 @@ const useJoinTransferChannel = ({
       // Listening for remote ICE candidates
       const calllerUnsubscriber = connectionRef.collection(CALLER).onSnapshot((snapshot) => {
         snapshot.docChanges().forEach(async (change) => {
-          if (change.type === 'added') {
-            let data = change.doc.data();
+          if (change.type === "added") {
+            const data = change.doc.data();
             console.log(`Got new remote ICE candidate: ${JSON.stringify(data)}`);
             console.log(peerConnectionRef.current);
             await peerConnectionRef.current!.addIceCandidate(new RTCIceCandidate(data));
@@ -165,11 +165,11 @@ const useJoinTransferChannel = ({
 
       // Creating SDP answer and update remote
       const offer = connectionSnapshot!.data()!.offer;
-      console.log('Got offer:', offer);
+      console.log("Got offer:", offer);
       await peerConnectionRef.current.setRemoteDescription(new RTCSessionDescription(offer));
 
       const answer = await peerConnectionRef.current.createAnswer();
-      console.log('Created answer:', answer);
+      console.log("Created answer:", answer);
       await peerConnectionRef.current.setLocalDescription(answer);
 
       const roomWithAnswer = {

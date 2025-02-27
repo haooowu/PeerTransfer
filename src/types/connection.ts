@@ -1,8 +1,8 @@
-import {IFileMeta} from './file';
+import { IFileMeta } from "./file";
 
 export interface IConnectionField {
-  answer?: any;
-  offer?: any;
+  answer?: unknown;
+  offer?: unknown;
   fileMeta?: IFileMeta;
   p2p: {
     p1: string;

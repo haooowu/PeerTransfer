@@ -1,18 +1,21 @@
-import React from 'react';
-import styled from 'styled-components';
-import Link from '@material-ui/core/Link';
-import Dialog from '@material-ui/core/Dialog';
-import DialogContent from '@material-ui/core/DialogContent';
-import DialogContentText from '@material-ui/core/DialogContentText';
-import {MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER, MAXIMUM_PEER_NUMBER} from 'src/constants';
+import React from "react";
+import styled from "styled-components";
+import Link from "@mui/material/Link";
+import Dialog from "@mui/material/Dialog";
+import DialogContentText from "@mui/material/DialogContentText";
+import { MAXIMUM_FILE_BYTE, MAXIMUM_FILE_NUMBER, MAXIMUM_PEER_NUMBER } from "src/constants";
 
-import readableBytes from 'src/utils/readableBytes';
+import readableBytes from "src/utils/readableBytes";
+import { Box } from "@mui/material";
 
 const CustomLabel = styled.div`
   font-weight: bold;
   font-size: 12px;
   text-transform: uppercase;
   margin-bottom: 1em;
+  &:last-of-type {
+    margin-top: 2em;
+  }
 `;
 
 interface Props {
@@ -25,13 +28,13 @@ interface Props {
   handleClose: () => void;
 }
 
-const AboutModal: React.FC<Props> = ({open, handleClose}) => {
+const AboutModal: React.FC<Props> = ({ open, handleClose }) => {
   return (
     <Dialog open={open} onClose={handleClose}>
-      <DialogContent>
+      <Box sx={{ p: 3 }}>
         <CustomLabel>About</CustomLabel>
         <DialogContentText>
-          This App uses <strong>WebRTC</strong> for secure end-to-end peer connection (you can{' '}
+          This App uses <strong>WebRTC</strong> for secure end-to-end peer connection (you can{" "}
           <Link color="secondary" href="https://test.webrtc.org/" rel="noreferrer" target="_blank">
             test here
           </Link>
@@ -56,11 +59,11 @@ const AboutModal: React.FC<Props> = ({open, handleClose}) => {
         </DialogContentText>
 
         <DialogContentText>
-          Maximum file size is set to <strong>{readableBytes(MAXIMUM_FILE_BYTE, 0)}</strong>, with up to{' '}
-          <strong>{MAXIMUM_FILE_NUMBER}</strong> file peer transfer and up to <strong>{MAXIMUM_PEER_NUMBER}</strong>{' '}
+          Maximum file size is set to <strong>{readableBytes(MAXIMUM_FILE_BYTE, 0)}</strong>, with up to{" "}
+          <strong>{MAXIMUM_FILE_NUMBER}</strong> file peer transfer and up to <strong>{MAXIMUM_PEER_NUMBER}</strong>{" "}
           peers each room.
         </DialogContentText>
-      </DialogContent>
+      </Box>
     </Dialog>
   );
 };

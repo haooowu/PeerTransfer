@@ -1,9 +1,8 @@
-import React from 'react';
-import {Popper} from '@material-ui/core';
-import {PopperContentWrapper, ContentTitle} from 'src/styles/styled-components/StyledPopperContent';
-import usePopperStyles from 'src/styles/hooks/usePopperStyles';
-import {IPeerField} from 'src/types';
-import {DATA_CHANNEL_TIMEOUT, WAIT_REMOTE_DESC} from 'src/constants';
+import React from "react";
+import { PopperContentWrapper, ContentTitle } from "src/styles/styled-components/StyledPopperContent";
+import { IPeerField } from "src/types";
+import { DATA_CHANNEL_TIMEOUT, WAIT_REMOTE_DESC } from "src/constants";
+import Popper, { Arrow, commonPopperModifiers } from "src/styles/styled-mui/StyledPopper";
 
 interface IWaitResponsePopperData {
   isOpen: boolean;
@@ -16,32 +15,32 @@ export const initialWaitResponsePopperData: IWaitResponsePopperData = {
 };
 
 export type WaitResponsePopperReducerAction =
-  | {type: 'clear'}
-  | {type: 'set_open_with_desc'}
-  | {type: 'set_open_without_desc'}
-  | {type: 'set_desc'};
+  | { type: "clear" }
+  | { type: "set_open_with_desc" }
+  | { type: "set_open_without_desc" }
+  | { type: "set_desc" };
 
 export const waitResponsePopperReducer = (
   state: IWaitResponsePopperData,
   action: WaitResponsePopperReducerAction,
 ): IWaitResponsePopperData => {
   switch (action.type) {
-    case 'clear':
+    case "clear":
       return {
         ...initialWaitResponsePopperData,
       };
-    case 'set_open_with_desc':
+    case "set_open_with_desc":
       return {
         isOpen: true,
         gotRemoteDesc: true,
       };
 
-    case 'set_open_without_desc':
+    case "set_open_without_desc":
       return {
         isOpen: true,
         gotRemoteDesc: false,
       };
-    case 'set_desc':
+    case "set_desc":
       return {
         ...state,
         gotRemoteDesc: true,
@@ -53,19 +52,18 @@ export const waitResponsePopperReducer = (
 
 interface Props extends IWaitResponsePopperData {
   targetPeer: IPeerField;
-  anchorElement: any;
+  anchorElement: HTMLElement;
 }
 
-const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorElement}) => {
+const WaitResponsePopper: React.FC<Props> = ({ targetPeer, gotRemoteDesc, anchorElement }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
-  const classes = usePopperStyles();
 
   React.useEffect(() => {
-    sessionStorage.setItem(WAIT_REMOTE_DESC, '1');
+    sessionStorage.setItem(WAIT_REMOTE_DESC, "1");
     let timeoutReload: NodeJS.Timeout;
     if (gotRemoteDesc) {
       timeoutReload = setTimeout(() => {
-        sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, '1');
+        sessionStorage.setItem(DATA_CHANNEL_TIMEOUT, "1");
         window.location.reload();
       }, 6000);
     }
@@ -80,21 +78,18 @@ const WaitResponsePopper: React.FC<Props> = ({targetPeer, gotRemoteDesc, anchorE
       open={!!anchorElement}
       anchorEl={anchorElement}
       placement="top"
-      className={classes.popper}
-      modifiers={{
-        flip: {
+      modifiers={[
+        ...commonPopperModifiers,
+        {
+          name: "arrow",
           enabled: true,
+          options: {
+            element: arrowRef,
+          },
         },
-        preventOverflow: {
-          enabled: true,
-          boundariesElement: 'scrollParent',
-        },
-        arrow: {
-          element: arrowRef,
-        },
-      }}
+      ]}
     >
-      <div className={classes.arrow} ref={setArrowRef} />
+      <Arrow className="MuiPopper-arrow" ref={setArrowRef} />
       <PopperContentWrapper>
         <ContentTitle>
           {gotRemoteDesc

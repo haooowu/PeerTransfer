@@ -1,43 +1,38 @@
-import React from 'react';
-import {Popper} from '@material-ui/core';
-import {PopperContentWrapper, ContentTitle} from 'src/styles/styled-components/StyledPopperContent';
-import usePopperStyles from 'src/styles/hooks/usePopperStyles';
-import {EnterType} from 'src/types';
+import React from "react";
+import { PopperContentWrapper, ContentTitle } from "src/styles/styled-components/StyledPopperContent";
+import Popper, { Arrow, commonPopperModifiers } from "src/styles/styled-mui/StyledPopper";
+import { EnterType } from "src/types";
 
 interface Props {
   enterType: EnterType;
   isSelf: boolean;
-  anchorElement: any;
+  anchorElement: HTMLElement;
 }
 
-const DropzoneTooltipPopper: React.FC<Props> = ({enterType, anchorElement, isSelf}) => {
+const DropzoneTooltipPopper: React.FC<Props> = ({ enterType, anchorElement, isSelf }) => {
   const [arrowRef, setArrowRef] = React.useState<HTMLDivElement | null>(null);
-  const classes = usePopperStyles();
 
   return (
     <Popper
       open={!!anchorElement && !!enterType}
       anchorEl={anchorElement}
       placement="top"
-      className={classes.popper}
-      modifiers={{
-        flip: {
+      modifiers={[
+        ...commonPopperModifiers,
+        {
+          name: "arrow",
           enabled: true,
+          options: {
+            element: arrowRef,
+          },
         },
-        preventOverflow: {
-          enabled: true,
-          boundariesElement: 'scrollParent',
-        },
-        arrow: {
-          element: arrowRef,
-        },
-      }}
+      ]}
     >
-      <div className={classes.arrow} ref={setArrowRef} />
+      <Arrow className="MuiPopper-arrow" ref={setArrowRef} />
       <PopperContentWrapper>
         <ContentTitle>
-          {enterType === 'drag' && 'Drop here to send files'}
-          {enterType === 'mouse' && `Click here to ${isSelf ? 'send to all' : 'send files'}`}
+          {enterType === "drag" && "Drop here to send files"}
+          {enterType === "mouse" && `Click here to ${isSelf ? "send to all" : "send files"}`}
         </ContentTitle>
       </PopperContentWrapper>
     </Popper>

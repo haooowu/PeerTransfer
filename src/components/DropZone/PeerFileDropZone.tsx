@@ -1,9 +1,9 @@
-import React from 'react';
-import styled from 'styled-components';
-import {PeerStyledCircleButton} from 'src/styles/styled-components/StyledCircleButton';
-import {IPeerField} from 'src/types';
-import DropzoneTooltipPopper from 'src/components/Poppers/DropzoneTooltipPopper';
-import useCustomDropzone from 'src/components/DropZone/hooks/useCustomDropzone';
+import React from "react";
+import styled from "styled-components";
+import { PeerStyledCircleButton } from "src/styles/styled-components/StyledCircleButton";
+import { IPeerField } from "src/types";
+import DropzoneTooltipPopper from "src/components/Poppers/DropzoneTooltipPopper";
+import useCustomDropzone from "src/components/DropZone/hooks/useCustomDropzone";
 
 const IdentityWrapper = styled.div`
   position: relative;
@@ -19,7 +19,7 @@ interface Props {
   handleFileInputChange: (files: File[]) => Promise<void>;
   targetPeer: IPeerField;
   onPeerDrop: () => Promise<void>;
-  setAnchorElement: React.Dispatch<React.SetStateAction<any>>;
+  setAnchorElement: React.Dispatch<React.SetStateAction<HTMLElement | null>>;
 }
 
 const PeerFileDropZone: React.FC<Props> = ({
@@ -31,7 +31,7 @@ const PeerFileDropZone: React.FC<Props> = ({
 }) => {
   const anchorRef = React.useRef(null);
 
-  const {getRootProps, getInputProps, onMouseEnter, onMouseLeave, enterType} = useCustomDropzone({
+  const { getRootProps, getInputProps, onMouseEnter, onMouseLeave, enterType } = useCustomDropzone({
     shouldDisableActionBtn,
     handleFileInputChange,
   });
@@ -48,7 +48,7 @@ const PeerFileDropZone: React.FC<Props> = ({
   }, [anchorRef, setAnchorElement]);
 
   const avatarButtonClick = () =>
-    ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = '');
+    ((document.getElementById(`fileInput-${targetPeer.id}`) as HTMLInputElement).value = "");
 
   return (
     <>
@@ -69,7 +69,9 @@ const PeerFileDropZone: React.FC<Props> = ({
       <IdentityWrapper>
         {targetPeer.platform}-{targetPeer.browser}
       </IdentityWrapper>
-      {enterType && <DropzoneTooltipPopper isSelf={false} enterType={enterType} anchorElement={anchorRef.current} />}
+      {enterType && anchorRef.current && (
+        <DropzoneTooltipPopper isSelf={false} enterType={enterType} anchorElement={anchorRef.current} />
+      )}
     </>
   );
 };

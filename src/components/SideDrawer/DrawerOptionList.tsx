@@ -1,36 +1,37 @@
-import React from 'react';
-import styled from 'styled-components';
-import {toast} from 'react-toastify';
-import {IdentityContext, IIdentityContextVariable} from 'src/providers/IdentityProvider';
+import React from "react";
+import styled from "styled-components";
+import { toast } from "react-toastify";
+import { IdentityContext, IIdentityContextVariable } from "src/providers/IdentityProvider";
 
-import List from '@material-ui/core/List';
-import Divider from '@material-ui/core/Divider';
-import ListItem from '@material-ui/core/ListItem';
-import ListItemIcon from '@material-ui/core/ListItemIcon';
-import ListItemText from '@material-ui/core/ListItemText';
-import Switch from '@material-ui/core/Switch';
-import Tooltip from '@material-ui/core/Tooltip';
-import InputBase from '@material-ui/core/InputBase';
+import List from "@mui/material/List";
+import Divider from "@mui/material/Divider";
+import ListItem from "@mui/material/ListItem";
+import ListItemIcon from "@mui/material/ListItemIcon";
+import ListItemText from "@mui/material/ListItemText";
+import Switch from "@mui/material/Switch";
+import Tooltip from "@mui/material/Tooltip";
+import InputBase from "@mui/material/InputBase";
 
-import AccountTreeIcon from '@material-ui/icons/AccountTree';
-import GitHubIcon from '@material-ui/icons/GitHub';
-import HelpIcon from '@material-ui/icons/Help';
-import CloudIcon from '@material-ui/icons/CloudDownloadSharp';
-import CloudOffIcon from '@material-ui/icons/CloudOff';
-import ChatIcon from '@material-ui/icons/Chat';
-import ChatOffIcon from '@material-ui/icons/SpeakerNotesOff';
-import LightBrightnessIcon from '@material-ui/icons/Brightness7';
-import DarkBrightnessIcon from '@material-ui/icons/Brightness4';
-import {IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
-import FileCopyOutlinedIcon from '@material-ui/icons/FileCopyOutlined';
-import {ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER} from 'src/constants';
+import AccountTreeIcon from "@mui/icons-material/AccountTree";
+import GitHubIcon from "@mui/icons-material/GitHub";
+import HelpIcon from "@mui/icons-material/Help";
+import CloudIcon from "@mui/icons-material/CloudDownloadSharp";
+import CloudOffIcon from "@mui/icons-material/CloudOff";
+import ChatIcon from "@mui/icons-material/Chat";
+import ChatOffIcon from "@mui/icons-material/SpeakerNotesOff";
+import LightBrightnessIcon from "@mui/icons-material/Brightness7";
+import DarkBrightnessIcon from "@mui/icons-material/Brightness4";
+import { IAppSettingContextVariable } from "src/providers/AppSettingProvider";
+import FileCopyOutlinedIcon from "@mui/icons-material/FileCopyOutlined";
+import { ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER } from "src/constants";
+import { ListItemButton } from "@mui/material";
 
 const StyledListItemIcon = styled(ListItemIcon)`
   margin-right: -16px;
   color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
-const StyledListItem = styled(ListItem)<{$isOpen: boolean}>`
+const StyledListItem = styled(ListItem)<{ $isOpen: boolean }>`
   margin-top: 4px;
   justify-content: space-between !important;
   line-height: 1.5em;
@@ -39,9 +40,10 @@ const StyledListItem = styled(ListItem)<{$isOpen: boolean}>`
   font-size: 14px;
   text-align: left;
   padding-bottom: 1em;
-  visibility: ${(props) => (props.$isOpen ? 'visible' : 'hidden')};
+  visibility: ${(props) => (props.$isOpen ? "visible" : "hidden")};
   * {
     pointer-events: none;
+    cursor: pointer;
   }
   span {
     font-weight: 300;
@@ -79,12 +81,12 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
   handleJoinRoomModalOpen,
   handleAboutModalOpen,
 }) => {
-  const handleCopyPublicID = async (e: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+  const handleCopyPublicID = async (e: React.MouseEvent<HTMLLIElement, MouseEvent>) => {
     e.stopPropagation();
     try {
       await navigator.clipboard.writeText(publicID);
       toast.dismiss();
-      toast.info('Room Id copied', {
+      toast.info("Room Id copied", {
         autoClose: 3000,
       });
     } catch {
@@ -92,25 +94,25 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
     }
   };
 
-  const handleSourceRedirect = () => window.open('https://github.com/haooowu/PeerTransfer');
+  const handleSourceRedirect = () => window.open("https://github.com/haooowu/PeerTransfer");
 
   return (
     <>
       <List>
-        <Tooltip title={'Auto Accept'} placement="right">
-          <ListItem button onClick={toggleAutoAccept}>
+        <Tooltip title={"Auto Accept"} placement="right">
+          <ListItemButton onClick={toggleAutoAccept}>
             <StyledListItemIcon>{shouldAutoAccept ? <ChatIcon /> : <ChatOffIcon />}</StyledListItemIcon>
-            <ListItemText primary={'Auto Accept Request'} />
-            <Switch checked={shouldAutoAccept} inputProps={{'aria-label': 'secondary checkbox'}} />
-          </ListItem>
+            <ListItemText primary={"Auto Accept Request"} />
+            <Switch checked={shouldAutoAccept} color="secondary" inputProps={{ "aria-label": "checkbox" }} />
+          </ListItemButton>
         </Tooltip>
 
-        <Tooltip title={'Auto Download'} placement="right">
-          <ListItem button onClick={toggleAutoDownload}>
+        <Tooltip title={"Auto Download"} placement="right">
+          <ListItemButton onClick={toggleAutoDownload}>
             <StyledListItemIcon>{shouldAutoDownload ? <CloudIcon /> : <CloudOffIcon />}</StyledListItemIcon>
-            <ListItemText primary={'Auto Download File'} />
-            <Switch checked={shouldAutoDownload} inputProps={{'aria-label': 'secondary checkbox'}} />
-          </ListItem>
+            <ListItemText primary={"Auto Download File"} />
+            <Switch checked={shouldAutoDownload} color="secondary" inputProps={{ "aria-label": "checkbox" }} />
+          </ListItemButton>
         </Tooltip>
       </List>
 
@@ -118,54 +120,56 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 
       <List>
         <Tooltip title="Brightness Theme" placement="right">
-          <ListItem button onClick={toggleLightDarkTheme}>
+          <ListItemButton onClick={toggleLightDarkTheme}>
             <StyledListItemIcon>
-              {appTheme === 'light' ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
+              {appTheme === "light" ? <LightBrightnessIcon /> : <DarkBrightnessIcon />}
             </StyledListItemIcon>
-            <ListItemText primary={'Light / Dark Theme'} />
-          </ListItem>
+            <ListItemText primary={"Light / Dark Theme"} />
+          </ListItemButton>
         </Tooltip>
         <Tooltip title="Join Another Room" placement="right">
-          <ListItem button onClick={handleJoinRoomModalOpen}>
+          <ListItemButton onClick={handleJoinRoomModalOpen}>
             <StyledListItemIcon>
               <AccountTreeIcon />
             </StyledListItemIcon>
-            <ListItemText primary={'Join a room'} />
-          </ListItem>
+            <ListItemText primary={"Join a room"} />
+          </ListItemButton>
         </Tooltip>
       </List>
 
       <Divider />
 
       <List>
-        <StyledListItem button id={ELE_PUBLIC_ID_WRAPPER} $isOpen={drawerOpen} onClick={(e) => handleCopyPublicID(e)}>
-          <div>
-            <span>Room ID:</span>
-            <br />
-            <InputBase id={ELE_PUBLIC_ID} value={publicID} inputProps={{'aria-label': 'naked'}} />
-          </div>
-          <StyledListItemIcon>
-            <FileCopyOutlinedIcon />
-          </StyledListItemIcon>
-        </StyledListItem>
+        <Tooltip title="Copy Current Room ID" placement="right">
+          <StyledListItem id={ELE_PUBLIC_ID_WRAPPER} $isOpen={drawerOpen} onClick={(e) => handleCopyPublicID(e)}>
+            <div>
+              <span>Room ID:</span>
+              <br />
+              <InputBase id={ELE_PUBLIC_ID} value={publicID} inputProps={{ "aria-label": "naked" }} />
+            </div>
+            <StyledListItemIcon>
+              <FileCopyOutlinedIcon />
+            </StyledListItemIcon>
+          </StyledListItem>
+        </Tooltip>
       </List>
 
       <StyledList>
         <Tooltip title="About" placement="right">
-          <ListItem button onClick={handleAboutModalOpen}>
+          <ListItemButton onClick={handleAboutModalOpen}>
             <StyledListItemIcon>
               <HelpIcon />
             </StyledListItemIcon>
-            <ListItemText primary={'About'} />
-          </ListItem>
+            <ListItemText primary={"About"} />
+          </ListItemButton>
         </Tooltip>
         <Tooltip title="Source Code" placement="right">
-          <ListItem button onClick={handleSourceRedirect}>
+          <ListItemButton onClick={handleSourceRedirect}>
             <StyledListItemIcon>
               <GitHubIcon />
             </StyledListItemIcon>
-            <ListItemText primary={'Source'} />
-          </ListItem>
+            <ListItemText primary={"Source"} />
+          </ListItemButton>
         </Tooltip>
       </StyledList>
     </>
@@ -174,7 +178,7 @@ const DrawerOptionList: React.FC<IDrawerOptionList> = ({
 
 const ConsumedDrawerOptionList = (props: Props) => (
   <IdentityContext.Consumer>
-    {({publicID}: IIdentityContextVariable) => <DrawerOptionList publicID={publicID} {...props} />}
+    {({ publicID }: IIdentityContextVariable) => <DrawerOptionList publicID={publicID} {...props} />}
   </IdentityContext.Consumer>
 );
 

@@ -1,19 +1,17 @@
-import React from 'react';
-import styled from 'styled-components';
+import React from "react";
+import styled from "styled-components";
 
-import clsx from 'clsx';
-import Drawer from '@material-ui/core/Drawer';
-import Divider from '@material-ui/core/Divider';
-import IconButton from '@material-ui/core/IconButton';
-import ArrowBackIcon from '@material-ui/icons/ArrowBack';
-import Tooltip from '@material-ui/core/Tooltip';
-import MenuIcon from '@material-ui/icons/Menu';
-import useDrawerStyles from 'src/styles/hooks/useDrawerStyles';
+import Divider from "@mui/material/Divider";
+import IconButton from "@mui/material/IconButton";
+import ArrowBackIcon from "@mui/icons-material/ArrowBack";
+import Tooltip from "@mui/material/Tooltip";
+import MenuIcon from "@mui/icons-material/Menu";
 
-import {AppSettingContext, IAppSettingContextVariable} from 'src/providers/AppSettingProvider';
-import DrawerOptionList from 'src/components/SideDrawer/DrawerOptionList';
-import JoinRoomModal from 'src/components/SideDrawer/Modals/JoinRoomModal';
-import AboutModal from 'src/components/SideDrawer/Modals/AboutModal';
+import { AppSettingContext, IAppSettingContextVariable } from "src/providers/AppSettingProvider";
+import DrawerOptionList from "src/components/SideDrawer/DrawerOptionList";
+import JoinRoomModal from "src/components/SideDrawer/Modals/JoinRoomModal";
+import AboutModal from "src/components/SideDrawer/Modals/AboutModal";
+import Drawer, { TitleBar, TitleText } from "src/styles/styled-mui/StyledDrawer";
 
 const StyledIconButton = styled(IconButton)`
   width: ${(props) => props.theme.drawerMinWidth};
@@ -21,32 +19,22 @@ const StyledIconButton = styled(IconButton)`
   color: ${(props) => props.theme.primary.contrastText} !important;
 `;
 
-const StyledDrawer = styled(Drawer)`
-  .MuiDrawer-paper {
-    background-color: ${(props) => props.theme.primary.light} !important;
-    color: ${(props) => props.theme.primary.contrastText} !important;
-    overflow-x: hidden;
-  }
-`;
-
 interface Props {
-  gestureDirection: 'left' | 'right' | undefined;
+  gestureDirection: "left" | "right" | undefined;
 }
 
 interface ISideDrawer extends Props {
   contextProps: IAppSettingContextVariable;
 }
 
-const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => {
-  const classes = useDrawerStyles();
+const SideDrawer: React.FC<ISideDrawer> = ({ gestureDirection, contextProps }) => {
   const [drawerOpen, setDrawerOpen] = React.useState(false);
   const [joinRoomModalOpen, setJoinRoomModalOpen] = React.useState(false);
   const [aboutModalOpen, setAboutModalOpen] = React.useState(false);
 
   React.useEffect(() => {
-    if (gestureDirection === 'left') setDrawerOpen(false);
-    if (gestureDirection === 'right') setDrawerOpen(true);
-    if (!gestureDirection) setDrawerOpen(false);
+    if (gestureDirection === "left") setDrawerOpen(false);
+    if (gestureDirection === "right") setDrawerOpen(true);
   }, [gestureDirection]);
 
   const handleToggle = () => setDrawerOpen((prev) => !prev);
@@ -56,27 +44,15 @@ const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => 
   const handleAboutModalOpen = () => setAboutModalOpen(true);
 
   return (
-    <StyledDrawer
-      variant="permanent"
-      className={clsx(classes.drawer, {
-        [classes.drawerOpen]: drawerOpen,
-        [classes.drawerClose]: !drawerOpen,
-      })}
-      classes={{
-        paper: clsx({
-          [classes.drawerOpen]: drawerOpen,
-          [classes.drawerClose]: !drawerOpen,
-        }),
-      }}
-    >
-      <div className={classes.titleBar}>
-        {drawerOpen && <div className={classes.titleText}>PeerTransfer</div>}
-        <Tooltip title={drawerOpen ? 'Close Menu' : 'Open Menu'} placement="right">
+    <Drawer variant="permanent" open={drawerOpen}>
+      <TitleBar>
+        {drawerOpen && <TitleText>PeerTransfer</TitleText>}
+        <Tooltip title={drawerOpen ? "Close Menu" : "Open Menu"} placement="right">
           <StyledIconButton disableRipple onClick={handleToggle}>
             {drawerOpen ? <ArrowBackIcon /> : <MenuIcon />}
           </StyledIconButton>
         </Tooltip>
-      </div>
+      </TitleBar>
 
       <Divider />
 
@@ -90,7 +66,7 @@ const SideDrawer: React.FC<ISideDrawer> = ({gestureDirection, contextProps}) => 
       <JoinRoomModal open={joinRoomModalOpen} handleClose={() => setJoinRoomModalOpen(false)} />
 
       <AboutModal open={aboutModalOpen} handleClose={() => setAboutModalOpen(false)} />
-    </StyledDrawer>
+    </Drawer>
   );
 };
 

@@ -1,28 +1,27 @@
-import React, {useState, useEffect, useLayoutEffect} from 'react';
-import firebase from 'src/services/firebase';
-import styled from 'styled-components';
+import React, { useState, useEffect, useLayoutEffect } from "react";
+import firebase from "src/services/firebase";
+import styled from "styled-components";
 
-import getRandomFaceEmoji from 'src/utils/getRandomFaceEmoji';
-import detectOS from 'src/utils/detectOS';
+import getRandomFaceEmoji from "src/utils/getRandomFaceEmoji";
+import detectOS from "src/utils/detectOS";
 
-import {CircularProgress} from '@material-ui/core';
-import backgroundRipple from 'src/assets/backgroundRipple.svg';
+import { CircularProgress } from "@mui/material";
 
-import {useGesture} from 'react-use-gesture';
-import {IdentityContext, IIdentityContextVariable} from 'src/providers/IdentityProvider';
-import PeersListener from 'src/components/PeersListener';
-import SideDrawer from 'src/components/SideDrawer';
-import {IPeerField} from 'src/types';
+import { useGesture } from "react-use-gesture";
+import { IdentityContext, IIdentityContextVariable } from "src/providers/IdentityProvider";
+import PeersListener from "src/components/PeersListener";
+import SideDrawer from "src/components/SideDrawer";
+import { IPeerField } from "src/types";
 
-import {toast} from 'react-toastify';
-import {DATA_CHANNEL_TIMEOUT, ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER} from 'src/constants';
+import { toast } from "react-toastify";
+import { DATA_CHANNEL_TIMEOUT, ELE_PUBLIC_ID, ELE_PUBLIC_ID_WRAPPER } from "src/constants";
 
 const Loader = styled(CircularProgress)``;
 
 const RippleHolder = styled.div`
   position: absolute;
   bottom: 0;
-  background-image: url(${backgroundRipple});
+  background-image: url("/backgroundRipple.svg");
   background-repeat: no-repeat;
   background-position: bottom;
   background-size: cover;
@@ -63,9 +62,9 @@ interface Props {
   publicID: string;
 }
 
-const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
+const ConsumedIdentityLayout: React.FC<Props> = ({ publicID, localID }) => {
   const [selfIdentity, setSelfIdentity] = useState<IPeerField | null>();
-  const [gestureDirection, setGestureDirection] = useState<'left' | 'right' | undefined>();
+  const [gestureDirection, setGestureDirection] = useState<"left" | "right" | undefined>();
 
   useEffect(() => {
     const initPeers = () => {
@@ -76,7 +75,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
         ...detectOS(),
       } as IPeerField;
 
-      let presenceRef = presenceDB.ref(`${publicID}/${localID}`);
+      const presenceRef = presenceDB.ref(`${publicID}/${localID}`);
 
       presenceRef.set(identity);
       presenceRef.onDisconnect().remove();
@@ -90,7 +89,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
     if (sessionStorage.getItem(DATA_CHANNEL_TIMEOUT)) {
       toast(<div>Failed to establish data transfer channel, please try again</div>, {
         autoClose: false,
-        type: 'warning',
+        type: "warning",
       });
       sessionStorage.removeItem(DATA_CHANNEL_TIMEOUT);
     }
@@ -103,12 +102,12 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
         state.event.target === document.getElementById(ELE_PUBLIC_ID_WRAPPER)
       )
         return;
-      let movementX = Math.sign(state.movement[0]);
-      let movementY = Math.sign(state.movement[1]);
-      let distanceX = Math.abs(state.movement[0]);
+      const movementX = Math.sign(state.movement[0]);
+      const movementY = Math.sign(state.movement[1]);
+      const distanceX = Math.abs(state.movement[0]);
       if (distanceX > 8) {
-        if (movementX === -1) setGestureDirection('left');
-        if (movementX === 1) setGestureDirection('right');
+        if (movementX === -1) setGestureDirection("left");
+        if (movementX === 1) setGestureDirection("right");
       }
       if (movementX === 0 && movementY === 0) setGestureDirection(undefined);
     },
@@ -125,7 +124,7 @@ const ConsumedIdentityLayout: React.FC<Props> = ({publicID, localID}) => {
 
 const IdentityLayout = () => (
   <IdentityContext.Consumer>
-    {({localID, publicID}: IIdentityContextVariable) =>
+    {({ localID, publicID }: IIdentityContextVariable) =>
       localID && publicID ? (
         <ConsumedIdentityLayout localID={localID} publicID={publicID} />
       ) : (
